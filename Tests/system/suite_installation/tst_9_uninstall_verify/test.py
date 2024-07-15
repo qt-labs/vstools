@@ -10,20 +10,18 @@ source("../shared/scripts/install_utils.py")
 
 
 def main():
-    version = startAppGetVersion(clearSettings=False)
-    if not version:
-        return
-    vsToolsLabelText = selectInstalledVsTools(version)
+    startApp(clearSettings=False)
+    vsToolsLabelText = selectInstalledVsTools()
     test.compare(vsToolsLabelText, None,
-                "Are 'Qt VS Tools for Visual Studio %s' installed?" % version)
+                "Are 'Qt VS Tools for Visual Studio' installed?")
     closeExtensionManager()
-    checkMenuItems(version)
+    checkMenuItems()
     closeMainWindow()
 
 
-def checkMenuItems(version):
+def checkMenuItems():
     try:
-        openVsToolsMenu(version)
+        openVsToolsMenu()
         test.fail("Surplus menu items", "Qt VS Tools show unexpected menu items.")
         mouseClick(waitForObject(globalnames.file_MenuItem))  # Close menu
     except:

@@ -11,13 +11,13 @@ import globalnames
 import names
 
 
-def openExtensionManager(version):
+def openExtensionManager():
     mouseClick(waitForObject(globalnames.extensions_MenuItem))
     mouseClick(waitForObject(names.extensions_Manage_Extensions_MenuItem))
 
 
-def selectInstalledVsTools(version):
-    openExtensionManager(version)
+def selectInstalledVsTools():
+    openExtensionManager()
     if getMsvsVersionAsList() < [17, 10, 0]:
         mouseClick(waitForObject({"type": "TreeItem", "id": "Installed"}, 5000))
     else:

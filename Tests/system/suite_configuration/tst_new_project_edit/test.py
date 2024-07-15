@@ -12,7 +12,7 @@ import names
 myProjectName = ""
 
 
-def setNames(_, __, expectedName):
+def setNames(_, expectedName):
     global myProjectName
     projectNameEdit = waitForObjectExists(names.msvs_Project_name_Edit)
     myProjectName = "My%sProject" % expectedName

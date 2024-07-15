@@ -15,18 +15,16 @@ def main():
     test.warning("This is a semi-manual test.",
                  "It is designed to run on VS with Qt VS Tools installed "
                  "and requires manual steps.")
-    version = startAppGetVersion()
-    if not version:
-        return
-    if uninstallQtVsTools(version):
+    startApp()
+    if uninstallQtVsTools():
         test.warning("If the test succeeded so far, it now requires manual steps.",
                      "Please finish the steps of the VSIX Installer wizard which should have "
                      "appeared. After this, you can run tst_uninstall_verify to check the result.")
     closeMainWindow()
 
 
-def uninstallQtVsTools(version):
-    selectInstalledVsTools(version)
+def uninstallQtVsTools():
+    selectInstalledVsTools()
     mouseClick(waitForObject(names.msvs_ExtensionManager_UI_InstalledExtItem_Uninstall_Label))
     clickButton(waitForObject(names.microsoft_Visual_Studio_Yes_Button))
     testChangesScheduledLabel()

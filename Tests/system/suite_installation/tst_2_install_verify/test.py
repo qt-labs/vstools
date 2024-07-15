@@ -12,33 +12,33 @@ import names
 
 
 def main():
-    version = startAppGetVersion()
-    if not version:
-        return
-    checkVSVersion(version)
-    vsToolsLabelText = selectInstalledVsTools(version)
+    startApp()
+    checkVSVersion()
+    vsToolsLabelText = selectInstalledVsTools()
     if test.verify(vsToolsLabelText, "Are Qt VS Tools found in extension manager?"):
+        version = getMsvsProductLine()
         test.verify(vsToolsLabelText.startswith("The Qt VS Tools for Visual Studio " + version),
                     "Are these 'Qt VS Tools for Visual Studio %s' as expected? Found:\n%s"
                     % (version, vsToolsLabelText))
         verifyVsToolsVersion()
     closeExtensionManager()
-    checkMenuItems(version)
+    checkMenuItems()
     closeMainWindow()
 
 
-def checkVSVersion(version):
+def checkVSVersion():
     mouseClick(waitForObject(names.help_MenuItem))
     mouseClick(waitForObject(names.help_About_Microsoft_Visual_Studio_MenuItem))
     vsVersionText = waitForObjectExists(names.about_Microsoft_Visual_Studio_Edit).text
+    version = getMsvsProductLine()
     test.verify(version in vsVersionText,
                 "Is this VS %s as expected? Found:\n%s" % (version, vsVersionText))
     clickButton(waitForObject(names.o_Microsoft_Visual_Studio_OK_Button))
 
 
-def checkMenuItems(version):
+def checkMenuItems():
     try:
-        openVsToolsMenu(version)
+        openVsToolsMenu()
         waitForObject(names.pART_Popup_qt_io_MenuItem, 5000)
         test.passes("Qt VS Tools show expected menu items.")
         mouseClick(waitForObject(globalnames.file_MenuItem))  # Close menu

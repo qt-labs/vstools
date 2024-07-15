@@ -47,8 +47,8 @@ def tableCellEdit(col, row):
     return {"container": tableCell(col, row), "type": "Edit"}
 
 
-def configureQtVersions(msvsVersion, qtDirs, withTests=False):
-    openVsToolsMenu(msvsVersion)
+def configureQtVersions(qtDirs, withTests=False):
+    openVsToolsMenu()
     mouseClick(waitForObject(names.pART_Popup_Qt_Versions_MenuItem))
     tableRows = waitForObjectExists(names.dataGrid_Table).rowCount
     if withTests:
@@ -72,8 +72,8 @@ def configureQtVersions(msvsVersion, qtDirs, withTests=False):
     return True
 
 
-def clearQtVersions(msvsVersion):
-    openVsToolsMenu(msvsVersion)
+def clearQtVersions():
+    openVsToolsMenu()
     mouseClick(waitForObject(names.pART_Popup_Qt_Versions_MenuItem))
     qtVersionCount = waitForObjectExists(names.dataGrid_Table).rowCount - 1
     for i in range(qtVersionCount):
@@ -99,7 +99,6 @@ def getExpectedName(templateName):
 # run any tests itself, but it runs a callback function for each page of all the wizards. These
 # functions should contain tests for the respective page.
 # funcNewProjectDialog: Function run on MSVS' own "New Project" dialog. Parameters are strings:
-#                       - version of MSVS, e.g. "2022"
 #                       - the project template, e.g. "Qt Empty Application"
 #                       - the expected name of the new project, without index, e.g. "QtApplication"
 # funcPage1: Function run on the first page of the Qt VS Tools' wizard. Parameters are strings:
@@ -126,10 +125,8 @@ def testAllQtWizards(funcNewProjectDialog=None, funcPage1=None, funcPage2=None, 
     if not qtDirs:
         test.fatal("No Qt versions known", "Did you set SQUISH_VSTOOLS_QTDIRS correctly?")
         return
-    version = startAppGetVersion()
-    if not version:
-        return
-    if setupQtVersions and not configureQtVersions(version, qtDirs):
+    startApp()
+    if setupQtVersions and not configureQtVersions(qtDirs):
         closeMainWindow()
         return
 
@@ -141,7 +138,7 @@ def testAllQtWizards(funcNewProjectDialog=None, funcPage1=None, funcPage2=None, 
                 expectedName = getExpectedName(templateName)
                 clickButton(waitForObject(names.microsoft_Visual_Studio_Next_Button))
                 if funcNewProjectDialog:
-                    funcNewProjectDialog(version, templateName, expectedName)
+                    funcNewProjectDialog(templateName, expectedName)
                 projectName = waitForObjectExists(names.msvs_Project_name_Edit).text
                 devEnvContext = currentApplicationContext()
                 clickButton(waitForObject(names.microsoft_Visual_Studio_Create_Button))
@@ -182,5 +179,5 @@ def testAllQtWizards(funcNewProjectDialog=None, funcPage1=None, funcPage2=None, 
             dialog.goBack()
 
     if setupQtVersions:
-        clearQtVersions(version)
+        clearQtVersions()
     closeMainWindow()

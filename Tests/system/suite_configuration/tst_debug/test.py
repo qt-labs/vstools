@@ -51,10 +51,8 @@ def main():
         test.fatal("No directory for creating projects known",
                    "Did you set SQUISH_VSTOOLS_WORKDIR correctly?")
         return
-    version = startAppGetVersion()
-    if not version:
-        return
-    if not configureQtVersions(version, qtDirs):
+    startApp()
+    if not configureQtVersions(qtDirs):
         closeMainWindow()
         return
 
@@ -107,7 +105,7 @@ def main():
                     "Is the 'Thread' combo box disabled?")
         test.verify(not waitForObjectExists(names.stackFrame_ComboBox).enabled,
                     "Is the 'Stack Frame' combo box disabled?")
-    clearQtVersions(version)
+    clearQtVersions()
     closeMainWindow()
 
 

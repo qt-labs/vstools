@@ -16,12 +16,10 @@ def main():
     if not qtDirs:
         test.fatal("No Qt versions known", "Did you set SQUISH_VSTOOLS_QTDIRS correctly?")
         return
-    version = startAppGetVersion()
-    if not version:
-        return
+    startApp()
     test.verify(checkSelectQtLabel(),
                 "Warning about having to select a Qt version is being shown?")
-    if not configureQtVersions(version, qtDirs, True):
+    if not configureQtVersions(qtDirs, True):
         closeMainWindow()
         return
     test.verify(not checkSelectQtLabel(),
@@ -30,7 +28,7 @@ def main():
     qtDirs.sort(key=lambda dir: dir["name"].lower())
     # Check and remove the Qt versions, but cancel changes, then repeat and click "OK"
     for closeButton in [names.options_Cancel_Button, names.options_OK_Button]:
-        openVsToolsMenu(version)
+        openVsToolsMenu()
         mouseClick(waitForObject(names.pART_Popup_Qt_Versions_MenuItem))
         if test.compare(waitForObjectExists(names.dataGrid_Table).rowCount, len(qtDirs) + 1,
                         "The table should have %d lines after adding Qt versions."
@@ -46,7 +44,7 @@ def main():
         clickButton(waitForObject(closeButton))
         waitFor(lambda: not object.exists(names.options_Dialog))
     # Check that Qt versions were removed
-    openVsToolsMenu(version)
+    openVsToolsMenu()
     mouseClick(waitForObject(names.pART_Popup_Qt_Versions_MenuItem))
     if test.compare(waitForObjectExists(names.dataGrid_Table).rowCount, 1,
                     "The table should have exactly one line after removing all Qt versions."):

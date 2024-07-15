@@ -15,18 +15,16 @@ def main():
     test.warning("This is a semi-manual test.",
                  "It is designed to run on VS without Qt VS Tools installed "
                  "and requires manual steps.")
-    version = startAppGetVersion(clearSettings=False)
-    if not version:
-        return
-    if downloadQtVsTools(version):
+    startApp(clearSettings=False)
+    if downloadQtVsTools():
         test.warning("If the test succeeded so far, it now requires manual steps.",
                      "Please finish the steps of the VSIX Installer wizard which should have "
                      "appeared. After this, you can run tst_install_verify to verify the result.")
     closeMainWindow()
 
 
-def downloadQtVsTools(version):
-    openExtensionManager(version)
+def downloadQtVsTools():
+    openExtensionManager()
     mouseClick(waitForObjectItem(names.o_Extensions_ProvidersTree_Tree, "Online"))
     mouseClick(waitForObjectItem(names.providersTree_Online_TreeItem, "Visual Studio Marketplace"))
     mouseClick(waitForObject(names.o_Extensions_Edit))

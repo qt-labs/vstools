@@ -23,7 +23,15 @@ def getAppProperty(property):
     return plv.decode().strip()
 
 
+msvsProductLine = None
 msvsVersion = None
+
+
+def getMsvsProductLine():
+    global msvsProductLine
+    if not msvsProductLine:
+        msvsProductLine = getAppProperty("catalog_productLineVersion")
+    return msvsProductLine
 
 
 def getMsvsVersionAsList():
@@ -48,12 +56,12 @@ def fixAppContext(wantedName="devenv"):
         test.fatal("There's no %s application context, only: %s" % (wantedName, appContexts))
 
 
-def startAppGetVersion(waitForInitialDialogs=False, clearSettings=True):
+def startApp(waitForInitialDialogs=False, clearSettings=True):
     command = "devenv /LCID 1033 /RootSuffix %s"
     if clearSettings:
         command += " /Command QtVSTools.ClearSettings"
     startApplication(command % rootSuffix)
-    version = getAppProperty("catalog_productLineVersion")
+    version = getMsvsProductLine()
     if waitForInitialDialogs:
         try:
             if version == "2022":
@@ -85,10 +93,9 @@ def startAppGetVersion(waitForInitialDialogs=False, clearSettings=True):
             clickButton(waitForObject(globalnames.msvs_Account_Close_Button, 10000))
     except:
         pass
-    return version
 
 
-def openVsToolsMenu(version):
+def openVsToolsMenu():
     while True:
         mouseClick(waitForObject(globalnames.extensions_MenuItem))
         mouseClick(waitForObject(globalnames.extensions_Qt_VS_Tools_MenuItem, 5000))

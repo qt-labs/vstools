@@ -13,7 +13,7 @@ import os
 import names
 
 
-def testNewProjectDialog(version, templateName, expectedName):
+def testNewProjectDialog(templateName, expectedName):
     test.compare(waitForObjectExists(names.project_template_name_Label).text, templateName,
                  'Does the "Configure your new project" dialog show the right template name?')
     projectName = waitForObjectExists(names.msvs_Project_name_Edit).text
@@ -24,7 +24,7 @@ def testNewProjectDialog(version, templateName, expectedName):
                 "Solution name is based on template name?")
     test.compare(projectName, solutionName, "Project name and solution name are the same?")
     projectLocation = waitForObjectExists(names.comboBox_Edit).text
-    if version != "2019":
+    if getMsvsProductLine() != "2019":
         test.compare(waitForObjectExists(names.outputPathTextBlock_Label).text,
                      'Project will be created in "%s"'
                      % os.path.join(projectLocation, solutionName, projectName, ""))

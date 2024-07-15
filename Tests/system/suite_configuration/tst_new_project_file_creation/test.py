@@ -140,10 +140,8 @@ def main():
         test.fatal("No directory for creating projects known",
                    "Did you set SQUISH_VSTOOLS_WORKDIR correctly?")
         return
-    version = startAppGetVersion()
-    if not version:
-        return
-    if not configureQtVersions(version, qtDirs):
+    startApp()
+    if not configureQtVersions(qtDirs):
         closeMainWindow()
         return
 
@@ -164,7 +162,7 @@ def main():
         for buildSystem in ["Qt Visual Studio Project (Qt/MSBuild)",
                             "CMake Project for Qt (cmake-qt, Qt/CMake helper functions)"]:
             cmakeBased = buildSystem.startswith("CMake")
-            if cmakeBased and version == "2019":
+            if cmakeBased and getMsvsProductLine() == "2019":
                 test.warning("MSVS2019 often freezes when opening CMake-based projects, skipping.")
                 continue
             with TestSection("Build System: " + buildSystem):
@@ -232,7 +230,7 @@ def main():
                                                  else names.file_Close_Solution_MenuItem))
                         # reopens the "New Project" dialog
                         mouseClick(waitForObject(names.msvs_Create_a_new_project_Label))
-    clearQtVersions(version)
+    clearQtVersions()
     closeMainWindow()
 
 
