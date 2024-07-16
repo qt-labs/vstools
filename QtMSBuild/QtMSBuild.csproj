@@ -411,7 +411,6 @@
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // Inline tasks
     // -->
-    <Compile Include="Tasks\CriticalSection.cs" />
     <Compile Include="Tasks\QtRunTask.cs" />
     <Compile Include="Tasks\GetVarsFromMSBuild.cs" />
     <Compile Include="Tasks\ListQrc.cs" />

@@ -98,7 +98,6 @@
     <Compile Include="MockBuildEngine.cs" />
     <Compile Include="MockTaskLogger.cs" />
     <Compile Include="Test_GetVarsFromMSBuild.cs" />
-    <Compile Include="Test_CriticalSection.cs" />
     <Compile Include="Test_Join.cs" />
     <Compile Include="Test_QtRunTask.cs" />
   </ItemGroup>
