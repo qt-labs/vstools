@@ -1,0 +1,70 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <!-- Root element -->
+  <xs:element name="QtTest" type="QtTestType" />
+  <xs:complexType name="QtTestType">
+    <xs:sequence>
+      <!-- General option, need to be available always -->
+      <xs:element name="QtInstall" type="xs:string"/>
+      <!-- others, might be there or not -->
+      <xs:element name="ShowAdapterOutput" minOccurs="0" type="xs:boolean"/>
+      <xs:element name="TestTimeout" minOccurs="0" type="xs:int"/>
+      <xs:element name="DiscoveryTimeout" minOccurs="0" type="xs:int"/>
+      <xs:element name="ParsePdbFiles" minOccurs="0" type="xs:boolean"/>
+      <xs:element name="SubsystemConsoleOnly" minOccurs="0" type="xs:boolean"/>
+      <xs:element name="Output" minOccurs="0" type="OutputType"/>
+      <xs:element name="Verbosity" minOccurs="0" type="VerbosityType"/>
+      <xs:element name="Commands" minOccurs="0" type="CommandsType"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- Root element -->
+  <xs:element name="QtTestGlobal" type="QtTestGlobalType" />
+  <!-- Complex types -->
+  <xs:complexType name="QtTestGlobalType">
+    <xs:sequence>
+      <!-- General options, need to be available always -->
+      <xs:element name="QtInstall" type="xs:string"/>
+      <xs:element name="ShowAdapterOutput" type="xs:boolean"/>
+      <xs:element name="TestTimeout" type="xs:int"/>
+      <xs:element name="DiscoveryTimeout" type="xs:int"/>
+      <xs:element name="ParsePdbFiles" type="xs:boolean"/>
+      <xs:element name="SubsystemConsoleOnly" type="xs:boolean"/>
+      <!-- others, might be there or not -->
+      <xs:element name="Output" minOccurs="0" type="OutputType"/>
+      <xs:element name="Verbosity" minOccurs="0" type="VerbosityType"/>
+      <xs:element name="Commands" minOccurs="0" type="CommandsType"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="OutputType">
+    <xs:sequence>
+      <xs:element name="FilenameFormat" minOccurs="0" maxOccurs="unbounded">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:pattern value="^.+,(txt|csv|junitxml|xml|lightxml|teamcity|tap)$"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="VerbosityType">
+    <xs:sequence>
+      <xs:element name="Level" minOccurs="0" type="xs:string"/>
+      <xs:element name="LogSignals" minOccurs="0" type="xs:boolean"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="CommandsType">
+    <xs:sequence>
+      <xs:element name="EventDelay" minOccurs="0" type="xs:int"/>
+      <xs:element name="KeyDelay" minOccurs="0" type="xs:int"/>
+      <xs:element name="MouseDelay" minOccurs="0" type="xs:int"/>
+      <xs:element name="MaxWarnings" minOccurs="0" type="xs:int"/>
+      <xs:element name="NoCrashHandler" minOccurs="0" type="xs:boolean"/>
+    </xs:sequence>
+  </xs:complexType>
+
+</xs:schema>

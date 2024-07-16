@@ -224,6 +224,26 @@
       >1.7.1</Version_DiffPlex>
   </PropertyGroup>
 
+  <!-- Microsoft.TestPlatform.ObjectModel -->
+  <PropertyGroup>
+    <Name_Microsoft_TestPlatform_ObjectModel
+      >Microsoft.TestPlatform.ObjectModel</Name_Microsoft_TestPlatform_ObjectModel>
+    <Version_Microsoft_TestPlatform_ObjectModel Condition="'$(VisualStudioVersion)'=='16.0'"
+      >16.11.0</Version_Microsoft_TestPlatform_ObjectModel>
+    <Version_Microsoft_TestPlatform_ObjectModel Condition="'$(VisualStudioVersion)'=='17.0'"
+      >17.8.0</Version_Microsoft_TestPlatform_ObjectModel>
+    <Version_Microsoft_TestPlatform_ObjectModel Condition="$(MSBuildVersion.StartsWith('17.9'))"
+      >17.9.0</Version_Microsoft_TestPlatform_ObjectModel>
+  </PropertyGroup>
+
+  <!-- Microsoft.Diagnostics.Tracing.TraceEvent.SupportFiles -->
+  <PropertyGroup>
+    <Name_Microsoft_Diagnostics_Tracing_TraceEvent_SupportFiles
+      >Microsoft.Diagnostics.Tracing.TraceEvent.SupportFiles</Name_Microsoft_Diagnostics_Tracing_TraceEvent_SupportFiles>
+    <Version_Microsoft_Diagnostics_Tracing_TraceEvent_SupportFiles
+      >1.0.23</Version_Microsoft_Diagnostics_Tracing_TraceEvent_SupportFiles>
+  </PropertyGroup>
+
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////
   // Disable reference resolution warnings

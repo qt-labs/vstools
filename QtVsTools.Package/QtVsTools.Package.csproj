@@ -78,6 +78,10 @@
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="WindowsBase" />
+    <Reference Include="Microsoft.VisualStudio.TestWindow.Interfaces">
+      <HintPath>$(DevEnvDir)\CommonExtensions\Microsoft\TestWindow\Microsoft.VisualStudio.TestWindow.Interfaces.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
   </ItemGroup>
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -101,6 +105,7 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="$(Name_System_Management)" Version="$(Version_System_Management)" />
+    <PackageReference Include="$(Name_Microsoft_TestPlatform_ObjectModel)" Version="$(Version_Microsoft_TestPlatform_ObjectModel)" />
   </ItemGroup>
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -145,6 +150,11 @@
     <ProjectReference Include="..\QtVsTools.Core\QtVsTools.Core.csproj">
       <Project>{2621ad55-c4e9-4884-81e9-da0d00b4c6e5}</Project>
       <Name>QtVsTools.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\QtVsTools.TestAdapter\QtVsTools.TestAdapter.csproj">
+      <Project>{56430803-B257-48BF-9CE2-15EF1ED963FA}</Project>
+      <Name>QtVsTools.TestAdapter</Name>
+      <IncludeOutputGroupsInVSIX>BuiltProjectOutputGroup%3bBuiltProjectOutputGroupDependencies%3bGetCopyToOutputDirectoryItems%3bSatelliteDllsProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
     </ProjectReference>
     <ProjectReference Include="..\QtVsTools.Wizards\QtVsTools.Wizards.csproj">
       <Project>{8df0a4c4-a32d-44a4-9da4-41a6bca80b44}</Project>
@@ -304,6 +314,7 @@
   // Project items
   // -->
   <ItemGroup>
+    <Compile Include="TestAdapter\QtTestGlobalSettingsService.cs" />
     <T4Template Include="Properties\AssemblyInfo.cs">
       <Generator>TextTemplatingFileGenerator</Generator>
       <OutputFile>Properties\AssemblyInfo.tt.cs</OutputFile>

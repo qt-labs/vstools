@@ -98,6 +98,9 @@
   </Prerequisites>
   <Assets>
     <Asset
+      Type="UnitTestExtension" d:Source="Project" d:ProjectName="QtVsTools.TestAdapter"
+      Path="|QtVsTools.TestAdapter|" />
+    <Asset
       Type="Microsoft.VisualStudio.VsPackage" d:Source="Project" d:ProjectName="%CurrentProject%"
       Path="|%CurrentProject%;PkgdefProjectOutputGroup|" />
     <Asset

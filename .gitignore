@@ -277,7 +277,9 @@ Version.tt.cs
 qtvstools.package/Properties/AssemblyInfo.tt.cs
 qtvstools.package/QtVersionId.vsct
 qtvstools.package/Marketplace/Overview.html
+qtvstools.package/source.extension.vsixmanifest
 qtvstools.core/Properties/AssemblyInfo.tt.cs
+qtvstools.testadapter/Properties/AssemblyInfo.tt.cs
 qtvstools.wizards/Properties/AssemblyInfo.tt.cs
 templates/qmldir/Properties/AssemblyInfo.tt.cs
 templates/qml/Properties/AssemblyInfo.tt.cs
@@ -312,7 +314,6 @@ qtvstest/csmacro.tmLanguage
 qtvstest/csmacro.tmTheme
 qtvstest/Properties/AssemblyInfo.tt.cs
 qtvstest/source.extension.vsixmanifest
-QtVsTools.Package/source.extension.vsixmanifest
 QtNatvisPoC/*.txt
 Tests/BigSolution/generated/
 vstools.pri

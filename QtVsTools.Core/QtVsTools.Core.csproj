@@ -125,6 +125,7 @@
     <Compile Include="CommandLineParser.cs" />
     <Compile Include="Common\Concurrent.cs" />
     <Compile Include="Common\ConcurrentStopwatch.cs" />
+    <Compile Include="Common\Converters.cs" />
     <Compile Include="Common\Disposable.cs" />
     <Compile Include="Common\EnumExt.cs" />
     <Compile Include="Common\Json\DeferredObject.cs" />

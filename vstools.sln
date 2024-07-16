@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QtMSBuild", "QtMSBuild\QtMS
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QtVsTools.Core", "QtVsTools.Core\QtVsTools.Core.csproj", "{2621AD55-C4E9-4884-81E9-DA0D00B4C6E5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QtVsTools.TestAdapter", "QtVsTools.TestAdapter\QtVsTools.TestAdapter.csproj", "{56430803-B257-48BF-9CE2-15EF1ED963FA}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QtVsTools.Wizards", "QtVsTools.Wizards\QtVsTools.Wizards.csproj", "{8DF0A4C4-A32D-44A4-9DA4-41A6BCA80B44}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Templates", "Templates", "{9D9290B2-9E87-46EA-84EA-02836F699BB8}"
@@ -672,6 +674,24 @@ Global
 		{4B8FC08C-4901-45D4-BC00-C0C461292FF2}.Tests|x64.Build.0 = Debug|Any CPU
 		{4B8FC08C-4901-45D4-BC00-C0C461292FF2}.Tests|x86.ActiveCfg = Debug|Any CPU
 		{4B8FC08C-4901-45D4-BC00-C0C461292FF2}.Tests|x86.Build.0 = Debug|Any CPU
+		{56430803-B257-48BF-9CE2-15EF1ED963FA}.Debug|arm64.ActiveCfg = Debug|Any CPU
+		{56430803-B257-48BF-9CE2-15EF1ED963FA}.Debug|arm64.Build.0 = Debug|Any CPU
+		{56430803-B257-48BF-9CE2-15EF1ED963FA}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{56430803-B257-48BF-9CE2-15EF1ED963FA}.Debug|x64.Build.0 = Debug|Any CPU
+		{56430803-B257-48BF-9CE2-15EF1ED963FA}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{56430803-B257-48BF-9CE2-15EF1ED963FA}.Debug|x86.Build.0 = Debug|Any CPU
+		{56430803-B257-48BF-9CE2-15EF1ED963FA}.Release|arm64.ActiveCfg = Release|Any CPU
+		{56430803-B257-48BF-9CE2-15EF1ED963FA}.Release|arm64.Build.0 = Release|Any CPU
+		{56430803-B257-48BF-9CE2-15EF1ED963FA}.Release|x64.ActiveCfg = Release|Any CPU
+		{56430803-B257-48BF-9CE2-15EF1ED963FA}.Release|x64.Build.0 = Release|Any CPU
+		{56430803-B257-48BF-9CE2-15EF1ED963FA}.Release|x86.ActiveCfg = Release|Any CPU
+		{56430803-B257-48BF-9CE2-15EF1ED963FA}.Release|x86.Build.0 = Release|Any CPU
+		{56430803-B257-48BF-9CE2-15EF1ED963FA}.Tests|arm64.ActiveCfg = Release|Any CPU
+		{56430803-B257-48BF-9CE2-15EF1ED963FA}.Tests|arm64.Build.0 = Release|Any CPU
+		{56430803-B257-48BF-9CE2-15EF1ED963FA}.Tests|x64.ActiveCfg = Release|Any CPU
+		{56430803-B257-48BF-9CE2-15EF1ED963FA}.Tests|x64.Build.0 = Release|Any CPU
+		{56430803-B257-48BF-9CE2-15EF1ED963FA}.Tests|x86.ActiveCfg = Release|Any CPU
+		{56430803-B257-48BF-9CE2-15EF1ED963FA}.Tests|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -18,7 +18,8 @@ namespace QtVsTools.Core.Options
     using Common;
     using Core;
     using VisualStudio;
-    using static Common.Utils;
+
+    using static Common.Converters;
     using static QtVsTools.Common.EnumExt;
 
     public class QtOptionsPage : DialogPage
@@ -141,45 +142,8 @@ namespace QtVsTools.Core.Options
             }
         }
 
-        private class EnableDisableConverter : BooleanConverter
-        {
-            public override object ConvertFrom(
-                ITypeDescriptorContext context,
-                CultureInfo culture,
-                object value)
-            {
-                return string.Equals(value as string, "Enable", IgnoreCase);
-            }
-
-            public override object ConvertTo(
-                ITypeDescriptorContext context,
-                CultureInfo culture,
-                object value,
-                Type destinationType)
-            {
-                if (value is bool b && destinationType == typeof(string))
-                    return b ? "Enable" : "Disable";
-                return base.ConvertTo(context, culture, value, destinationType);
-            }
-        }
-
-        private class QtVersionConverter : StringConverter
-        {
-            public override bool GetStandardValuesSupported(ITypeDescriptorContext _) => true;
-            public override StandardValuesCollection GetStandardValues(ITypeDescriptorContext _)
-            {
-                return new(QtVersionManager.GetVersions()
-                    .Where(IsCompatible)
-                    .Prepend("$(DefaultQtVersion)")
-                    .Cast<object>()
-                    .ToArray());
-            }
-            protected virtual bool IsCompatible(string qtVersion) => true;
-        }
-
         private class QmlLspProviderConverter : QtVersionConverter
         {
-            public override bool GetStandardValuesExclusive(ITypeDescriptorContext _) => true;
             protected override bool IsCompatible(string qtVersion)
             {
                 return VersionInformation.GetOrAddByName(qtVersion) is {LibExecs: {}  libExecs}

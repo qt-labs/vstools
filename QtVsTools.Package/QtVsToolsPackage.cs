@@ -85,9 +85,13 @@ namespace QtVsTools
     [ProvideOptionPage(typeof(Core.Options.QtOptionsPage),
         "Qt", "General", 0, 0, true, Sort = 0)]
 
+    // Test Adapter page
+    [ProvideOptionPage(typeof(TestAdapter.QtTestPage),
+        "Qt", "Test Adapter", 0, 0, true, Sort = 1)]
+
     // Qt Versions page
     [ProvideOptionPage(typeof(Core.Options.QtVersionsPage),
-        "Qt", "Versions", 0, 0, true, Sort = 1)]
+        "Qt", "Versions", 0, 0, true, Sort = 2)]
 
     [ProvideLaunchHook(typeof(QmlDebugLaunchHook))]
 

@@ -4,9 +4,10 @@
 ***************************************************************************************************/
 
 using System;
-using System.Linq;
+using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -125,6 +126,21 @@ namespace QtVsTools.Core.Common
             dataUtf8.Write(text);
             dataRaw.Seek(0, SeekOrigin.Begin);
             return sha256.ComputeHash(dataRaw);
+        }
+
+        public static string JoinWithTransform<T>(string separator, Func<T, string> transformFunc,
+            IEnumerable<T> values)
+        {
+            separator ??= "";
+            values ??= Enumerable.Empty<T>();
+
+            var builder = new StringBuilder();
+            foreach (var value in values) {
+                if (builder.Length > 0)
+                    builder.Append(separator);
+                builder.Append(transformFunc(value));
+            }
+            return builder.ToString();
         }
     }
 }

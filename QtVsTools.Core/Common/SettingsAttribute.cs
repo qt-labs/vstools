@@ -9,8 +9,14 @@ namespace QtVsTools.Core.Common
 {
     using QtVsTools.Common;
 
-    internal sealed class SettingsAttribute : Attribute
+    public sealed class SettingsAttribute : Attribute
     {
+        public SettingsAttribute(string key, object defaultValue)
+        {
+            DefaultValue = defaultValue;
+            Key = key;
+        }
+
         public SettingsAttribute(object key, object defaultValue)
         {
             DefaultValue = defaultValue;
