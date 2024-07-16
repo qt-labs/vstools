@@ -78,7 +78,8 @@ LINK_OPTIONS=/Project/ItemDefinitionGroup/Link/AdditionalOptions;
   </PropertyGroup>
   <Import Project=""$(VCTargetsPath)\Microsoft.Cpp.Default.props"" />
   <PropertyGroup Condition=""&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;"" Label=""Configuration"">
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset Condition=""'$(VisualStudioVersion)'=='16.0'"">v142</PlatformToolset>
+    <PlatformToolset Condition=""'$(VisualStudioVersion)'=='17.0'"">v143</PlatformToolset>
     <OutputDirectory>.\</OutputDirectory>
     <ATLMinimizesCRunTimeLibraryUsage>false</ATLMinimizesCRunTimeLibraryUsage>
     <CharacterSet>NotSet</CharacterSet>
