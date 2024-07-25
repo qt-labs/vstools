@@ -44,7 +44,7 @@ def tableCell(col, row):
 
 
 def tableCellEdit(col, row):
-    return {"container": tableCell(col, row), "type": "Edit"}
+    return {"container": tableCell(col, row), "type": "Label"}
 
 
 def configureQtVersions(qtDirs, withTests=False):
@@ -52,21 +52,22 @@ def configureQtVersions(qtDirs, withTests=False):
     mouseClick(waitForObject(names.pART_Popup_Qt_Versions_MenuItem))
     tableRows = waitForObjectExists(names.dataGrid_Table).rowCount
     if withTests:
-        test.compare(tableRows, 1,
-                     "The table should have exactly one line before adding Qt versions.")
-    if tableRows != 1:
+        test.compare(tableRows, 0,
+                     "The table should have zero lines before adding Qt versions.")
+    if tableRows != 0:
         test.fatal("Unexpected table shown. Probably there is either an unexpected configuration "
                    "or the UI changed.")
         clickButton(waitForObject(names.options_Cancel_Button))
         return False
     for i, qtDir in enumerate(qtDirs):
-        mouseClick(waitForObject(tableCell(1, i)))
-        typeToEdit(tableCellEdit(3, i), qtDir["path"])
-        typeToEdit(tableCellEdit(1, i), qtDir["name"])
+        clickButton(waitForObject(names.add_Button))
+        typeToEdit(names.location_Edit, qtDir["path"])
+        typeToEdit(names.name_Edit, qtDir["name"])
         if withTests:
-            test.compare(waitForObjectExists(names.dataGrid_Table).rowCount, i + 2,
+            dirsAdded = i + 1
+            test.compare(waitForObjectExists(names.dataGrid_Table).rowCount, dirsAdded,
                          "The table should have %d lines after adding %d Qt versions."
-                         % (i + 2, i + 1))
+                         % (dirsAdded, dirsAdded))
     clickButton(waitForObject(names.options_OK_Button))
     waitFor(lambda: not object.exists(names.options_Dialog))
     return True
@@ -75,10 +76,12 @@ def configureQtVersions(qtDirs, withTests=False):
 def clearQtVersions():
     openVsToolsMenu()
     mouseClick(waitForObject(names.pART_Popup_Qt_Versions_MenuItem))
-    qtVersionCount = waitForObjectExists(names.dataGrid_Table).rowCount - 1
-    for i in range(qtVersionCount):
-        clickButton(waitForObject({"container": tableCell(1, i),
-                                   "text": "", "type": "Button"}))
+    qtVersionCount = waitForObjectExists(names.dataGrid_Table).rowCount
+    if qtVersionCount > 1:
+        # default kit can only be removed if other exist, select other
+        mouseClick(waitForObject(tableCell(1, 1)))
+    for _ in range(qtVersionCount):
+        clickButton(waitForObject(names.remove_Button))
     snooze(1)
     clickButton(waitForObject(names.options_OK_Button))
     waitFor(lambda: not object.exists(names.options_Dialog))

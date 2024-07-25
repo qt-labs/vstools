@@ -30,24 +30,33 @@ def main():
     for closeButton in [names.options_Cancel_Button, names.options_OK_Button]:
         openVsToolsMenu()
         mouseClick(waitForObject(names.pART_Popup_Qt_Versions_MenuItem))
-        if test.compare(waitForObjectExists(names.dataGrid_Table).rowCount, len(qtDirs) + 1,
+        if test.compare(waitForObjectExists(names.dataGrid_Table).rowCount, len(qtDirs),
                         "The table should have %d lines after adding Qt versions."
-                        % (len(qtDirs) + 1)):
+                        % (len(qtDirs))):
             for i, qtDir in enumerate(qtDirs):
-                test.compare(waitForObject(tableCellEdit(1, i)).text, qtDir["name"],
-                             "Is the Qt version's name shown as entered?")
-                test.compare(waitForObject(tableCellEdit(3, i)).text, qtDir["path"],
-                             "Is the Qt version's path shown as entered?")
-                clickButton(waitForObject({"container": tableCell(1, i),
-                                           "text": "", "type": "Button"}))
+                # from the table, Squish returns the text without the underscores
+                # although is is being displayed completely
+                expectedNameInTable = qtDir["name"].replace("_", "")
+                expectedPathInTable = qtDir["path"].replace("_", "")
+                test.compare(waitForObject(tableCellEdit(1, i)).text, expectedNameInTable,
+                             "Is the Qt version's name shown in table as entered?")
+                test.compare(waitForObject(tableCellEdit(2, i)).text, expectedPathInTable,
+                             "Is the Qt version's path shown in table as entered?")
+                mouseClick(waitForObject(tableCell(1, i)))
+                test.compare(waitForObject(names.name_Edit).text, qtDir["name"],
+                             "Is the Qt version's name shown in edit as entered?")
+                test.compare(waitForObject(names.location_Edit).text, qtDir["path"],
+                             "Is the Qt version's path shown in edit as entered?")
+            for _ in qtDirs:
+                clickButton(waitForObject(names.remove_Button))
         snooze(1)
         clickButton(waitForObject(closeButton))
         waitFor(lambda: not object.exists(names.options_Dialog))
     # Check that Qt versions were removed
     openVsToolsMenu()
     mouseClick(waitForObject(names.pART_Popup_Qt_Versions_MenuItem))
-    if test.compare(waitForObjectExists(names.dataGrid_Table).rowCount, 1,
-                    "The table should have exactly one line after removing all Qt versions."):
+    if test.compare(waitForObjectExists(names.dataGrid_Table).rowCount, 0,
+                    "The table should have zero lines after removing all Qt versions."):
 
         # test handling of invalid directory
         def testErrorMessage(nameEntered):
@@ -60,10 +69,10 @@ def main():
         nonExistingDir = "C:\\this\does\\not\\exist"
         while os.path.exists(nonExistingDir):
             nonExistingDir += "x"
-        mouseClick(waitForObject(tableCell(1, 0)))
-        typeToEdit(tableCellEdit(3, 0), nonExistingDir)
+        clickButton(waitForObject(names.add_Button))
+        typeToEdit(names.location_Edit, nonExistingDir)
         testErrorMessage(False)
-        typeToEdit(tableCellEdit(1, 0), "some name")
+        typeToEdit(names.name_Edit, "some name")
         testErrorMessage(True)
     clickButton(waitForObject(names.options_Cancel_Button))
     waitFor(lambda: not object.exists(names.options_Dialog))
