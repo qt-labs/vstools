@@ -54,13 +54,14 @@ def testWizardPage2(expectedText, qtDirs):
             "Is the selected Qt version '%s' in configured Qt versions?" % selectedQtVersion)
 
 
-def testWizardPage3(expectedText, projectName):
+def testWizardPage3(templateName, expectedText, projectName):
     test.verify(waitForObject(names.qt_Wizard_Welcome_Label).text.startswith(expectedText),
                 "Check beginning of wizard's text on third page")
     test.compare(waitForObjectExists(names.qt_Wizard_Class_Name_Edit).text,
                  projectName)
-    test.compare(waitForObjectExists(names.qt_Wizard_Header_h_file_Edit).text,
-                 projectName + ".h")
+    if templateName != "Qt Test Application":
+        test.compare(waitForObjectExists(names.qt_Wizard_Header_h_file_Edit).text,
+                     projectName + ".h")
     test.compare(waitForObjectExists(names.qt_Wizard_Source_cpp_file_Edit).text,
                  projectName + ".cpp")
 

@@ -21,30 +21,36 @@ def setNames(_, expectedName):
     type(solutionNameEdit, "My%sSolution" % expectedName)
 
 
-def testWizardPage3(_, __):
+def testWizardPage3(templateName, _, __):
     classNameEdit = waitForObjectExists(names.qt_Wizard_Class_Name_Edit)
-    headerEdit = waitForObjectExists(names.qt_Wizard_Header_h_file_Edit)
+    headerEdit = None
+    if templateName != "Qt Test Application":
+        headerEdit = waitForObjectExists(names.qt_Wizard_Header_h_file_Edit)
     sourceEdit = waitForObjectExists(names.qt_Wizard_Source_cpp_file_Edit)
     # Check that names are derived from project name
     test.compare(classNameEdit.text, myProjectName)
-    test.compare(headerEdit.text, myProjectName + ".h")
+    if headerEdit:
+        test.compare(headerEdit.text, myProjectName + ".h")
     test.compare(sourceEdit.text, myProjectName + ".cpp")
     # Check that changing class name changes file names
     type(classNameEdit, "HereIs")
     changedClassName = "HereIs" + myProjectName
     waitFor(lambda: classNameEdit.text == changedClassName, 2000)
     test.compare(classNameEdit.text, changedClassName)
-    test.compare(headerEdit.text, changedClassName + ".h")
+    if headerEdit:
+        test.compare(headerEdit.text, changedClassName + ".h")
     test.compare(sourceEdit.text, changedClassName + ".cpp")
     # Check that file names can be made lower case
     test.verify(not waitForObject(names.lower_case_file_names_CheckBox).checked)
     mouseClick(waitForObject(names.lower_case_file_names_CheckBox))
-    test.compare(headerEdit.text, changedClassName.lower() + ".h")
+    if headerEdit:
+        test.compare(headerEdit.text, changedClassName.lower() + ".h")
     test.compare(sourceEdit.text, changedClassName.lower() + ".cpp")
     test.verify(waitForObject(names.lower_case_file_names_CheckBox).checked)
     # Check that file names can be set back to camel case
     mouseClick(waitForObject(names.lower_case_file_names_CheckBox))
-    test.compare(headerEdit.text, changedClassName + ".h")
+    if headerEdit:
+        test.compare(headerEdit.text, changedClassName + ".h")
     test.compare(sourceEdit.text, changedClassName + ".cpp")
     test.verify(not waitForObject(names.lower_case_file_names_CheckBox).checked)
 
@@ -60,7 +66,8 @@ def testWizardPage3(_, __):
         test.verify(waitForObjectExists(names.qt_Wizard_Finish_Button).enabled)
 
     clearAndRestoreEdit(sourceEdit)
-    clearAndRestoreEdit(headerEdit)
+    if headerEdit:
+        clearAndRestoreEdit(headerEdit)
     clearAndRestoreEdit(classNameEdit)
 
 

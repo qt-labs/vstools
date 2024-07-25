@@ -94,6 +94,8 @@ def getExpectedName(templateName):
         return "QtDesignerWidget"
     elif templateName == "Qt Empty Application":
         return "QtApplication"
+    elif templateName == "Qt Test Application":
+        return "QtTest"
     else:
         return templateName.replace(" ", "")
 
@@ -114,6 +116,7 @@ def getExpectedName(templateName):
 #              configured for it
 # funcPage3: Function run on the third page of the Qt VS Tools' wizard, in case it has one.
 #            Parameters are strings:
+#            - the project's template name
 #            - the expected greeting text on top of the page
 #            - the name of the project
 # setupQtVersions: Optional boolean value whether the function shall configure Qt versions read
@@ -160,10 +163,11 @@ def testAllQtWizards(funcNewProjectDialog=None, funcPage1=None, funcPage2=None, 
                         if templateName in ["Qt ActiveQt Server",
                                             "Qt Class Library",
                                             "Qt Designer Custom Widget",
+                                            "Qt Test Application",
                                             "Qt Widgets Application"]:
                             clickButton(waitForObject(names.qt_Wizard_Next_Button))
                             if funcPage3:
-                                funcPage3(expectedText, projectName)
+                                funcPage3(templateName, expectedText, projectName)
                         test.verify(findObject(names.qt_Wizard_Finish_Button).enabled)
                     else:
                         test.verify(not findObject(names.qt_Wizard_Finish_Button).enabled)
