@@ -3,11 +3,16 @@
  SPDX-License-Identifier: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
 ***************************************************************************************************/
 
+using System;
 using System.Diagnostics;
+using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace QtVsTools.Core
 {
+    using Common;
+
     public class QtPaths : QtBuildTool<QtPaths>, IQueryProcess
     {
         public bool Version { get; set; }
@@ -79,6 +84,56 @@ namespace QtVsTools.Core
         {
             base.OutMsg(qmakeProc, msg);
             StdOutput.AppendLine(msg);
+        }
+
+        protected override Process CreateProcess()
+        {
+            // This function implements a workaround running qtpaths.bat from a Process. The
+            // issue here is that QCommandLineParser checks if the executable is running from
+            // a console and if it is not, it will show a message box in addition to dumping
+            // the version information with fputs() to stdout. This is a bug in Qt, but we need
+            // to work around the issue here.
+
+            // only create the process if we want to know the version of qtpaths
+            if (!Version)
+                return base.CreateProcess();
+            // only create the process if we want to know the version of qtpaths using a .bat file
+            if (string.Equals(Path.GetExtension(ToolExe), ".exe", Utils.IgnoreCase))
+                return base.CreateProcess();
+
+            // open the .bat file, read the content, do some replacement and create the start info
+            var batchFileDirectory = Path.GetDirectoryName(ToolExe);
+            var batchFileLines = File.ReadAllLines(ToolExe);
+            var qtPathsLine = batchFileLines.FirstOrDefault(line => line.Contains("qtpaths"));
+            if (string.IsNullOrEmpty(qtPathsLine))
+                return base.CreateProcess();
+
+            var expandedLine = qtPathsLine.Replace("%~dp0", batchFileDirectory + "\\")
+                .Replace("%*", ToolArgs);
+            var commandParts = expandedLine.Split(new[] { ' ' }, 2 /* split in two parts */);
+            var toolStartInfo = new ProcessStartInfo
+            {
+                CreateNoWindow = true,
+                UseShellExecute = false,
+                RedirectStandardError = true,
+                RedirectStandardOutput = true,
+                FileName = commandParts[0],
+                Arguments = commandParts[1],
+                WorkingDirectory = WorkingDirectory,
+                EnvironmentVariables =
+                {
+                    ["QTDIR"] = QtDir
+                }
+            };
+
+            var toolProc = new Process
+            {
+                StartInfo = toolStartInfo
+            };
+            toolProc.OutputDataReceived += (_, ev) => OutMsg(toolProc, ev.Data);
+            toolProc.ErrorDataReceived += (_, ev) => ErrMsg(toolProc, ev.Data);
+
+            return toolProc;
         }
     }
 }

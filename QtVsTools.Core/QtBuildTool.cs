@@ -14,7 +14,7 @@ namespace QtVsTools.Core
 
     public abstract class QtBuildTool<T> where T : QtBuildTool<T>
     {
-        private string QtDir { get; }
+        protected string QtDir { get; }
 
         protected QtBuildTool(string qtDir)
         {
