@@ -23,26 +23,8 @@ namespace QtVsTools.Core
     {
         public static QtBuildToolQuery Get(string qtDir)
         {
-            if (QtPaths.Exists(qtDir)) {
-                var qtPaths = new QtPaths(qtDir)
-                {
-                    Version = true
-                };
-
-                if (qtPaths.Run() == 0 && qtPaths.StdOutput.Length > 0) {
-                    var tokens = qtPaths.StdOutput.ToString().Trim(' ', '\r', '\n')
-                        .Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                    if (tokens.Length >= 2) {
-                        if (System.Version.TryParse(tokens[1], out var v) && v.Major >= 2) {
-                            return new QtPathsQuery()
-                            {
-                                QtDir = qtDir
-                            };
-                        }
-                    }
-                }
-            }
-
+            if (TryGetQtPathQuery(qtDir, out var qtPathsQuery))
+                return qtPathsQuery;
             return QMake.Exists(qtDir) ? new QMakeQuery { QtDir = qtDir } : null;
         }
 
@@ -92,5 +74,26 @@ namespace QtVsTools.Core
             var propertyLine = StartOfLine & property & CharVertSpace.Repeat();
             return propertyLine.Repeat().Render();
         });
+
+        private static bool TryGetQtPathQuery(string qtDir, out QtBuildToolQuery qtPathsQuery)
+        {
+            qtPathsQuery = null;
+            if (!QtPaths.Exists(qtDir))
+                return false;
+
+            var qtPaths = new QtPaths(qtDir) { Version = true };
+            if (qtPaths.Run() != 0 || qtPaths.StdOutput.Length <= 0)
+                return false;
+
+            var tokens = qtPaths.StdOutput.ToString().Trim(' ', '\r', '\n')
+                .Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+
+            // The qtPaths executable versions < 2.0 do not support the qmake query functionality.
+            if (tokens.Length < 2 || !System.Version.TryParse(tokens[1], out var v) || v.Major < 2)
+                return false;
+
+            qtPathsQuery = new QtPathsQuery { QtDir = qtDir };
+            return true;
+        }
     }
 }
