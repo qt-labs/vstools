@@ -12,10 +12,11 @@ namespace QtVsTools.Core
     {
         public const string RegistryRoot = @"SOFTWARE\QtProject\QtVsTools";
         public static string RegistrySuffix { get; set; } = "";
-        public static string CurrentRootPath => RegistryRoot + RegistrySuffix;
-        public static string PackageSettingsPath => CurrentRootPath + @"\Settings";
-        public static string TestAdapterSettingsPath => CurrentRootPath + @"\TestAdapter";
+        public static string RegistryPath => RegistryRoot + RegistrySuffix;
+        public static string SettingsRegistryPath => RegistryPath + @"\Settings";
+        public static string VersionsRegistryPath => RegistryPath + @"\Versions";
+        public static string TestAdapterSettingsPath => RegistryPath + @"\TestAdapter";
 
-        public const string ObsoleteRootPath = @"SOFTWARE\Digia";
+        public const string ObsoleteRegistryPath = @"SOFTWARE\Digia";
     }
 }

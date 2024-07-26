@@ -21,11 +21,10 @@ namespace QtVsTools.Core
     public static class QtVersionManager
     {
         private const string VersionsKey = "Versions";
-        private static string RegistryVersionsPath => $"{Resources.CurrentRootPath}\\{VersionsKey}";
 
         public static string[] GetVersions()
         {
-            var key = Registry.CurrentUser.OpenSubKey(Resources.CurrentRootPath, false);
+            var key = Registry.CurrentUser.OpenSubKey(Resources.RegistryPath, false);
             if (key == null)
                 return Array.Empty<string>();
             var versionKey = key.OpenSubKey(VersionsKey, false);
@@ -40,7 +39,7 @@ namespace QtVsTools.Core
                 return Environment.GetEnvironmentVariable("QTDIR");
             if (string.IsNullOrEmpty(version))
                 return null;
-            var key = Registry.CurrentUser.OpenSubKey(Resources.CurrentRootPath, false);
+            var key = Registry.CurrentUser.OpenSubKey(Resources.RegistryPath, false);
             var versionKey = key?.OpenSubKey(Path.Combine(VersionsKey, version), false);
             return versionKey?.GetValue("InstallDir") as string;
         }
@@ -88,7 +87,7 @@ namespace QtVsTools.Core
                 }
             }
 
-            using var key = Registry.CurrentUser.CreateSubKey(Resources.CurrentRootPath);
+            using var key = Registry.CurrentUser.CreateSubKey(Resources.RegistryPath);
             if (key == null) {
                 Messages.Print("ERROR: root registry key creation failed");
                 return;
@@ -106,13 +105,13 @@ namespace QtVsTools.Core
         {
             if (string.IsNullOrEmpty(versionName))
                 return false;
-            return Registry.CurrentUser.OpenSubKey(Path.Combine(RegistryVersionsPath, versionName),
-                false) != null;
+            return Registry.CurrentUser.OpenSubKey(Path.Combine(Resources.VersionsRegistryPath,
+                versionName), false) != null;
         }
 
         public static void RemoveVersion(string versionName)
         {
-            var key = Registry.CurrentUser.OpenSubKey(RegistryVersionsPath, true);
+            var key = Registry.CurrentUser.OpenSubKey(Resources.VersionsRegistryPath, true);
             if (key == null)
                 return;
             key.DeleteSubKey(versionName);
@@ -142,7 +141,7 @@ namespace QtVsTools.Core
         {
             var defaultVersion = GetDefaultVersionName();
             if (defaultVersion == null) {
-                var key = Registry.CurrentUser.OpenSubKey(RegistryVersionsPath, false);
+                var key = Registry.CurrentUser.OpenSubKey(Resources.VersionsRegistryPath, false);
                 if (key != null) {
                     var versions = GetVersions();
                     if (versions is {Length: > 0})
@@ -167,7 +166,7 @@ namespace QtVsTools.Core
         public static string GetDefaultVersionName()
         {
             try {
-                return Registry.CurrentUser.OpenSubKey(RegistryVersionsPath)
+                return Registry.CurrentUser.OpenSubKey(Resources.VersionsRegistryPath)
                     ?.GetValue("DefaultQtVersion") as string;
             } catch (Exception exception) {
                 Messages.Print("Cannot read the name of the default Qt version.");
@@ -183,8 +182,9 @@ namespace QtVsTools.Core
                 if (string.IsNullOrEmpty(defaultVersion))
                     return Path.GetFileName(Environment.GetEnvironmentVariable("QTDIR"));
 
-                return Registry.CurrentUser.OpenSubKey($"{RegistryVersionsPath}\\{defaultVersion}")
-                    ?.GetValue("InstallDir") as string;
+                return Registry.CurrentUser.OpenSubKey(
+                    $"{Resources.VersionsRegistryPath}\\{defaultVersion}")?
+                    .GetValue("InstallDir") as string;
             } catch (Exception exception) {
                 Messages.Print("Cannot read the install path of the default Qt version.");
                 exception.Log();
@@ -196,7 +196,7 @@ namespace QtVsTools.Core
         {
             if (version == "$(DefaultQtVersion)")
                 return false;
-            var key = Registry.CurrentUser.CreateSubKey(RegistryVersionsPath);
+            var key = Registry.CurrentUser.CreateSubKey(Resources.VersionsRegistryPath);
             if (key == null)
                 return false;
 
@@ -221,7 +221,8 @@ namespace QtVsTools.Core
         public static void MoveRegisteredQtVersions()
         {
             try {
-                if (Registry.CurrentUser.OpenSubKey(Resources.ObsoleteRootPath, true) is not {} key)
+                if (Registry.CurrentUser.OpenSubKey(Resources.ObsoleteRegistryPath, true)
+                    is not {} key)
                     return;
 
                 const string valueName = "Copied";
@@ -229,9 +230,9 @@ namespace QtVsTools.Core
                     return;
 
                 // TODO v3.2.0: Use MoveRegistryKeys and delete source keys
-                CopyRegistryKeys(Resources.ObsoleteRootPath, Resources.CurrentRootPath);
-                MoveRegistryKeys(Resources.CurrentRootPath + "\\Qt5VS2017",
-                    Resources.PackageSettingsPath);
+                CopyRegistryKeys(Resources.ObsoleteRegistryPath, Resources.RegistryPath);
+                MoveRegistryKeys(Resources.RegistryPath + "\\Qt5VS2017",
+                    Resources.SettingsRegistryPath);
 
                 key.SetValue(valueName, "");
             } catch (Exception exception) {

@@ -148,8 +148,8 @@ namespace QtVsTools
                 }
 
                 if (Dte.CommandLineArguments?.Contains("/Command QtVSTools.ClearSettings") == true) {
-                    Registry.CurrentUser.DeleteSubKeyTree(Resources.ObsoleteRootPath, false);
-                    Registry.CurrentUser.DeleteSubKeyTree(Resources.CurrentRootPath, false);
+                    Registry.CurrentUser.DeleteSubKeyTree(Resources.ObsoleteRegistryPath, false);
+                    Registry.CurrentUser.DeleteSubKeyTree(Resources.RegistryPath, false);
                 }
 
                 Qml.Debug.Launcher.Initialize();

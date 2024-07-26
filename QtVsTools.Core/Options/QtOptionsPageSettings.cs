@@ -18,7 +18,7 @@ namespace QtVsTools.Core.Options
 
         public override void SaveSettings()
         {
-            using var key = Registry.CurrentUser.CreateSubKey(Resources.PackageSettingsPath);
+            using var key = Registry.CurrentUser.CreateSubKey(Resources.SettingsRegistryPath);
             if (key == null)
                 return;
 
@@ -46,7 +46,7 @@ namespace QtVsTools.Core.Options
 
         protected override Dictionary<string, object> LoadSettings()
         {
-            using var registry = Registry.CurrentUser.OpenSubKey(Resources.PackageSettingsPath);
+            using var registry = Registry.CurrentUser.OpenSubKey(Resources.SettingsRegistryPath);
 
             var loadedSettings = new Dictionary<string, object>();
             var properties = typeof(QtOptionsPage).GetProperties();
