@@ -394,13 +394,13 @@
         </Expand>
     </Type>
 
-   <Type Name="##NAMESPACE##::QVarLengthArray&lt;*&gt;">
+   <Type Name="##NAMESPACE##::QVarLengthArray&lt;*,*&gt;">
         <DisplayString>{{ size={s} }}</DisplayString>
         <Expand>
             <Item Name="[capacity]">a</Item>
             <ArrayItems>
                 <Size>s</Size>
-                <ValuePointer>ptr</ValuePointer>
+                <ValuePointer>reinterpret_cast&lt;$T1*&gt;(ptr)</ValuePointer>
             </ArrayItems>
         </Expand>
     </Type>
