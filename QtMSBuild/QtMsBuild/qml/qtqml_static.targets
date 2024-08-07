@@ -310,6 +310,69 @@
 
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////
+  /// TARGET QtQmlStaticGatherQmlPaths
+  ///  => runs once
+  ///  => skipped if there are no QRC files in the project
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Gathers the QML paths within all RCC files.
+  // -->
+  <Target
+    Name="QtQmlStaticGatherQmlPaths"
+    Condition="'@(QtRcc)' != ''"
+    Outputs="@(QtQmlPaths)">
+    <ListQrc QrcFilePath="%(QtRcc.FullPath)">
+      <Output TaskParameter="Result" ItemName="QtRccPaths" />
+    </ListQrc>
+    <ItemGroup>
+      <QtQmlPaths Condition="'%(QtRccPaths.Extension)' == '.qml'"
+        Include="%(QtRccPaths.Identity)" />
+    </ItemGroup>
+  </Target>
+
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  /// TARGET QtQmlStaticGenerateImportFile
+  ///  => runs once
+  ///  => skipped if there are no QRC files in the project
+  ///  => targets that must run first: QtQmlStaticGatherQmlPaths
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Generates a QML file containing all import statements in all QML files.
+  // -->
+  <Target
+    Name="QtQmlStaticGenerateImportFile"
+    Condition="'@(QtRcc)' != ''"
+    DependsOnTargets="QtQmlStaticGatherQmlPaths"
+    Inputs="@(QtRcc);@(QtQmlPaths)"
+    Outputs="$(QtQmlStaticImportFile)">
+    <ReadLinesFromFile Condition="'@(QtQmlPaths)' != ''" File="%(QtQmlPaths.Identity)">
+      <Output TaskParameter="Lines" ItemName="QtQmlSourceText" />
+    </ReadLinesFromFile>
+
+    <ItemGroup>
+      <QtQmlImportFileSource
+        Include="$([System.Text.RegularExpressions.Regex]::Matches('%(QtQmlSourceText.Identity)',
+        '^\s*import[^\n]*'))" />
+      <QtQmlImportFileSource Include="QmlObject { }" />
+    </ItemGroup>
+
+    <ReadLinesFromFile Condition="Exists('$(QtQmlStaticImportFile)')"
+      File="$(QtQmlStaticImportFile)">
+      <Output TaskParameter="Lines" ItemName="QtPrevQmlImportFileSource" />
+    </ReadLinesFromFile>
+
+    <PropertyGroup>
+      <QtQmlImportFileSource
+        >@(QtQmlImportFileSource->'%(Identity)')</QtQmlImportFileSource>
+      <QtPrevQmlImportFileSource
+        >@(QtPrevQmlImportFileSource->'%(Identity)')</QtPrevQmlImportFileSource>
+    </PropertyGroup>
+
+    <WriteLinesToFile Condition="'$(QtQmlImportFileSource)' != '$(QtPrevQmlImportFileSource)'"
+      File="$(QtQmlStaticImportFile)" Lines="@(QtQmlImportFileSource)" Overwrite="true" />
+  </Target>
+
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
   // Import dependants
   // -->
   <Import

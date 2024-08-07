@@ -24,6 +24,8 @@
       >$([System.IO.Path]::Combine('$(QtVarsOutputDir)','$(QtVarsWorkDirName)'))</QtVarsWorkDir>
     <QtVarsWorkPath
       >$(QtVarsWorkDir)\$(QtVarsFileName)</QtVarsWorkPath>
+    <QtQmlStaticImportFile Condition="'$(QtQmlStaticImportFile)' == ''"
+      >$([System.IO.Path]::Combine('$(QtVarsWorkDir)', 'import.qml'))</QtQmlStaticImportFile>
   </PropertyGroup>
 
   <!--
@@ -34,8 +36,8 @@
   // -->
   <Target
     Name="QtVars"
-    DependsOnTargets="QtPrepare;QtHash;QtVarsPrepare;QtMocInit;QtUicInit;ResolveHost"
-    Inputs="$(MSBuildProjectFile)" Outputs="$(QtVarsFilePath)">
+    DependsOnTargets="QtPrepare;QtHash;QtVarsPrepare;QtMocInit;QtUicInit;QtQmlStaticGenerateImportFile;ResolveHost"
+    Inputs="$(MSBuildProjectFile);$(QtQmlStaticImportFile)" Outputs="$(QtVarsFilePath)">
 
     <!--// Check if qmake is in the tools path -->
     <Error Condition="'$(QtToolsPath)' == ''" Text="There's no Qt version assigned to project $(MSBuildProjectFile) for configuration $(Configuration)/$(Platform).&#xA;Please set a Qt installation in 'Project|Properties|Configuration Properties|Qt Project Settings|Qt Installation'."/>
@@ -266,18 +268,11 @@
     <!--// Write dummy QML and QRC files -->
     <WriteLinesToFile
       Condition="$(QtModules.Contains('quick'))"
-      File="$(QtVarsWorkDir)\main.qml"
-      Lines="
-import QtQuick
-DummyQmlObject { }
-"/>
-    <WriteLinesToFile
-      Condition="$(QtModules.Contains('quick'))"
       File="$(QtVarsWorkDir)\qml.qrc"
       Lines="
 &lt;RCC&gt;
     &lt;qresource prefix=&quot;/&quot;&gt;
-        &lt;file&gt;main.qml&lt;/file&gt;
+        &lt;file&gt;import.qml&lt;/file&gt;
     &lt;/qresource&gt;
 &lt;/RCC&gt;
 "/>
