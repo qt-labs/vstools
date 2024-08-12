@@ -176,6 +176,7 @@ def main():
                             test.log("Skipping '%s' because it does not support CMake."
                                      % templateName)
                             continue
+                        dialog.clickScrollBarsLowerHalf()
                         mouseClick(waitForObject(listItem))
                         clickButton(waitForObject(names.microsoft_Visual_Studio_Next_Button))
                         type(waitForObject(names.comboBox_Edit), workDir)

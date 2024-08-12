@@ -20,6 +20,8 @@ microsoft_Visual_Studio_Back_Button = {"container": globalnames.microsoft_Visual
                                        "text": "Back", "type": "Button"}
 microsoft_Visual_Studio_Close_Button = {"container": globalnames.microsoft_Visual_Studio_Window,
                                         "id": "button_Close", "type": "Button"}
+templateList_ScrollBar = {"container": microsoft_VS_TemplateList_ListView,
+                          "orientation": "vertical", "type": "ScrollBar"}
 
 
 class NewProjectDialog:
@@ -41,7 +43,16 @@ class NewProjectDialog:
         squish.expand(squish.waitForObject(project_type_filter_ComboBox))
         squish.mouseClick(squish.waitForObject(qt_ComboBoxItem))
 
+    def clickScrollBarsLowerHalf(self):
+        # Used as a workaround since not all of the list's items are
+        # accessible to Squish unless the list was scrolled down.
+        # First, hover a list item to make the scrollbar appear:
+        squish.mouseMove(squish.waitForObject(templateList_ListViewItem | {"occurrence": 1}))
+        bar = squish.waitForObject(templateList_ScrollBar)
+        squish.mouseClick(bar, bar.width / 2, bar.height * 3 / 4, squish.MouseButton.LeftButton)
+
     def getListedTemplates(self):
+        self.clickScrollBarsLowerHalf()
         listView = squish.waitForObject(microsoft_VS_TemplateList_ListView)
         for i in range(1, listView.itemCount - 1):  # itemCount is number of shown items + 2
             listItem = templateList_ListViewItem | {"occurrence": i}
