@@ -171,7 +171,7 @@ namespace QtVsTools.Core.CMake
                 {
                     ["name"] = "Qt-Release",
                     ["inherits"] = "Qt-Default",
-                    ["binaryDir"] = "${sourceDir}/out/build",
+                    ["binaryDir"] = "${sourceDir}/out/build/release",
                     ["cacheVariables"] = new JObject
                     {
                         ["CMAKE_BUILD_TYPE"] = "Release"
@@ -181,7 +181,7 @@ namespace QtVsTools.Core.CMake
                 {
                     ["name"] = "Qt-Debug",
                     ["inherits"] = "Qt-Default",
-                    ["binaryDir"] = "${sourceDir}/out/build",
+                    ["binaryDir"] = "${sourceDir}/out/build/debug",
                     ["cacheVariables"] = new JObject
                     {
                         ["CMAKE_BUILD_TYPE"] = "Debug",
