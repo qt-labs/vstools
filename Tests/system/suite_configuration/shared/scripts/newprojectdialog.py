@@ -8,17 +8,17 @@
 import globalnames
 import squish
 
-project_type_filter_ComboBox = {"container": globalnames.microsoft_Visual_Studio_Window,
+project_type_filter_ComboBox = {"container": globalnames.workflowHostView,
                                 "id": "ComboBox_3", "type": "ComboBox"}
 qt_ComboBoxItem = {"container": project_type_filter_ComboBox, "text": "Qt", "type": "ComboBoxItem"}
-microsoft_VS_TemplateList_ListView = {"container": globalnames.microsoft_Visual_Studio_Window,
+microsoft_VS_TemplateList_ListView = {"container": globalnames.workflowHostView,
                                       "name": "TemplateList", "type": "ListView"}
 templateList_ListViewItem = {"container": microsoft_VS_TemplateList_ListView,
                              "text": "Microsoft.VisualStudio.NewProjectDialog.VsTemplateViewModel",
                              "type": "ListViewItem"}
-microsoft_Visual_Studio_Back_Button = {"container": globalnames.microsoft_Visual_Studio_Window,
+microsoft_Visual_Studio_Back_Button = {"container": globalnames.workflowHostView,
                                        "text": "Back", "type": "Button"}
-microsoft_Visual_Studio_Close_Button = {"container": globalnames.microsoft_Visual_Studio_Window,
+microsoft_Visual_Studio_Close_Button = {"container": globalnames.workflowHostView,
                                         "id": "button_Close", "type": "Button"}
 templateList_ScrollBar = {"container": microsoft_VS_TemplateList_ListView,
                           "orientation": "vertical", "type": "ScrollBar"}

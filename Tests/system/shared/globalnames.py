@@ -34,3 +34,4 @@ msvs_Account_Close_Button = {"container": msvs_Account_Settings_Window, "text": 
 microsoft_Visual_Studio_Dialog = {"text": "Microsoft Visual Studio", "type": "Dialog"}
 microsoft_Visual_Studio_OK_Button = {"container": microsoft_Visual_Studio_Dialog,
                                      "text": "OK", "type": "Button"}
+workflowHostView = {"id": "WorkflowHostView", "text": "Microsoft Visual Studio", "type": "Window"}

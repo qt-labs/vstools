@@ -17,21 +17,21 @@ options_Cancel_Button = {"container": options_Dialog, "text": "Cancel", "type": 
 You_must_select_a_Qt_version_Label = {"container": globalnames.microsoft_Visual_Studio_Window,
                                       "text": Wildcard("*You must select a Qt version*"),
                                       "type": "Label"}
-microsoft_Visual_Studio_Next_Button = {"container": globalnames.microsoft_Visual_Studio_Window,
+microsoft_Visual_Studio_Next_Button = {"container": globalnames.workflowHostView,
                                        "text": "Next", "type": "Button"}
-microsoft_Visual_Studio_Create_Button = {"container": globalnames.microsoft_Visual_Studio_Window,
+microsoft_Visual_Studio_Create_Button = {"container": globalnames.workflowHostView,
                                          "text": "Create", "type": "Button"}
 qt_Wizard_Window = {"class": "QtVsTools.Wizards.Common.WizardWindow", "type": "Window"}
 qt_Wizard_Next_Button = {"container": qt_Wizard_Window, "text": "Next >", "type": "Button"}
 qt_Wizard_Cancel_Button = {"container": qt_Wizard_Window, "text": "Cancel", "type": "Button"}
-project_template_name_Label = {"container": globalnames.microsoft_Visual_Studio_Window,
+project_template_name_Label = {"container": globalnames.workflowHostView,
                                "id": "TextBlock_1", "type": "Label"}
 qt_Wizard_Welcome_Label = {"class": "System.Windows.Controls.TextBlock",
                            "container": qt_Wizard_Window, "type": "Label"}
-outputPathTextBlock_Label = {"container": globalnames.microsoft_Visual_Studio_Window,
+outputPathTextBlock_Label = {"container": globalnames.workflowHostView,
                              "id": "outputPathTextBlock", "type": "Label"}
 msvs_Project_name_Edit = {"id": "projectNameText", "type": "Edit"}
-solutionNameText_Edit = {"container": globalnames.microsoft_Visual_Studio_Window,
+solutionNameText_Edit = {"container": globalnames.workflowHostView,
                          "id": "solutionNameText", "type": "Edit"}
 comboBox_Edit = {"id": "PART_EditableTextBox", "type": "Edit"}
 ProjectModel_ComboBox = {"id": "ProjectModelSelection", "container": qt_Wizard_Window, "type": "ComboBox"}
@@ -48,7 +48,7 @@ lower_case_file_names_CheckBox = {"container": qt_Wizard_Window, "text": "Lower 
 file_Close_Solution_MenuItem = {"container": globalnames.file_MenuItem, "text": "Close Solution",
                                 "type": "MenuItem"}
 msvs_Create_a_new_project_Label = {"container":
-                                   globalnames.microsoft_Visual_Studio_Window,
+                                   globalnames.workflowHostView,
                                    "text": "Create a _new project",
                                    "type": "Label"}
 qt_Microsoft_Visual_Studio_cpp_TabItem = {"container":globalnames.microsoft_Visual_Studio_Window,
