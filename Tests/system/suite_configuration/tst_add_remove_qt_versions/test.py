@@ -63,7 +63,7 @@ def main():
             clickButton(waitForObject(names.options_OK_Button))
             dialogText = waitForObjectExists(names.msvs_Qt_VS_Tools_Invalid_Qt_versions).text
             test.verify(("Name cannot be empty" in dialogText) ^ nameEntered)
-            test.verify("Cannot find qmake.exe" in dialogText)
+            test.verify("Cannot find qtpaths or qmake" in dialogText)
             clickButton(waitForObject(globalnames.microsoft_Visual_Studio_OK_Button))
 
         nonExistingDir = "C:\\this\does\\not\\exist"
