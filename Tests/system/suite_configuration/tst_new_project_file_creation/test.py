@@ -66,6 +66,8 @@ def listExpectedWrittenFiles(workDir, projectName, templateName, cmakeBased):
         return projFiles + list(map(prependProjectDirectory, [projectName + ".cpp",
                                                               projectName + ".h",
                                                               projectName.lower() + "_global.h"]))
+    elif templateName == "Qt Test Application":
+        return projFiles + list(map(prependProjectDirectory, [projectName + ".cpp"]))
     elif templateName == "Qt Widgets Application":
         if not cmakeBased:
             projFiles.append(prependProjectDirectory(projectName + ".qrc"))
@@ -98,6 +100,7 @@ def getExpectedBuiltFile(projectsBuiltBefore, workDir, projectName, templateName
         buildPath = os.path.join(buildPath, "Debug")
     if templateName in ["Qt Console Application",
                         "Qt Quick Application",
+                        "Qt Test Application",
                         "Qt Widgets Application"]:
         return os.path.join(buildPath, projectName + ".exe")
     elif templateName in ["Qt Class Library",
@@ -150,12 +153,13 @@ def main():
         dialog.filterForQtProjects()
         listedTemplates = list(dialog.getListedTemplates())
 
-    expectedFiles = {"Qt Designer Custom Widget": "^QtDesigner.*\.cpp$",
-                     "Qt Console Application": "^main\.cpp$",
-                     "Qt ActiveQt Server": "^ActiveQtServer\d*\.cpp$",
-                     "Qt Quick Application": "^main\.qml$",
-                     "Qt Empty Application": None,
+    expectedFiles = {"Qt ActiveQt Server": "^ActiveQtServer\d*\.cpp$",
                      "Qt Class Library": "^QtClassLibrary\d*\.cpp$",
+                     "Qt Console Application": "^main\.cpp$",
+                     "Qt Designer Custom Widget": "^QtDesigner.*\.cpp$",
+                     "Qt Empty Application": None,
+                     "Qt Quick Application": "^main\.qml$",
+                     "Qt Test Application": "^QtTest\d*\.cpp$",
                      "Qt Widgets Application": "^QtWidgets.*\.cpp$"}
 
     with NewProjectDialog() as dialog:
@@ -200,6 +204,7 @@ def main():
                         if templateName in ["Qt ActiveQt Server",
                                             "Qt Class Library",
                                             "Qt Designer Custom Widget",
+                                            "Qt Test Application",
                                             "Qt Widgets Application"]:
                             clickButton(waitForObject(names.qt_Wizard_Next_Button))
                         clickButton(waitForObject(names.qt_Wizard_Finish_Button))
