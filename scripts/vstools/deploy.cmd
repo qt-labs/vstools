@@ -18,8 +18,8 @@ IF "%VERSION_REV%" == "" (
         "%DEPLOY_DIR%\%VERSION%.0\qt-vsaddin-msvc%VS%-%VCVARS_ARCH%-%VERSION%.vsix" > NUL ^
     || (%##%   %BOLD%%RED%Error copying .vsix file to deploy dir.%RESET%)
     COPY /Y QtMSBuild\bin\Release\QtMSBuild.zip ^
-        "%DEPLOY_DIR%\%VERSION%.0\qt-vsaddin-msvc%VS%-%VCVARS_ARCH%-%VERSION%.zip" > NUL ^
-    || (%##%   %BOLD%%RED%Error copying .zip file to deploy dir.%RESET%)
+        "%DEPLOY_DIR%\%VERSION%.0\qt-vsaddin-msbuild-%VERSION%.zip" > NUL ^
+    || (%##%   %BOLD%%RED%Error copying msbuild .zip file to deploy dir.%RESET%)
 ) ELSE (
     %##%   QtVsTools.vsix -^> qt-vsaddin-msvc%VS%-%VCVARS_ARCH%-%VERSION%-rev.%VERSION_REV%.vsix
     MD "%DEPLOY_DIR%\%VERSION%.%VERSION_REV%" > NUL 2>&1
@@ -27,7 +27,7 @@ IF "%VERSION_REV%" == "" (
         "%DEPLOY_DIR%\%VERSION%.%VERSION_REV%\qt-vsaddin-msvc%VS%-%VCVARS_ARCH%-%VERSION%-rev.%VERSION_REV%.vsix" > NUL ^
     || (%##%   %BOLD%%RED%Error copying .vsix file to deploy dir.%RESET%)
     COPY /Y QtMSBuild\bin\Release\QtMSBuild.zip ^
-        "%DEPLOY_DIR%\%VERSION%.%VERSION_REV%\qt-vsaddin-msvc%VS%-%VCVARS_ARCH%-%VERSION%-rev.%VERSION_REV%.zip" > NUL ^
-    || (%##%   %BOLD%%RED%Error copying .zip file to deploy dir.%RESET%)
+        "%DEPLOY_DIR%\%VERSION%.%VERSION_REV%\qt-vsaddin-msbuild-%VERSION%-rev.%VERSION_REV%.zip" > NUL ^
+    || (%##%   %BOLD%%RED%Error copying msbuild .zip file to deploy dir.%RESET%)
 )
 %##########################%
