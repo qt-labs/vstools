@@ -14,7 +14,7 @@ find_package(Qt${QT_VERSION_MAJOR}
 qt_standard_project_setup()
 
 set(PROJECT_SOURCES
-    test.cpp
+    $sourcefilename$
 )
 
 qt_add_executable($projectname$ ${PROJECT_SOURCES})
