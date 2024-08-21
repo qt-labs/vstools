@@ -325,6 +325,14 @@
     <Defines>QT_SVG_LIB</Defines>
   </Module>
   <Module>
+    <Name>Qt SVG Widgets</Name>
+    <Selectable>true</Selectable>
+    <LibraryPrefix>QtSvgWidgets</LibraryPrefix>
+    <proVarQT>svgwidgets</proVarQT>
+    <IncludePath>$(QTDIR)\include\QtSvgWidgets</IncludePath>
+    <Defines>QT_SVGWIDGETS_LIB</Defines>
+  </Module>
+  <Module>
     <Name>Qt WebChannel</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtWebChannel</LibraryPrefix>
