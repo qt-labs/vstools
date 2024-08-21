@@ -145,7 +145,7 @@ namespace QtVsTools.Wizards.ProjectWizard
             {
                 Name = $"{config.Name}-{config.Platform}",
                 DisplayName = $"{config.Name} ({config.Platform})",
-                BinaryDir = "${sourceDir}/out/build",
+                BinaryDir = "${sourceDir}/out/build/" + (config.IsDebug ? "debug" : "release"),
                 CacheVariables = new CMakeConfigPreset.ConfigCacheVariables
                 {
                     CMakeBuildType = config.IsDebug ? "Debug" : "Release"
