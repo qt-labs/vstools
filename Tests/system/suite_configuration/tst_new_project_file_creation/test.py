@@ -81,7 +81,7 @@ def listExpectedWrittenFiles(workDir, projectName, templateName, cmakeBased):
 def getExpectedBuiltFile(projectsBuiltBefore, workDir, projectName, templateName, cmakeBased):
     buildPath = os.path.join(workDir, projectName)
     if cmakeBased:
-        buildPath = os.path.join(buildPath, "out", "build", projectName)
+        buildPath = os.path.join(buildPath, "out", "build", "debug", projectName)
     else:
         if projectsBuiltBefore != 0 and getMsvsVersionAsList() >= [17, 10, 0]:
             # Handle MSVS changing the build directory
