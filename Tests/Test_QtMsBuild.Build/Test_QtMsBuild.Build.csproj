@@ -58,10 +58,10 @@
   <ItemGroup>
     <PackageReference Include="$(Name_MSTest_TestAdapter)" Version="$(Version_MSTest_TestAdapter)" />
     <PackageReference Include="$(Name_MSTest_TestFramework)" Version="$(Version_MSTest_TestFramework)" />
-    <PackageReference Include="$(Name_Microsoft_Build)" Version="$(Version_Microsoft_Build)" />
-    <PackageReference Include="$(Name_Microsoft_Build_Framework)" Version="$(Version_Microsoft_Build)" />
-    <PackageReference Include="$(Name_Microsoft_Build_Tasks_Core)" Version="$(Version_Microsoft_Build)" />
-    <PackageReference Include="$(Name_Microsoft_Build_Utilities_Core)" Version="$(Version_Microsoft_Build)" />
+    <PackageReference Include="$(Name_Microsoft_Build)" Version="$(MSBuildVersion)" />
+    <PackageReference Include="$(Name_Microsoft_Build_Framework)" Version="$(MSBuildVersion)" />
+    <PackageReference Include="$(Name_Microsoft_Build_Tasks_Core)" Version="$(MSBuildVersion)" />
+    <PackageReference Include="$(Name_Microsoft_Build_Utilities_Core)" Version="$(MSBuildVersion)" />
   </ItemGroup>
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////
