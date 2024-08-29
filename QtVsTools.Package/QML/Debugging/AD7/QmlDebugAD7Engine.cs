@@ -272,6 +272,12 @@ namespace QtVsTools.Qml.Debug.AD7
         public static Guid IdLanguageCpp = new(ID_LANGUAGE_CPP);
     }
 
+    public static class COMPlusNativeEngine
+    {
+        const string ID_COMPLUSNATIVE_ENGINE = "92ef0900-2251-11d2-b72e-0000f87572ef";
+        public static readonly Guid Id = new(ID_COMPLUSNATIVE_ENGINE);
+    }
+
     public static class GdbEngine
     {
         const string ID_GDBENGINE = "ea6637c6-17df-45b5-a183-0951c54243bc";

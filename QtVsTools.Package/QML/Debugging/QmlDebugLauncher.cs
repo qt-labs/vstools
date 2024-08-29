@@ -97,7 +97,7 @@ namespace QtVsTools.Qml.Debug
 
             bool native;
             Guid engineId = GetEngineId(pProgram);
-            if (engineId == NativeEngine.Id)
+            if (engineId == NativeEngine.Id || engineId == COMPlusNativeEngine.Id)
                 native = true;
             else if (engineId == GdbEngine.Id)
                 native = false;
@@ -377,7 +377,8 @@ namespace QtVsTools.Qml.Debug
         public int OnLaunchDebugTargets(uint targetCount,
             VsDebugTargetInfo4[] targets, VsDebugTargetProcessInfo[] results)
         {
-            var isNative = targets[0].guidLaunchDebugEngine == NativeEngine.Id;
+            var isNative = targets[0].guidLaunchDebugEngine == NativeEngine.Id ||
+                targets[0].guidLaunchDebugEngine == COMPlusNativeEngine.Id;
             var hasEnv = targets[0].bstrEnv is { Length: > 0 };
             var noDebug = (targets[0].LaunchFlags & (uint)__VSDBGLAUNCHFLAGS.DBGLAUNCH_NoDebug) > 0;
             if (!isNative || !hasEnv || noDebug)
