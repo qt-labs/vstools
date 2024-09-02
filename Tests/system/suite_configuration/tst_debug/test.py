@@ -88,6 +88,11 @@ def main():
     test.verify(not object.exists(names.continue_Button),
                 "Continue Button doesn't exist?")
     type(waitForObject(names.msvs_WpfTextView_WPFControl), "<F5>") # Start debugging
+    if getMsvsProductLine() == "2019":
+        if waitFor(lambda: currentApplicationContext().name != "devenv", 16000):
+            fixAppContext()
+        else:
+            test.warning("Waiting for changed app context timed out")
     waitAndTestForStoppedDebugger()
     type(waitForObject(names.msvs_WpfTextView_WPFControl), "<F5>") # Continue
     waitFor(qtQuickAppContextExists, 30000)
