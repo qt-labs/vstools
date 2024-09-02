@@ -36,15 +36,5 @@ namespace QtVsTools.Core.Common
             // Delete source keys recursively
             Registry.CurrentUser.DeleteSubKeyTree(sourcePath, false);
         }
-
-        public static bool GetBoolValue(this RegistryKey key, string name, bool defaultValue = false)
-        {
-            var value = key.GetValue(name, defaultValue)?.ToString();
-            if (int.TryParse(value, out var intValue))
-                return intValue != 0;
-            if (bool.TryParse(value, out var boolValue))
-                return boolValue;
-            return false;
-        }
     }
 }
