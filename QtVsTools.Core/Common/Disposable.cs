@@ -28,8 +28,8 @@ namespace QtVsTools
     [DataContract]
     public abstract class Disposable : Concurrent, IDisposable
     {
-        protected const bool DisposingFrom_ObjectFinalizer = false;
-        protected const bool DisposingFrom_DisposeInterface = true;
+        protected const bool DisposingFromObjectFinalizer = false;
+        protected const bool DisposingFromDisposeInterface = true;
 
         private HashSet<IDisposableEventSink> eventSinks;
         private HashSet<IDisposableEventSink> EventSinks =>
@@ -39,19 +39,9 @@ namespace QtVsTools
 
         public bool Disposing { get; private set; }
 
-        public void AdviseDispose(IDisposableEventSink sink)
-        {
-            ThreadSafe(() => EventSinks.Add(sink));
-        }
-
-        public void UnadviseDispose(IDisposableEventSink sink)
-        {
-            ThreadSafe(() => EventSinks.Remove(sink));
-        }
-
         public void Dispose()
         {
-            Dispose(DisposingFrom_DisposeInterface);
+            Dispose(DisposingFromDisposeInterface);
             GC.SuppressFinalize(this);
         }
 
@@ -90,7 +80,7 @@ namespace QtVsTools
             ThreadSafe(() => EventSinks.ToList())
                 .ForEach(sink => sink.NotifyDisposing(this));
 
-            if (disposingFrom == DisposingFrom_DisposeInterface)
+            if (disposingFrom == DisposingFromDisposeInterface)
                 DisposeManaged();
 
             DisposeUnmanaged();
@@ -114,7 +104,7 @@ namespace QtVsTools
     {
         ~Finalizable()
         {
-            Dispose(DisposingFrom_ObjectFinalizer);
+            Dispose(DisposingFromObjectFinalizer);
         }
     }
 }
