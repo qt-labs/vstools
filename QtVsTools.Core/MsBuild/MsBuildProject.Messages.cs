@@ -86,16 +86,6 @@ namespace QtVsTools.Core.MsBuild
                 await VsShell.UiThreadAsync(UpdateQtInstallation.Message(project).Show);
         }
 
-        public static void CloseUpdateQtInstallationMessage()
-        {
-            ThreadHelper.JoinableTaskFactory.Run(CloseUpdateQtInstallationMessageAsync);
-        }
-
-        public static async Task CloseUpdateQtInstallationMessageAsync()
-        {
-            await VsShell.UiThreadAsync(UpdateQtInstallation.Message().Close);
-        }
-
         private class UpdateProjectFormat : InfoBarMessage
         {
             public static UpdateProjectFormat Message =>
@@ -204,7 +194,7 @@ namespace QtVsTools.Core.MsBuild
 
         public static void CloseProjectFormatUpdated()
         {
-            ThreadHelper.JoinableTaskFactory.Run(() => CloseProjectFormatUpdatedAsync());
+            ThreadHelper.JoinableTaskFactory.Run(CloseProjectFormatUpdatedAsync);
         }
 
         public static async Task CloseProjectFormatUpdatedAsync()
