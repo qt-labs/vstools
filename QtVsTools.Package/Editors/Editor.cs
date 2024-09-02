@@ -31,7 +31,7 @@ namespace QtVsTools.Editors
         public abstract Guid Guid { get; }
         public abstract string ExecutableName { get; }
 
-        public virtual Func<string, bool> WindowFilter => caption => true;
+        public virtual Func<string, bool> WindowFilter => _ => true;
 
         protected virtual string GetTitle(Process editorProcess)
         {
@@ -109,7 +109,7 @@ namespace QtVsTools.Editors
                 return VSConstants.VS_E_INCOMPATIBLEDOCDATA;
 
             // Create the Document (editor)
-            EditorPane newEditor = new EditorPane(this, toolsPath);
+            var newEditor = new EditorPane(this, toolsPath);
             ppunkDocView = Marshal.GetIUnknownForObject(newEditor);
             ppunkDocData = Marshal.GetIUnknownForObject(newEditor);
             pbstrEditorCaption = "";
@@ -133,9 +133,9 @@ namespace QtVsTools.Editors
             pbstrPhysicalView = null;   // initialize out parameter
 
             // we support only a single physical view
-            if (VSConstants.LOGVIEWID_Primary == rguidLogicalView)
-                return VSConstants.S_OK; // primary view uses NULL as pbstrPhysicalView
-            return VSConstants.E_NOTIMPL; // return E_NOTIMPL for any unrecognized rguidLogicalView
+            return VSConstants.LOGVIEWID_Primary == rguidLogicalView
+                ? VSConstants.S_OK // primary view uses NULL as pbstrPhysicalView
+                : VSConstants.E_NOTIMPL; // return E_NOTIMPL for any unrecognized rguidLogicalView
         }
 
         protected virtual ProcessStartInfo GetStartInfo(
@@ -286,7 +286,7 @@ namespace QtVsTools.Editors
                         NativeAPI.EnumThreadWindows(
                             dwThreadId: (uint)thread.Id,
                             lParam: IntPtr.Zero,
-                            lpfn: (hWnd, lParam) =>
+                            lpfn: (hWnd, _) =>
                             {
                                 windows.Add(hWnd, NativeAPI.GetWindowCaption(hWnd));
                                 return true;
