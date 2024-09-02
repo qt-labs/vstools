@@ -265,8 +265,7 @@ namespace QtVsTools.Qml.Debug.AD7
 
     public static class NativeEngine
     {
-        const string ID_NATIVEENGINE = "3b476d35-a401-11d2-aad4-00c04f990171";
-        public static readonly Guid Id = new(ID_NATIVEENGINE);
+        public static readonly Guid Id = VSConstants.DebugEnginesGuids.NativeOnly_guid;
 
         const string ID_LANGUAGE_CPP = "3a12d0b7-c26c-11d0-b442-00a0244a1dd2";
         public static Guid IdLanguageCpp = new(ID_LANGUAGE_CPP);
@@ -274,8 +273,7 @@ namespace QtVsTools.Qml.Debug.AD7
 
     public static class COMPlusNativeEngine
     {
-        const string ID_COMPLUSNATIVE_ENGINE = "92ef0900-2251-11d2-b72e-0000f87572ef";
-        public static readonly Guid Id = new(ID_COMPLUSNATIVE_ENGINE);
+        public static readonly Guid Id = VSConstants.DebugEnginesGuids.ManagedAndNative_guid;
     }
 
     public static class GdbEngine
