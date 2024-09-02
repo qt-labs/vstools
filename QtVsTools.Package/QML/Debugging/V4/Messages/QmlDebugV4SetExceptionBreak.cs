@@ -38,12 +38,6 @@ namespace QtVsTools.Qml.Debug.V4
             [DataMember(Name = "type")]
             private string TypeString { get; set; }
 
-            public ExceptionBreakType ExceptionBreakType
-            {
-                get => SerializableEnum.Deserialize<ExceptionBreakType>(TypeString);
-                set => TypeString = SerializableEnum.Serialize(value);
-            }
-
             [DataMember(Name = "enabled")]
             public bool Enabled { get; set; }
         }

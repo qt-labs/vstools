@@ -49,7 +49,6 @@ namespace QtVsTools.Qml.Debug.AD7
         private string ExecPath { get; set; }
         private string ExecArgs { get; set; }
         private IVsDebugger VsDebugger { get; set; }
-        private Dispatcher vsDebuggerThreadDispatcher;
 
         private static readonly object criticalSectionGlobal = new();
         private static bool originalBreakAllProcesses = BreakAllProcesses;
@@ -96,7 +95,6 @@ namespace QtVsTools.Qml.Debug.AD7
                     VsDebugger.AdviseDebugEventCallback(this);
                 });
             }
-            vsDebuggerThreadDispatcher = Dispatcher.CurrentDispatcher;
 
             ProcessId = Guid.NewGuid();
             CurrentFrames = new List<StackFrame>();

@@ -242,11 +242,6 @@ namespace QtVsTools.Qml.Debug
             return true;
         }
 
-        void OutputWriteLine(string msg)
-        {
-            Messages.Print(msg);
-        }
-
         private async Task LaunchDebugAsync(string execPath, string cmd, uint procId)
         {
             // Attach only once per process

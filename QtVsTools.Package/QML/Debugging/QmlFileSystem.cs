@@ -39,19 +39,6 @@ namespace QtVsTools.Qml.Debug
         private FileSystem()
         { }
 
-        public IEnumerable<string> QrcPaths => files.Values.GroupBy(x => x.QrcPath).Select(x => x.Key);
-
-        string QrcPath(string prefix, string filePath)
-        {
-            if (!string.IsNullOrEmpty(prefix) && !prefix.EndsWith("/"))
-                prefix += Path.AltDirectorySeparatorChar;
-
-            while (!string.IsNullOrEmpty(prefix) && prefix[0] == Path.AltDirectorySeparatorChar)
-                prefix = prefix.Substring(1);
-
-            return $"qrc:///{prefix}{filePath}";
-        }
-
         public void RegisterRccFile(string rccFilePath)
         {
             XDocument rccXml;

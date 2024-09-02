@@ -53,9 +53,7 @@ namespace QtVsTools.Qml.Debug
         ProtocolDriver driver;
         string connectionHostName;
         ushort connectionHostPortFrom;
-        ushort connectionHostPortTo;
         string connectionFileName;
-        bool connectionBlock;
 
         List<Request> outbox;
         Dictionary<int, IBreakpoint> breakpoints;
@@ -83,9 +81,8 @@ namespace QtVsTools.Qml.Debug
             if (sink == null)
                 return false;
 
-            if (!ParseCommandLine(execPath, args,
-                out connectionHostPortFrom, out connectionHostPortTo,
-                out connectionHostName, out connectionFileName, out connectionBlock)) {
+            if (!ParseCommandLine(execPath, args, out connectionHostPortFrom,
+                out connectionHostName, out connectionFileName)) {
                 return false;
             }
 
@@ -408,7 +405,7 @@ namespace QtVsTools.Qml.Debug
 
         public static bool CheckCommandLine(string execPath, string args)
         {
-            return ParseCommandLine(execPath, args, out _, out _, out _, out _, out _);
+            return ParseCommandLine(execPath, args, out _, out _, out _);
         }
 
         /// <summary>
@@ -473,7 +470,7 @@ namespace QtVsTools.Qml.Debug
         static RegExpr RxBlock =>
             new Token(TokenId.Block, "block")
             {
-                new Rule<bool> { Capture(token => true) }
+                new Rule<bool> { Capture(_ => true) }
             };
 
         static RegExpr RxDelim =>
@@ -486,14 +483,11 @@ namespace QtVsTools.Qml.Debug
             string execPath,
             string args,
             out ushort portFrom,
-            out ushort portTo,
             out string hostName,
-            out string fileName,
-            out bool block)
+            out string fileName)
         {
-            portFrom = portTo = 0;
+            portFrom = 0;
             hostName = fileName = "";
-            block = false;
 
             ConnectParams connParams;
             try {
@@ -509,11 +503,8 @@ namespace QtVsTools.Qml.Debug
                 return false;
 
             portFrom = connParams.Port;
-            if (connParams.MaxPort.HasValue)
-                portTo = connParams.MaxPort.Value;
             hostName = connParams.Host;
             fileName = connParams.File;
-            block = connParams.Block;
 
             return true;
         }

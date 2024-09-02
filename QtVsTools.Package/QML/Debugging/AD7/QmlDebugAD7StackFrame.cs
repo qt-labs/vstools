@@ -73,7 +73,7 @@ namespace QtVsTools.Qml.Debug.AD7
 
         private void InitializeProperties(bool forceScope = false)
         {
-            Properties = Scopes.ToDictionary(x => x, x => new Dictionary<string, Property>());
+            Properties = Scopes.ToDictionary(x => x, _ => new Dictionary<string, Property>());
             foreach (var scopeNumber in Scopes) {
                 var scopeVars = Debugger.RefreshScope(FrameNumber, scopeNumber, forceScope);
                 foreach (var scopeVar in scopeVars) {
