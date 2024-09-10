@@ -131,15 +131,13 @@ namespace QtVsTools.Core.MsBuild
         private static async Task BuildDispatcherLoopAsync()
         {
             ITaskHandler2 dispatchStatus = null;
-            if (VsServiceProvider.Instance is not AsyncPackage package)
-                return;
-            while (!package.Zombied) {
+            while (!VsShellUtilities.ShutdownToken.IsCancellationRequested) {
                 while (BuildQueue.IsEmpty || RequestTimer.ElapsedMilliseconds < 1000) {
                     if (BuildQueue.IsEmpty && dispatchStatus != null) {
                         dispatchStatus.Dismiss();
                         dispatchStatus = null;
                     }
-                    await Task.Delay(100);
+                    await Task.Delay(100, VsShellUtilities.ShutdownToken);
                 }
                 if (BuildQueue.TryDequeue(out var buildRequest)) {
                     var progressData = new TaskProgressData

@@ -162,10 +162,9 @@ namespace QtVsTools.Core
                     MessageReady = new EventWaitHandle(false, EventResetMode.AutoReset);
                     FlushTask = Task.Run(async () =>
                     {
-                        Package package;
-                        while ((package = VsServiceProvider.Instance as Package) is null)
-                            await Task.Delay(1000);
-                        while (!package.Zombied) {
+                        while (VsServiceProvider.Instance == null)
+                            await Task.Delay(1000, VsShellUtilities.ShutdownToken);
+                        while (!VsShellUtilities.ShutdownToken.IsCancellationRequested) {
                             await Task.Delay(Initialized ? 100 : 1000);
                             if (!await MessageReady.ToTask(3000))
                                 continue;

@@ -36,9 +36,9 @@ namespace QtVsTools.Core.MsBuild
             if (VsServiceProvider.Instance is not AsyncPackage package)
                 return;
 
-            while (!package.Zombied) {
+            while (!VsShellUtilities.ShutdownToken.IsCancellationRequested) {
                 while (InitQueue.IsEmpty)
-                    await Task.Delay(100);
+                    await Task.Delay(100, VsShellUtilities.ShutdownToken);
                 if (InitQueue.TryDequeue(out var tracker)) {
                     if (InitStatus == null) {
                         await package.JoinableTaskFactory.SwitchToMainThreadAsync();
