@@ -80,12 +80,10 @@ namespace QtVsTools.Test.Core
             Assert.AreEqual(logTx(1) + logTx(2) + logTx(3), File.ReadAllText(logFilePath));
 
             log.Write(logTx(4));
-            Assert.AreEqual(logTx(1) + logTx(2) + logTx(3) + logTx(4),
-                File.ReadAllText(logFilePath));
+            Assert.AreEqual(logTx(3) + logTx(4), File.ReadAllText(logFilePath));
 
             log.Write(logTx(5));
-            Assert.AreEqual(logTx(1) + logTx(2) + logTx(3) + logTx(4) + logTx(5),
-                File.ReadAllText(logFilePath));
+            Assert.AreEqual(logTx(3) + logTx(4) + logTx(5), File.ReadAllText(logFilePath));
         }
     }
 }
