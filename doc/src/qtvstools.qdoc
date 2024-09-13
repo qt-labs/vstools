@@ -8,49 +8,80 @@
 
     \title Qt VS Tools
 
+    \raw HTML
+    <style>
+    .main-navigation table { table-layout: fixed; }
+    .main-navigation table tr:first-child { text-align: center; background: none; }
+    </style>
+    \endraw
+
+    \div {class="main-navigation"}
+    \table borderless 100%
+        \row
+            \li \inlineimage installation.png
+            \li \inlineimage getting-started.png
+            \li \inlineimage tutorials.png
+        \row
+            \li \b {INSTALLATION}
+
+                Install Qt VS Tools from Microsoft Visual Studio.
+
+                \l {Install Qt VS Tools}
+            \li \b {GETTING STARTED}
+
+                Get started with developing Qt applications with Visual Studio.
+
+                \l{Getting started}
+            \li \b {TUTORIALS}
+
+                Learn how to develop Qt and Qt Quick applications with
+                Visual Studio.
+
+                \l{Tutorials}
+    \endtable
+    \enddiv
+
+    \section1 About
+
     Qt VS Tools integrate the Qt development tools into Microsoft Visual Studio
     2019, and later. Use the standard Windows development environment
-    without having to worry about Qt-related build steps or tools. Install and
-    update Qt VS Tools directly from Microsoft Visual Studio.
+    without having to worry about Qt-related build steps or tools.
 
-    \table
+    \b {HOW TO}
+
+    \raw HTML
+    <style>
+    .link-list table { table-layout: fixed; }
+    .link-list table, .link-list table tr:first-child { background: none; border: none; }
+    </style>
+    \endraw
+
+    \div {class="link-list"}
+    \table 100%
         \row
-            \li \inlineimage tutorials.webp
-            \li \inlineimage how-to.webp
-            \li \inlineimage explanation.webp
-            \li \inlineimage reference.webp
+            \li \inlineimage demo-32x32.png
+            \li \inlineimage build-32x32.png
+            \li \inlineimage settings-32x32.png
         \row
-            \li \l {Tutorials}
+            \li Work with code
                 \list
-                    \li \l {Tutorial: Qt Widgets application}
-                    \li \l {Tutorial: Qt Quick application}
-                    \li \l {Tutorial: Qt Quick debugging}
-                    \li \l {Tutorial: Qt Test application}
+                    \li \l {Edit}
+                    \li \l {Debug}
+                    \li \l {Test}
                 \endlist
-            \li \l {How-to}
+            \li Build and run applications
                 \list
                     \li \l {Set up Qt VS Tools}
                     \li \l {Create}
-                    \li \l {Edit}
                     \li \l {Build}
-                    \li \l {Debug}
-                    \li \l {Test}
-                    \li \l {Localize}
                 \endlist
-        \li \l {Explanation}
-            \list
-                \li \l {Building}
-                \li \l {Configuring builds}
-                \li \l {Debugging Qt Quick applications}
-                \li \l {Features}
-            \endlist
-        \li \l {Reference}
-            \list
-                \li \l {Files}
-                \li \l {Projects}
-                \li \l {Test Adapter settings}
-            \endlist
+            \li Use tools
+                \list
+                    \li \l {Localize}
+                    \li \l {Get help}
+                \endlist
     \endtable
+    \enddiv
 */
 
 /*!
@@ -65,7 +96,7 @@
                 \li \l {Tutorial: Qt Quick debugging}
                 \li \l {Tutorial: Qt Test application}
             \endlist
-        \li \l{How-to}
+        \li \l{How to}
             \list
                 \li \l {Add Qt versions}
                 \li \l {Build solutions that have Qt/MSBuild format 2}
@@ -106,6 +137,21 @@
 */
 
 /*!
+    \page qtvstools-getting-started.html
+
+    \title Getting started
+
+    To develop Qt and Qt Quick applications in Microsoft Visual Studio:
+
+    \list 1
+        \li \l {Install Qt VS Tools}.
+        \li \l {Add Qt versions}.
+        \li Follow the \l {Tutorials} to learn how to develop and debug
+            applications and create Qt unit tests.
+    \endlist
+*/
+
+/*!
     \page qtvstools-tutorials.html
 
     \title Tutorials
@@ -127,7 +173,7 @@
 /*!
     \page qtvstools-how-to.html
 
-    \title How-to
+    \title How to
 
     The following topics describe how to set up Qt VS Tools and to use them to
     create, build, debug, and localize Qt applications.
