@@ -2023,7 +2023,7 @@
 
     A \e {QML debug engine} extends the Visual Studio debugger with features of
     the \l{QML Debugging Infrastructure}{QML debugging infrastructure}, which is
-    a part of the \l{Qt QML} module that offers services for debugging,
+    a part of the \l{Qt Qml} module that offers services for debugging,
     inspecting, and profiling applications via a TCP port. The debug engine
     implements interfaces from the Active Debugging 7 (AD7) extensibility
     framework for the Visual Studio debugger.
