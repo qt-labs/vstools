@@ -260,7 +260,7 @@
         <DisplayString>{ucs,c}</DisplayString>
         <StringView>ucs,c</StringView>
         <Expand>
-            <Item Name="[latin 1]">ucs > 0xff ? '\0' : char(ucs),c</Item>
+            <Item Name="[latin 1]">ucs > 0xff ? 0 : ucs,c</Item>
             <Item Name="[unicode]">ucs,c</Item>
         </Expand>
     </Type>
