@@ -180,7 +180,9 @@ namespace QtVsTools.Editors
                 qtToolsPath = GetDefaultQtToolsPath();
             var st = GetStartInfo(filePath, qtToolsPath, hideWindow);
             try {
-                return Process.Start(st);
+                var process = Process.Start(st);
+                SubprocessTracker.AddProcess(process);
+                return process;
             } catch (Exception exception) {
                 exception.Log();
                 if (!File.Exists(st.Arguments))

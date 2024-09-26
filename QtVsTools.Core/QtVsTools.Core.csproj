@@ -156,6 +156,7 @@
     <Compile Include="QtPaths.cs" />
     <Compile Include="QtPathsQuery.cs" />
     <Compile Include="QtBuildToolQuery.cs" />
+    <Compile Include="SubprocessTracker.cs" />
     <Compile Include="VcFilterExtensions.cs" />
     <Compile Include="MsBuild\MsBuildProjectReaderWriter.V2.cs" />
     <Compile Include="MsBuild\MsBuildProjectReaderWriter.V3.cs" />
