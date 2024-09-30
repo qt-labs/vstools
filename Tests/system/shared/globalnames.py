@@ -6,7 +6,8 @@
 # encoding: UTF-8
 
 from objectmaphelper import *
-microsoft_Visual_Studio_Window = {"text": Wildcard("*Microsoft Visual Studio"), "type": "Window"}
+microsoft_Visual_Studio_Window = {"id": "VisualStudioMainWindow",
+                                  "text": Wildcard("*Microsoft Visual Studio"), "type": "Window"}
 quickStart_Window = {"class": "Microsoft.VisualStudio.PlatformUI.GetToCode.QuickStartWindow",
                      "text": "Microsoft Visual Studio", "type": "Window"}
 continueWithoutCode_Label = {"container": quickStart_Window,
