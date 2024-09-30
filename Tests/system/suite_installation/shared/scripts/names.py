@@ -21,8 +21,10 @@ help_MenuItem = {"container": globalnames.microsoft_Visual_Studio_MenuBar, "text
 help_About_Microsoft_Visual_Studio_MenuItem = {"container": help_MenuItem,
                                                "text": "About Microsoft Visual Studio",
                                                "type": "MenuItem"}
-o_Microsoft_Visual_Studio_OK_Button = {"container": globalnames.microsoft_Visual_Studio_Window, "text": "OK", "type": "Button"}
-about_Microsoft_Visual_Studio_Window = {"text": "About Microsoft Visual Studio", "type": "Window"}
+about_Microsoft_Visual_Studio_Window = {"id": "AboutBoxWindow",
+                                        "text": "About Microsoft Visual Studio", "type": "Window"}
+o_Microsoft_Visual_Studio_OK_Button = {"container": about_Microsoft_Visual_Studio_Window,
+                                       "text": "OK", "type": "Button"}
 about_Microsoft_Visual_Studio_Edit = {"container": about_Microsoft_Visual_Studio_Window, "type": "Edit"}
 o_Extensions_ProvidersTree_Tree = {"container": manage_Extensions_Window, "name": "ProvidersTree", "type": "Tree"}
 providersTree_Online_TreeItem = {"container": o_Extensions_ProvidersTree_Tree, "text": "Online", "type": "TreeItem"}
