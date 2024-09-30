@@ -7,7 +7,11 @@
 
 from objectmaphelper import *
 microsoft_Visual_Studio_Window = {"text": Wildcard("*Microsoft Visual Studio"), "type": "Window"}
-continueWithoutCode_Label = {"container": microsoft_Visual_Studio_Window, "text": "System.Windows.Controls.AccessText Microsoft.VisualStudio.Imaging.CrispImage", "type": "Label"}
+quickStart_Window = {"class": "Microsoft.VisualStudio.PlatformUI.GetToCode.QuickStartWindow",
+                     "text": "Microsoft Visual Studio", "type": "Window"}
+continueWithoutCode_Label = {"container": quickStart_Window,
+                             "text": "System.Windows.Controls.AccessText Microsoft.VisualStudio.Imaging.CrispImage",
+                             "type": "Label"}
 microsoft_Visual_Studio_MenuBar = {"container": microsoft_Visual_Studio_Window, "type": "MenuBar"}
 file_MenuItem = {"container": microsoft_Visual_Studio_MenuBar, "text": "File", "type": "MenuItem"}
 file_Exit_MenuItem = {"container": file_MenuItem, "text": "Exit", "type": "MenuItem"}
