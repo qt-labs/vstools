@@ -1,0 +1,5 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource prefix="/res/shared_project">
+   <file>bg1.jpg</file>
+</qresource>
+</RCC>

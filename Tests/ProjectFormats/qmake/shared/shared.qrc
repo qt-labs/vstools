@@ -1,0 +1,5 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource prefix="/res">
+   <file>images/bg_pattern.png</file>
+</qresource>
+</RCC>
