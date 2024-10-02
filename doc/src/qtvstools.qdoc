@@ -1223,6 +1223,16 @@
     To open Qt projects (.pro) in Visual Studio, go to \uicontrol Extensions >
     \uicontrol {Qt VS Tools} > \uicontrol {Open Qt Project File (.pro)}.
 
+    \section1 View conversion reports
+
+    A message on the info bar indicates that the conversion is complete.
+
+    \image qtvstools-pro-file-conversion-message.webp {Project format conversion complete message}
+
+    To see the changes that Qt VS Tools made, select \uicontrol {View report}.
+
+    \image qtvstools-pro-file-conversion-report.webp {Project format conversion report}
+
     \sa {Building}, {Configuring builds}
 */
 
