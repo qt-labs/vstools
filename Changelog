@@ -1,5 +1,34 @@
 Qt Visual Studio Tools version 3.2.0:
 
+This update to the Qt VS Tools extension introduces experimental support for the Visual Studio test
+adapter for the QtTest framework. It also introduces an improved and more streamlined build process
+with Qt/MSBuild.
+
+Changes
+-------
+  - Separate binary directories for debug and release in CMake projects
+  - Updated several types in natvis visualizer
+  - Redesign the layout of the Qt version page
+  - Implement project and item wizard for QtTest adapter
+  - Implement Visual Studio test adapter for QtTest framework
+  - Refactor Qt/MSBuild
+ - Fixed QTVSADDINBUG-1173: Fix linking of QML plugin dependencies in static builds
+ - Fixed QTVSADDINBUG-1209: Fix Qt include path not being passed to MOC
+ - Fixed QTVSADDINBUG-1211: Add Qt SVG Widgets to qt6modules.xml
+ - Fixed QTVSADDINBUG-1088: Store settings and versions per root suffix
+ - Fixed QTVSADDINBUG-1080: Enable adding Qt versions by using qtpaths.exe
+ - Fixed QTVSADDINBUG-1163: Fix autodetection detects incompatible Qt versions
+ - Fixed QTVSADDINBUG-1192: Fix locals not being populated during QML debugging
+ - Fixed QTVSADDINBUG-1078: Move QtVarsOutputDir to $(Temp)/$(ProjectGuid)/$(QtProjectDirHash)/qmake
+ - Fixes QTVSADDINBUG-962:  Add IDC integration to Qt/MSBuild
+ - Fixes QTVSADDINBUG-1204: Fix hang when process debug events is false and QML debugging is true
+ - Fixed QTVSADDINBUG-1199: Remove ARM64 build dependency to Microsoft.Build.Utilities.Core.dll
+ - Fixed QTVSADDINBUG-1197: Revert QtVarsOutputDir to $(ProjectDir)\$(IntDir)\qmake
+ - Fixed QTVSADDINBUG-1196: Fix storing Qt version names with spaces
+
+
+Qt Visual Studio Tools version 3.2.0:
+
 This update of the Qt VS Tools extension adds experimental QML LSP server, disabled by default.
 The update also introduces additional settings to provide more fine-grained control over the
 notification behavior of the Qt Visual Studio Tools extension.
