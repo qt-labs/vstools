@@ -1318,10 +1318,9 @@
 
     \title Add Qt versions
 
-    Qt VS Tools provide you with basic Qt version management that enables you to
-    use multiple Qt versions in parallel. For example, Qt 5.15.11 and 6.5.0.
-    You have to add at least one Qt version that was built for MSVC to be able
-    to create Qt projects.
+    You can develop with multiple Qt versions in parallel, such as Qt 5.15.11 and
+    Qt 6.8.0. You have to add at least one Qt version that was built for MSVC to
+    be able to create Qt projects.
 
     \image qtvstools-qt-versions.webp {Qt Versions}
 
@@ -1330,24 +1329,25 @@
     \list 1
         \li Go to \uicontrol Extensions > \uicontrol {Qt VS Tools} >
             \uicontrol {Qt Versions}.
-        \li Select \inlineimage plus.png.
+        \li Select \uicontrol Add.
         \li In \uicontrol Version, enter a name for the Qt version.
             If you add the path to Qt first, this field is filled automatically.
         \li In \uicontrol Host, select \uicontrol Windows, unless you
             want to cross-compile the application for an embedded Linux device.
         \li In \uicontrol Path, enter the path to the qmake.exe for
             the Qt version.
-            For example: \c {C:\Qt\6.2.0\msvc2019_64\bin\qmake.exe}.
-        \li In \uicontrol Default, select the Qt version to use
-            by default when creating new projects or importing a project from a
-            \c {.pro} file.
+            For example: \c {C:\Qt\6.8.0\msvc2022_64\bin\qmake.exe}.
         \li Select \uicontrol OK.
     \endlist
 
-    To remove a Qt version, select \inlineimage minus.png
-    .
+    To set the Qt version to use by default when creating new projects or
+    importing a project from a \c {.pro} file, select it in the list and
+    then select \uicontrol Default.
 
-    \section1 Register installed Qt versions
+    To remove a Qt version, select it in the list and then select
+    \uicontrol Remove.
+
+    \section1 Manage installed Qt versions
 
     Qt VS Tools can automatically detect Qt versions that you install with \QOI.
     To detect installed Qt versions from a folder, select \uicontrol Browse and
