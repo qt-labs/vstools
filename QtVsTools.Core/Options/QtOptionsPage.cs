@@ -544,12 +544,15 @@ namespace QtVsTools.Core.Options
         public bool SearchDevReleaseOption
         {
             get => SearchDevRelease;
-            set => QtOptionsPageSettings.Instance.SetValue(() => SearchDevRelease, value);
+            set => SearchDevRelease = value;
         }
 
         [Settings(DevelopmentReleases.SearchDevRelease, false)]
-        public static bool SearchDevRelease =>
-            QtOptionsPageSettings.Instance.GetValue(() => SearchDevRelease);
+        public static bool SearchDevRelease
+        {
+            get => QtOptionsPageSettings.Instance.GetValue(() => SearchDevRelease);
+            set => QtOptionsPageSettings.Instance.SetValue(() => SearchDevRelease, value);
+        }
 
         [Category("Development releases")]
         [DisplayName("Search timeout")]

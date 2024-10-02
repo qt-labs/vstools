@@ -103,8 +103,6 @@ namespace QtVsTools.Core
 
     public class SearchDevRelease : InfoBarMessage
     {
-        private readonly bool isSearchEnabled = QtOptionsPage.NotifySearchDevRelease;
-
         protected override ImageMoniker Icon => KnownMonikers.StatusInformation;
 
         protected override TextSpan[] Text => new TextSpan[]
@@ -120,12 +118,26 @@ namespace QtVsTools.Core
         {
             new()
             {
-                Text = isSearchEnabled ? "Disable" : "Enable",
+                Text = "Enable",
                 CloseInfoBar = false,
                 OnClicked= () =>
                 {
                     try {
-                        QtOptionsPage.NotifySearchDevRelease = !isSearchEnabled;
+                        QtOptionsPage.SearchDevRelease = true;
+                        QtOptionsPageSettings.Instance.SaveSettings();
+                    } catch (Exception ex) {
+                        ex.Log();
+                    }
+                }
+            },
+            new()
+            {
+                Text = "Disable",
+                CloseInfoBar = false,
+                OnClicked= () =>
+                {
+                    try {
+                        QtOptionsPage.SearchDevRelease = false;
                         QtOptionsPageSettings.Instance.SaveSettings();
                     } catch (Exception ex) {
                         ex.Log();
