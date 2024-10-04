@@ -89,6 +89,8 @@
     \title All Topics
 
     \list
+        \li \l{Install Qt VS Tools}
+        \li \l{Getting Started}
         \li \l{Tutorials}
             \list
                 \li \l {Tutorial: Qt Widgets application}
@@ -109,7 +111,6 @@
                 \li \l {Debug on Linux}
                 \li \l {Enable QML debugging}
                 \li \l {Get help}
-                \li \l {Install Qt VS Tools}
                 \li \l {Load Qt projects}
                 \li \l {Manage resources}
                 \li \l {Select Qt versions for a project}
