@@ -1370,7 +1370,47 @@
 
     \image qtvstools-qt-versions.webp {Qt Versions}
 
-    To add Qt versions:
+    \section1 Detect installed Qt versions
+
+    Qt VS Tools can automatically detect Qt versions that you install with \QOI.
+    To automatically detect installed Qt versions, select \uicontrol Autodetect.
+
+    To detect installed Qt versions from a folder, select \uicontrol Browse and
+    locate the Qt installation folder.
+
+    \section1 Remove Qt versions
+
+    To remove entries for Qt versions that you have uninstalled, select
+    \uicontrol {Cleanup}.
+
+    To remove a particular Qt version, select it in the list and then select
+    \uicontrol Remove.
+
+    You can remove the default Qt version only if you make another version the
+    default or if it is the only Qt version in the list.
+
+    \section1 Set default Qt version
+
+    To set the Qt version to use by default when creating new projects or
+    importing a project from a \c {.pro} file, select it in the list and
+    then select \uicontrol Default.
+
+    \section1 Turn off notifications about new Qt versions
+
+    To turn off notifications about new Qt versions being available:
+
+    \list 1
+        \li Go to \uicontrol Extensions > \uicontrol {Qt VS Tools} >
+            \uicontrol Options > \uicontrol Qt > \uicontrol General >
+            \uicontrol {Notifications}.
+            \image qtvstools-options-qt-general-notifications.webp {Notifications in Qt General Options}
+        \li In \uicontrol {Update Qt installation}, select \uicontrol Disable.
+    \endlist
+
+    \section1 Add other Qt versions
+
+    To add Qt versions that you installed from other sources than \QOI or built
+    yourself:
 
     \list 1
         \li Go to \uicontrol Extensions > \uicontrol {Qt VS Tools} >
@@ -1386,24 +1426,6 @@
             \uicontrol Compiler shows the compiler type.
         \li Select \uicontrol OK.
     \endlist
-
-    To set the Qt version to use by default when creating new projects or
-    importing a project from a \c {.pro} file, select it in the list and
-    then select \uicontrol Default.
-
-    To remove a Qt version, select it in the list and then select
-    \uicontrol Remove.
-
-    \section1 Manage installed Qt versions
-
-    Qt VS Tools can automatically detect Qt versions that you install with \QOI.
-    To detect installed Qt versions from a folder, select \uicontrol Browse and
-    locate the Qt installation folder.
-
-    To automatically detect Qt versions, select \uicontrol Autodetect.
-
-    To remove entries for Qt versions that you have uninstalled, select
-    \uicontrol {Cleanup}.
 
     \sa {Select Qt versions for a project}, {Cross-compile}, {Load Qt projects}
 */
