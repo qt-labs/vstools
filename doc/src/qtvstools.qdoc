@@ -1340,13 +1340,14 @@
         \li Go to \uicontrol Extensions > \uicontrol {Qt VS Tools} >
             \uicontrol {Qt Versions}.
         \li Select \uicontrol Add.
-        \li In \uicontrol Version, enter a name for the Qt version.
-            If you add the path to Qt first, this field is filled automatically.
-        \li In \uicontrol Host, select \uicontrol Windows, unless you
-            want to cross-compile the application for an embedded Linux device.
-        \li In \uicontrol Path, enter the path to the qmake.exe for
+        \li In \uicontrol Name, enter a name for the Qt version. If you add the
+            location of Qt first, this field is filled automatically.
+        \li In \uicontrol Location, enter the path to the qmake.exe for
             the Qt version.
             For example: \c {C:\Qt\6.8.0\msvc2022_64\bin\qmake.exe}.
+        \li In \uicontrol Host, select \uicontrol Windows, unless you
+            want to cross-compile the application for an embedded Linux device.
+            \uicontrol Compiler shows the compiler type.
         \li Select \uicontrol OK.
     \endlist
 
