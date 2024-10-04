@@ -336,6 +336,41 @@
         \li Select \uicontrol Download.
         \li Restart Microsoft Visual Studio to have the changes take effect.
     \endlist
+
+    \section1 Turn on installation notifications
+
+    To turn on notifications about new Qt VS Tools versions being installed:
+
+    \list 1
+        \li Go to \uicontrol Extensions > \uicontrol {Qt VS Tools} >
+            \uicontrol Options > \uicontrol Qt > \uicontrol General >
+            \uicontrol {Notifications}.
+            \image qtvstools-options-qt-general-notifications.webp {Notifications in Qt General Options}
+        \li In \uicontrol {New version installed}, select \uicontrol Enable.
+    \endlist
+
+    \section1 Search for updates to development releases
+
+    Qt VS Tools can search for updates to development releases when you
+    start it.
+
+    To set options for the search:
+
+    \list 1
+        \li Go to \uicontrol Extensions > \uicontrol {Qt VS Tools} >
+            \uicontrol Options > \uicontrol Qt > \uicontrol General >
+            \uicontrol {Development releases}.
+            \image qtvstools-options-qt-general-dev-releases.webp {Development releases in Qt General Options}
+        \li Select options:
+            \list
+                \li In \uicontrol {Notification}, show or hide notifications that
+                    let you turn searching for new releases on or off.
+                \li In \uicontrol {Search automatically}, turn searching for new
+                    releases on or off.
+                \li In \uicontrol {Search timeout}, set the time in seconds to
+                    search for new releases.
+            \endlist
+    \endlist
 */
 
 /*!
