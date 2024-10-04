@@ -114,8 +114,8 @@
                 \li \l {Load Qt projects}
                 \li \l {Manage resources}
                 \li \l {Select Qt versions for a project}
-                \li \l {Start Qt Designer}
-                \li \l {Start Qt Linguist}
+                \li \l {Start \QD}
+                \li \l {Start \QL}
                 \li \l {Start Qt Resource Editor}
                 \li \l {Turn on QML language server}
                 \li \l {Update IntelliSense info}
@@ -198,7 +198,7 @@
     \list
         \li \l {Select Qt versions for a project}
         \li \l {Create UI form files}
-        \li \l {Start Qt Designer}
+        \li \l {Start \QD}
         \li \l {Manage resources}
         \li \l {Start Qt Resource Editor}
         \li \l {Get help}
@@ -257,7 +257,7 @@
 
     \list
         \li \l {Create Qt translation files}
-        \li \l {Start Qt Linguist}
+        \li \l {Start \QL}
         \li \l {Update Qt translation files}
     \endlist
 */
@@ -308,7 +308,7 @@
         \li Loading existing Qt projects (\c .pro).
         \li Using CMake for cross-platform development.
         \li Integrated Qt resource management.
-        \li Creating a Qt translation source (TS) file and starting Qt Linguist
+        \li Creating a Qt translation source (TS) file and starting \QL
             to translate the strings.
         \li Starting \QD to design widget-based UIs for applications.
         \li Integrated Qt documentation.
@@ -317,7 +317,7 @@
 
     \sa {Projects}, {Files}, {Building}, {Load Qt projects}, {Cross-compile},
     {Manage resources}, {Create Qt translation files}, {Create UI form files},
-    {Start Qt Designer}, {Get help}, {Debug applications}
+    {Start \QD}, {Get help}, {Debug applications}
 */
 
 /*!
@@ -402,7 +402,7 @@
     By default, \QD opens in Visual Studio. To open it as a stand-alone
     application, select \uicontrol Detach.
 
-    For more information about using \QD, see the \l{Qt Designer Manual}.
+    For more information about using \QD, see the \l{\QD Manual}.
 
     \section2 Add widgets
 
@@ -535,7 +535,7 @@
 
     To have the \uicontrol OK button invoke the QDialog::accept() slot, click
     the \uicontrol {Edit Signals/Slots} toolbar button to enter
-    \l {Qt Designer's Signals and Slots Editing Mode}.
+    \l {\QD's Signals and Slots Editing Mode}.
 
     Click the \uicontrol OK button, drag the mouse cursor to an empty area of
     the form, and release the mouse button. In the
@@ -1077,7 +1077,7 @@
     Use the integrated Qt Resource editor to manage the resources in
     Qt projects.
 
-    Create a Qt translation source (TS) file and start Qt Linguist from
+    Create a Qt translation source (TS) file and start \QL from
     Visual Studio to translate the strings in your application.
 
     To create Qt projects, go to \uicontrol File > \uicontrol New >
@@ -1101,7 +1101,7 @@
         \li \uicontrol {Qt Console Application}
         \li A basic Qt console application.
     \row
-        \li \uicontrol {Qt Designer Custom Widget}
+        \li \uicontrol {\QD Custom Widget}
         \li A \QD custom widget plugin.
     \row
         \li \uicontrol {Qt Empty Application}
@@ -1619,25 +1619,25 @@
     QWidget subclass to add signals or slots to it. Therefore, Qt VS Tools
     create a \c .h and \c .cpp file for you, along with an empty UI form.
 
-    \sa {Tutorial: Qt Widgets application}, {Start Qt Designer},
-    {Qt Designer Manual}
+    \sa {Tutorial: Qt Widgets application}, {Start \QD},
+    {\QD Manual}
 */
 
 /*!
     \page qtvstools-how-to-start-qt-designer.html
     \ingroup qtvstools-how-to
 
-    \title Start Qt Designer
+    \title Start \QD
 
     To start \QD:
 
     \list
         \li Go to \uicontrol Extensions > \uicontrol {Qt VS Tools} >
-            \uicontrol {Launch Qt Designer}.
+            \uicontrol {Launch \QD}.
         \li Double-click a \c .ui file in the \uicontrol {Solution Explorer}.
     \endlist
 
-    \sa {Create UI form files}, {Qt Designer Manual}
+    \sa {Create UI form files}, {\QD Manual}
 
     By default, \QD opens in Visual Studio. To open it as a stand-alone
     application, select \uicontrol Detach.
@@ -1647,7 +1647,7 @@
     \list 1
         \li Go to \uicontrol Extensions > \uicontrol {Qt VS Tools} >
         \uicontrol Options > \uicontrol Qt > \uicontrol General >
-        \uicontrol {Qt Designer}.
+        \uicontrol {\QD}.
         \image qtvstools-options-qt-general.webp {Qt General Options}
         \li Set \uicontrol {Run in detached window} to \uicontrol True.
     \endlist
@@ -1727,7 +1727,7 @@
     Design applications so that they can be adapted to various languages
     and regions without engineering changes. Mark UI text as translatable
     to create Qt translation source (TS) files that contain them, and start
-    Qt Linguist to translate the strings.
+    \QL to translate the strings.
 
     To add a new translation file to the project:
 
@@ -1751,8 +1751,8 @@
     create QM files out of TS files. The QM file format is a compact binary
     format that the localized application uses to look up translations.
 
-    \sa {Start Qt Linguist}, {Update Qt translation files},
-    {Internationalization with Qt}, {Qt Linguist Manual}
+    \sa {Start \QL}, {Update Qt translation files},
+    {Internationalization with Qt}, {\QL Manual}
 */
 
 /*!
@@ -1803,39 +1803,39 @@
     For a list of properties that you can set in \uicontrol {AdditionalOptions},
     see \l {lrelease options}.
 
-    \sa {Create Qt translation files}, {Start Qt Linguist},
-    {Internationalization with Qt}, {Qt Linguist Manual}
+    \sa {Create Qt translation files}, {Start \QL},
+    {Internationalization with Qt}, {\QL Manual}
 */
 
 /*!
     \page qtvstools-how-to-start-qt-linguist.html
     \ingroup qtvstools-how-to
 
-    \title Start Qt Linguist
+    \title Start \QL
 
-    To start Qt Linguist:
+    To start \QL:
 
     \list
         \li Go to \uicontrol Extensions > \uicontrol {Qt VS Tools} >
-            \uicontrol {Launch Qt Linguist}.
+            \uicontrol {Launch \QL}.
         \li Double-click a \c .ts file in the \uicontrol {Solution Explorer}.
     \endlist
 
-    By default, Qt Linguist opens in Visual Studio. To open it as a stand-alone
+    By default, \QL opens in Visual Studio. To open it as a stand-alone
     application, select \uicontrol Detach.
 
-    To run Qt Linguist in a separate window by default:
+    To run \QL in a separate window by default:
 
     \list 1
         \li Go to \uicontrol Extensions > \uicontrol {Qt VS Tools} >
             \uicontrol Options > \uicontrol Qt > \uicontrol General >
-            \uicontrol {Qt Linguist}.
+            \uicontrol {\QL}.
             \image qtvstools-options-qt-general.webp {Qt General Options}
         \li Set \uicontrol {Run in detached window} to \uicontrol True.
     \endlist
 
     \sa {Create Qt translation files}, {Internationalization with Qt},
-    {Qt Linguist Manual}
+    {\QL Manual}
 */
 
 /*!
