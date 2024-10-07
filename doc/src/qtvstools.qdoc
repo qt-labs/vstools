@@ -1529,6 +1529,9 @@
 
     To set the path to the Qt/MSBuild files, go to \uicontrol Extensions >
     \uicontrol {Qt VS Tools} > \uicontrol Options > \uicontrol {Qt/MSBuild}.
+
+    \image qtvstools-options-qt-general-qt-msbuild.webp {Qt/MSBuild in Qt General Options}
+
     This corresponds to setting the value of the \c QTMSBUILDS environment
     variable.
 
