@@ -1705,7 +1705,7 @@
         \li Go to \uicontrol Extensions > \uicontrol {Qt VS Tools} >
         \uicontrol Options > \uicontrol Qt > \uicontrol General >
         \uicontrol {\QD}.
-        \image qtvstools-options-qt-general.webp {Qt General Options}
+        \image qtvstools-options-qt-general-qd.webp {Qt Designer in Qt General Options}
         \li Set \uicontrol {Run in detached window} to \uicontrol True.
     \endlist
 */
@@ -1887,7 +1887,7 @@
         \li Go to \uicontrol Extensions > \uicontrol {Qt VS Tools} >
             \uicontrol Options > \uicontrol Qt > \uicontrol General >
             \uicontrol {\QL}.
-            \image qtvstools-options-qt-general.webp {Qt General Options}
+            \image qtvstools-options-qt-general-ql.webp {Qt Linguist in Qt General Options}
         \li Set \uicontrol {Run in detached window} to \uicontrol True.
     \endlist
 
@@ -1912,7 +1912,7 @@
         \li Go to \uicontrol Extensions > \uicontrol {Qt VS Tools} >
             \uicontrol Options > \uicontrol Qt > \uicontrol General >
             \uicontrol Help.
-            \image qtvstools-options-qt-general.webp {Qt General Options}
+            \image qtvstools-options-qt-general-help.webp {Help in Qt General Options}
         \li Set \uicontrol {Try Qt documentation when F1 is pressed} to
             \uicontrol False.
     \endlist
@@ -1976,7 +1976,7 @@
         \li Go to \uicontrol Extensions > \uicontrol {Qt VS Tools} >
             \uicontrol Options > \uicontrol Qt > \uicontrol General >
             \uicontrol IntelliSense.
-            \image qtvstools-options-qt-general.webp {Qt General Options}
+            \image qtvstools-options-qt-general-intellisense.webp {IntelliSense Qt General Options}
         \li Select options:
             \list
                 \li \uicontrol {Auto project tracking} tracks changes and
@@ -2022,7 +2022,7 @@
         \li Go to \uicontrol Extensions > \uicontrol {Qt VS Tools} >
             \uicontrol Options > \uicontrol Qt > \uicontrol General >
             \uicontrol {QML Language Server}.
-            \image qtvstools-options-general-qmlls.webp {QML Language Server section in Qt General Options}
+            \image qtvstools-options-qt-general-qmlls.webp {QML Language Server section in Qt General Options}
         \li In \uicontrol Enable, select \uicontrol Enable to turn on the
             QML language server.
         \li In \uicontrol Log, select \uicontrol Enable to write LSP messages to
@@ -2171,7 +2171,7 @@
         \li Go to \uicontrol Extensions > \uicontrol {Qt VS Tools} >
             \uicontrol Options > \uicontrol Qt > \uicontrol General >
             \uicontrol {QML Debugging}.
-            \image qtvstools-options-qt-general.webp {Qt General Options}
+            \image qtvstools-options-qt-general-qml-debugging.webp {QML Debugging in Qt General Options}
         \li Set \uicontrol {Process debug events} to \uicontrol False.
     \endlist
 
@@ -2187,7 +2187,8 @@
         \li Go to \uicontrol Extensions > \uicontrol {Qt VS Tools} >
             \uicontrol Options > \uicontrol Qt > \uicontrol General >
             \uicontrol {QML Debugging}.
-        \li Set the value of \uicontrol {Runtime connection timeout}.
+        \li Set the value of \uicontrol {Runtime connection timeout} in
+            milliseconds.
     \endlist
 
     To remove the timeout, set the value to \uicontrol Disabled.
