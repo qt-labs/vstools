@@ -114,6 +114,7 @@
                 \li \l {Load Qt projects}
                 \li \l {Manage resources}
                 \li \l {Select Qt versions for a project}
+                \li \l {Set tool theme}
                 \li \l {Start \QD}
                 \li \l {Start \QL}
                 \li \l {Start Qt Resource Editor}
@@ -202,6 +203,7 @@
         \li \l {Start \QD}
         \li \l {Manage resources}
         \li \l {Start Qt Resource Editor}
+        \li \l {Set tool theme}
         \li \l {Get help}
     \endlist
 
@@ -261,6 +263,7 @@
         \li \l {Create Qt translation files}
         \li \l {Start \QL}
         \li \l {Update Qt translation files}
+        \li \l {Set tool theme}
     \endlist
 */
 
@@ -1696,7 +1699,7 @@
         \li Double-click a \c .ui file in the \uicontrol {Solution Explorer}.
     \endlist
 
-    \sa {Create UI form files}, {\QD Manual}
+    \section1 Detach \QD
 
     By default, \QD opens in Visual Studio. To open it as a stand-alone
     application, select \uicontrol Detach.
@@ -1705,11 +1708,38 @@
 
     \list 1
         \li Go to \uicontrol Extensions > \uicontrol {Qt VS Tools} >
-        \uicontrol Options > \uicontrol Qt > \uicontrol General >
-        \uicontrol {\QD}.
-        \image qtvstools-options-qt-general-qd.webp {Qt Designer in Qt General Options}
+            \uicontrol Options > \uicontrol Qt > \uicontrol General >
+            \uicontrol {\QD}.
+            \image qtvstools-options-qt-general-qd.webp {Qt Designer in Qt General Options}
         \li Set \uicontrol {Run in detached window} to \uicontrol True.
     \endlist
+
+    \sa {Create UI form files}, {Set tool theme}, {\QD Manual}
+*/
+
+/*!
+    \page qtvstools-how-to-set-tool-theme.html
+    \ingroup qtvstools-how-to
+
+    \title Set tool theme
+
+    You can start \QD, \QL, and Qt Resource Editor with a particular color theme
+    or style sheet.
+
+    To set editor color them and style sheet:
+
+    \list 1
+        \li Go to \uicontrol Extensions > \uicontrol {Qt VS Tools} >
+            \uicontrol Options > \uicontrol Qt > \uicontrol General >
+            \uicontrol {Style}.
+            \image qtvstools-options-qt-general-style.webp {Style in Qt General Options}
+        \li In \uicontrol {Color theme}, select the theme to use in the Qt tools.
+            The \uicontrol Consistent option uses the Visual Studio color theme.
+        \li In \uicontrol {Path to stylesheet}, select a style sheet for the Qt
+            tools.
+    \endlist
+
+    \sa {Start \QD}, {Start \QL}, {Start Qt Resource Editor}
 */
 
 /*!
@@ -1763,18 +1793,21 @@
 
     \image qtvstools-qrc-editor.png {Qt Resource Editor}
 
+    \section1 Detach Qt Resource Editor
+
     By default, Qt Resource Editor opens in Visual Studio. To run it in a
     separate window, select \uicontrol Detach.
 
     To run \uicontrol {Qt Resource Editor} in a separate window by default:
 
-    \list
+    \list 1
         \li Go to \uicontrol Extensions > \uicontrol {Qt VS Tools} >
             \uicontrol Options > \uicontrol {Qt Resource Editor}.
+            \image qtvstools-options-qt-general-qrc-editor.webp {Qt Resource Editor in Qt General Options}
         \li Set \uicontrol {Run in detached window} to \uicontrol True.
     \endlist
 
-    \sa {Manage resources}, {The Qt Resource System}
+    \sa {Manage resources}, {Set tool theme}, {The Qt Resource System}
 */
 
 /*!
@@ -1880,6 +1913,8 @@
         \li Double-click a \c .ts file in the \uicontrol {Solution Explorer}.
     \endlist
 
+    \section1 Detach \QL
+
     By default, \QL opens in Visual Studio. To open it as a stand-alone
     application, select \uicontrol Detach.
 
@@ -1893,8 +1928,8 @@
         \li Set \uicontrol {Run in detached window} to \uicontrol True.
     \endlist
 
-    \sa {Create Qt translation files}, {Internationalization with Qt},
-    {\QL Manual}
+    \sa {Create Qt translation files}, {Set tool theme},
+    {Internationalization with Qt}, {\QL Manual}
 */
 
 /*!
