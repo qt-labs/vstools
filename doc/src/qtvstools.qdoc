@@ -1274,6 +1274,19 @@
 
     \image qtvstools-pro-file-conversion-report.webp {Project format conversion report}
 
+    \section1 Hide the message
+
+    To turn off notifications about completing the conversion:
+
+    \list 1
+        \li Go to \uicontrol Extensions > \uicontrol {Qt VS Tools} >
+            \uicontrol Options > \uicontrol Qt > \uicontrol General >
+            \uicontrol {Notifications}.
+            \image qtvstools-options-qt-general-notifications.webp {Notifications in Qt General Options}
+        \li In \uicontrol {CMake conversion confirmation}, select
+            \uicontrol Disable.
+    \endlist
+
     \sa {Building}, {Configuring builds}
 */
 
