@@ -1,7 +1,7 @@
-Qt Visual Studio Tools version 3.2.0:
+Qt Visual Studio Tools version 3.3.0:
 
 This update to the Qt VS Tools extension introduces experimental support for the Visual Studio test
-adapter for the QtTest framework. It also introduces an improved and more streamlined build process
+adapter for the Qt Test framework. It also introduces an improved and more streamlined build process
 with Qt/MSBuild.
 
 Changes
