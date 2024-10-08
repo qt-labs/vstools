@@ -16,22 +16,19 @@
 <body>
 <!-- BEGIN Visual Studio Marketplace Extension Page: Overview -->
 <!-- CUT HERE vvv CUT HERE vvv CUT HERE vvv CUT HERE vvv CUT HERE vvv CUT HERE vvv CUT HERE vvv -->
-<#if (VS_TARGET_ARCH != "arm64") {#>
-<p><h1>Qt VS Tools for Visual Studio <#=VS_NAME #></h1></p>
 
-<p>
-    Qt Visual Studio Tools integrate the Qt development tools into Microsoft Visual Studio
-    <#=VS_NAME #>.
+<#if (VS_TARGET_ARCH != "arm64") {#>
+    <p><h1>Qt VS Tools for Visual Studio <#=VS_NAME #></h1></p>
 <#} else {#>
     <p><h1>Qt VS Tools for Visual Studio <#=VS_NAME #> on ARM</h1></p>
-
-<p>
-    Qt Visual Studio Tools integrate the Qt development tools into Microsoft Visual Studio
-    <#=VS_NAME #> on ARM.
 <#}#>
-    This enables developers to use the standard Windows development environment
-    without having to worry about Qt-related build steps or tools.
+<p>
+    This official Qt Group extension, Qt Visual Studio Tools, integrates Qt development tools
+    into Microsoft Visual Studio <#=VS_NAME #><#if (VS_TARGET_ARCH == "arm64") {#> on ARM<#}#>,
+    enabling developers to use their familiar Windows environment without worrying about
+    Qt-related build steps or tools.
 </p>
+
 <p>
     See also:
     <ul>
@@ -109,8 +106,14 @@ href="https://marketplace.visualstudio.com/items?itemName=TheQtCompany.QtVisualS
     <li>
         QML debug engine for debugging Qt Quick applications.
     </li>
+</ul>
+<p><h3><span>Experimental features of Qt VS Tools:</span></h3></p>
+<ul>
     <li>
-        Experimental support for QML language server.
+        Support for QML language server.
+    </li>
+    <li>
+        Support for the Visual Studio test adapter for the Qt Test framework.
     </li>
 </ul>
 <p><h3>Qt MSBuild file support</h3></p>
