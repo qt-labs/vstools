@@ -1574,8 +1574,8 @@
             \image qtvstools-convert-project-format.webp {Additional command line options}
         \li Go to \uicontrol Extensions > \uicontrol {Qt VS Tools} >
             \uicontrol {Qt Versions}.
-        \li In \uicontrol Default, select the checkbox next to the
-            Qt version that you initially created the project for.
+        \li Select the Qt version that you initially created the project for, and
+            then select \uicontrol Default.
             \image qtvstools-qt-versions.webp {Qt Versions}
     \endlist
 
@@ -1643,16 +1643,15 @@
 
     \list 1
         \li Go to \uicontrol Extensions > \uicontrol {Qt VS Tools} >
-            \uicontrol {Qt Versions}
-        \li Select \inlineimage plus.png to add a new Qt version.
+            \uicontrol {Qt Versions}.
             \image qtvstools-qt-versions.webp {Qt Versions}
-        \li In \uicontrol Version, enter a name for the Qt version.
-            If you add the path to Qt first, this field is filled automatically.
+        \li Select \uicontrol Add.
+        \li In \uicontrol Name, enter a name for the Qt version. If you add the
+            location of Qt first, this field is filled automatically.
+        \li In \uicontrol Location, enter the path to the Qt installation.
         \li In \uicontrol Host, select \uicontrol {Linux WSL} or
             \uicontrol {Linux SSH}.
-        \li In \uicontrol Path, enter the path to the Qt installation.
-        \li In \uicontrol Compiler, enter the cross-compiler to use.
-            The default value is g++.
+        \li \uicontrol Compiler shows the cross-compiler to use.
     \endlist
 
     \section1 Compile on WSL
