@@ -1461,7 +1461,8 @@
     \list 1
         \li In \uicontrol {Solution Explorer}, right-click the project and
             go to \uicontrol Properties in the context menu.
-        \li Select \uicontrol {Qt Project Settings}.
+        \li Select \uicontrol {Configuration Properties} >
+            \uicontrol {Qt Project Settings}.
             \image qtvstools-qt-project-settings.webp {Qt Project Settings dialog}
         \li In \uicontrol {Qt Installation}, select the Qt version.
     \endlist
@@ -1511,9 +1512,10 @@
     level:
 
     \list
-        \li Go to \uicontrol Properties in the context menu of the project.
-        \li Go to \uicontrol Extensions > \uicontrol {Qt VS Tools} >
+        \li Go to \uicontrol Project > \uicontrol Properties >
+            \uicontrol {Configuration Properties} >
             \uicontrol {Qt Project Settings}.
+        \li Go to \uicontrol Properties in the context menu of the project.
     \endlist
 
     \image qtvstools-qt-project-settings.webp {Qt Project Settings}
@@ -1878,36 +1880,52 @@
     \section1 Run translation tools during builds
 
     To run \l {Using lupdate}{lupdate} or \l {Using lrelease}{lrelease} when you
-    build a project, go to \uicontrol {Extensions} > \uicontrol {Qt VS Tools} >
-    \uicontrol {Qt Project Settings} > \uicontrol {Qt Translation} >
-    \uicontrol {General}, and select the tool to run.
+    build a project:
 
-    \image qtvstools-project-properties-qt-translation.webp {Qt Translation properties}
+    \list 1
+        \li In \uicontrol {Solution Explorer}, right-click the project and
+            select \uicontrol Qt > \uicontrol {Qt Project Settings} in the
+            context menu.
+        \li Select \uicontrol {Configuration Properties} >
+            \uicontrol {Qt Translation} > \uicontrol {General}.
+        \li In \uicontrol {Run Translation Tool During Build}, select the tools
+            to run.
+            \image qtvstools-project-properties-qt-translation.webp {Qt Translation properties}
+    \endlist
+
+    \note The \uicontrol {Qt Translation} properties are shown only if the
+    project has translation files.
 
     \section1 Set lupdate properties
 
-    To set properties for running \c lupdate for a project,
-    go to \uicontrol {Extensions} > \uicontrol {Qt VS Tools} >
-    \uicontrol {Qt Project Settings} > \uicontrol {Qt Translation} >
-    \uicontrol lupdate.
+    To set properties for running \c lupdate for a project:
 
-    \image qtvstools-project-properties-lupdate.webp {lupdate properties}
-
-    Select a property to see its description.
+    \list 1
+        \li In \uicontrol {Solution Explorer}, right-click the project and
+            select \uicontrol Qt > \uicontrol {Qt Project Settings} in the
+            context menu.
+        \li Select \uicontrol {Configuration Properties} >
+            \uicontrol {Qt Translation} > \uicontrol {lupdate}.
+            \image qtvstools-project-properties-lupdate.webp {lupdate properties}
+        \li Select a property to see its description.
+    \endlist
 
     For a list of properties that you can set in \uicontrol {AdditionalOptions},
     see \l {lupdate options}.
 
     \section1 Set lrelease properties
 
-    To set properties for running \c lrelease for a project,
-    go to \uicontrol {Extensions} > \uicontrol {Qt VS Tools} >
-    \uicontrol {Qt Project Settings} > \uicontrol {Qt Translation} >
-    \uicontrol lrelease.
+    To set properties for running \c lrelease for a project:
 
-    \image qtvstools-project-properties-lrelease.webp {lrelease properties}
-
-    Select a property to see its description.
+    \list 1
+        \li In \uicontrol {Solution Explorer}, right-click the project and
+            select \uicontrol Qt > \uicontrol {Qt Project Settings} in the
+            context menu.
+        \li Select \uicontrol {Configuration Properties} >
+            \uicontrol {Qt Translation} > \uicontrol {lrelease}.
+            \image qtvstools-project-properties-lrelease.webp {lrelease properties}
+        \li Select a property to see its description.
+    \endlist
 
     For a list of properties that you can set in \uicontrol {AdditionalOptions},
     see \l {lrelease options}.
@@ -2266,8 +2284,10 @@
     To enable QML debugging for a project:
 
     \list 1
-        \li Go to \uicontrol {Extensions} > \uicontrol {Qt VS Tools} >
-            \uicontrol {Qt Project Settings} > \uicontrol {QML}.
+        \li In \uicontrol {Solution Explorer}, right-click the project and
+            select \uicontrol Properties in the context menu.
+        \li Select \uicontrol {Configuration Properties} >
+            \uicontrol {Qt Project Settings}.
         \li In \uicontrol {Enable QML Debugging}, select \uicontrol {Yes}.
             \image qtvstools-quick-addressbook-enable-qml-debugging.webp {Enabling QML debugging for a project}
         \li Select \uicontrol {OK} to save the project settings.
