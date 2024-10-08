@@ -111,6 +111,7 @@
                 \li \l {Debug on Linux}
                 \li \l {Enable QML debugging}
                 \li \l {Get help}
+                \li \l {Hide output}
                 \li \l {Load Qt projects}
                 \li \l {Manage resources}
                 \li \l {Select Qt versions for a project}
@@ -228,6 +229,7 @@
         \li \l {Build solutions that have Qt/MSBuild format 2}
         \li \l {Convert solutions to latest Qt/MSBuild format}
         \li \l {Cross-compile}
+        \li \l {Hide output}
         \li \l {Update IntelliSense info}
     \endlist
 
@@ -2743,4 +2745,27 @@ QTEST_MAIN(QtTest)
 
     \sa {Tutorial: Qt Test application},
     {Configure Qt tests using a .runsettings file}, {Files}
+*/
+
+/*!
+    \page qtvstools-how-to-hide-output.html
+    \ingroup qtvstools-how-to
+
+    \title Hide output
+
+    Qt VS Tools shows messages in the \uicontrol Output pane when you start it
+    and build applications, for example.
+
+    \image qtvstools-output.webp {Qt VS Tools messages in the Output pane}
+
+    To stop the Qt VS Tools output from being activated and hiding the output
+    from Visual Studio:
+
+    \list 1
+        \li Go to \uicontrol Extensions > \uicontrol {Qt VS Tools} >
+            \uicontrol Options > \uicontrol Qt > \uicontrol General >
+            \uicontrol {Notifications}.
+            \image qtvstools-options-qt-general-notifications.webp {Notifications in Qt General Options}
+        \li In \uicontrol {Auto activate console pane}, select \uicontrol Disable.
+    \endlist
 */
