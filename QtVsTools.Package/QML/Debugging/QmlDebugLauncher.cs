@@ -384,7 +384,7 @@ namespace QtVsTools.Qml.Debug
                 return NextHook?.OnLaunchDebugTargets(targetCount, targets, results) ?? S_OK;
 
             if (env.ContainsKey("PATH") && env.ContainsKey("QTDIR")) {
-                env["PATH"] += ";%QTDIR%/bin";
+                env["PATH"] += $";{env["QTDIR"]}/bin";
                 targets[0].bstrEnv = string.Join("\0", env.Select(x => $"{x.Key}={x.Value}"));
             }
 
