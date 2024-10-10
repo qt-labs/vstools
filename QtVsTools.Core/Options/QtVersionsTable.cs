@@ -258,7 +258,7 @@ namespace QtVsTools.Core.Options
             }
         }
 
-        private void OnBrowseQtInstallation_Click(object sender, RoutedEventArgs e)
+        private void OnImportQtInstallation_Click(object sender, RoutedEventArgs e)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
             if (VsServiceProvider.GetService<SVsUIShell, IVsUIShell>() is not {} iVsUiShell)

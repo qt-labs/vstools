@@ -222,7 +222,8 @@
               MinHeight="24"
               Margin="0,6,6,0"
               Padding="10,0,0,0"
-              Click="OnAddNewVersion_Click">Add</Button>
+              Click="OnAddNewVersion_Click"
+              ToolTip="Add Qt versions that you installed from other sources than Qt Online Installer or built yourself">Add</Button>
       <Button Grid.Column="1"
               MinWidth="80"
               MinHeight="24"
@@ -258,7 +259,7 @@
               Margin="0,6,6,0"
               Padding="10,0,10,0"
               Content="Default"
-              ToolTip="Set the selected Qt version as default for new projects"
+              ToolTip="Set the selected Qt version as the default version for new projects"
               Click="OnSetAsDefault_Click">
         <Button.Style>
           <Style TargetType="Button">
@@ -311,8 +312,8 @@
               MinHeight="24"
               Margin="0,6,6,0"
               Padding="10,0,10,0"
-              Click="OnBrowseQtInstallation_Click"
-              ToolTip="Import from a Qt installer directory">Browse</Button>
+              Click="OnImportQtInstallation_Click"
+              ToolTip="Import Qt versions that you installed with the Qt Online Installer">Import</Button>
       <Button Grid.Column="5"
               MinWidth="80"
               MinHeight="24"
@@ -320,7 +321,7 @@
               Padding="10,0,10,0"
               x:Name="ButtonAutodetect"
               Click="OnAutodetectQtInstallations_Click"
-              ToolTip="Automatically detect Qt versions from Qt Creator">Autodetect</Button>
+              ToolTip="Automatically detect Qt versions that you installed with the Qt Online Installer or from Qt Creator">Autodetect</Button>
       <Button Grid.Column="6"
               MinWidth="80"
               MinHeight="24"

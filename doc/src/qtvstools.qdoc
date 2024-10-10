@@ -1395,7 +1395,7 @@
     Qt VS Tools can automatically detect Qt versions that you install with \QOI.
     To automatically detect installed Qt versions, select \uicontrol Autodetect.
 
-    To detect installed Qt versions from a folder, select \uicontrol Browse and
+    To detect installed Qt versions from a folder, select \uicontrol Import and
     locate the Qt installation folder.
 
     \section1 Remove Qt versions
