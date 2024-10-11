@@ -110,6 +110,7 @@
     <Compile Include="MsBuild.cs" />
     <Compile Include="Test_BigSolution.cs" />
     <Compile Include="Test_StdAfx.cs" />
+    <Compile Include="Test_Cpp20.cs" />
     <Compile Include="Test_QmlStatic.cs" />
     <Compile Include="Test_IntDir.cs" />
     <Compile Include="Test_LateBinding.cs" />

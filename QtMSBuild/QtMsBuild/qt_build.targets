@@ -159,7 +159,8 @@
           >$(Qt_DEFINES_);%(ClCompile.PreprocessorDefinitions)</PreprocessorDefinitions>
         <PreprocessorDefinitions Condition="'$(QtQMLDebugEnable)' == 'true'"
           >QT_QML_DEBUG;%(ClCompile.PreprocessorDefinitions)</PreprocessorDefinitions>
-        <LanguageStandard Condition="'$(Qt_STDCPP_)' != ''"
+        <LanguageStandard Condition="'$(Qt_STDCPP_)' != ''
+                          AND '%(ClCompile.LanguageStandard)' == 'Default'"
           >$(Qt_STDCPP_)</LanguageStandard>
         <RuntimeLibrary Condition="'$(Qt_RUNTIME_)' != ''"
           >$(Qt_RUNTIME_)</RuntimeLibrary>
