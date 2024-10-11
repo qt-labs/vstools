@@ -170,9 +170,16 @@
     DependsOnTargets="QtVars"
     BeforeTargets="QtMoc"
     Condition="'@(QtMoc)' != ''">
+    <PropertyGroup>
+      <QtMocPrecompiledHeader>@(ClCompile->WithMetadataValue('Identity','DefaultClCompile')->'%(PrecompiledHeader)')</QtMocPrecompiledHeader>
+    </PropertyGroup>
     <ItemGroup>
       <QtMoc>
         <IncludePath>%(QtMoc.IncludePath);$(Qt_INCLUDEPATH_)</IncludePath>
+      </QtMoc>
+      <QtMoc Condition="'$(QtMocPrecompiledHeader)' == 'Use'">
+        <IncludePath>%(QtMoc.IncludePath);$(ProjectDir)</IncludePath>
+        <AdditionalIncludeDirectories>%(QtMoc.AdditionalIncludeDirectories);$(ProjectDir)</AdditionalIncludeDirectories>
       </QtMoc>
     </ItemGroup>
   </Target>
