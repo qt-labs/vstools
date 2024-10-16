@@ -22,7 +22,8 @@ namespace QtVsTools.Editors
     public class QtDesigner : Editor
     {
         public const string GuidString = "96FE523D-6182-49F5-8992-3BEA5F7E6FF6";
-        public const string Title = "Qt Designer";
+        public const string Title = "Qt Widgets Designer";
+        public const string LegacyTitle = "Qt Designer";
 
         private Guid? guid;
         public override Guid Guid => guid ??= new Guid(GuidString);
@@ -30,7 +31,7 @@ namespace QtVsTools.Editors
         public override string ExecutableName => "designer.exe";
 
         public override Func<string, bool> WindowFilter =>
-            caption => caption.StartsWith(Title);
+            caption => caption.StartsWith(Title) || caption.StartsWith(LegacyTitle);
 
         protected override string GetTitle(Process editorProcess)
         {
