@@ -17,7 +17,7 @@ def main():
     vsToolsLabelText = selectInstalledVsTools()
     if test.verify(vsToolsLabelText, "Are Qt VS Tools found in extension manager?"):
         version = getMsvsProductLine()
-        test.verify(vsToolsLabelText.startswith("The Qt VS Tools for Visual Studio " + version),
+        test.verify(("into Microsoft Visual Studio " + version) in vsToolsLabelText,
                     "Are these 'Qt VS Tools for Visual Studio %s' as expected? Found:\n%s"
                     % (version, vsToolsLabelText))
         verifyVsToolsVersion()

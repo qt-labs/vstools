@@ -11,7 +11,8 @@ extensions_Manage_Extensions_MenuItem = {"container": globalnames.extensions_Men
                                          "text": RegularExpression("^Manage Extensions(\.\.\.)?$"),
                                          "type": "MenuItem"}
 manage_Extensions_Window = {"text": Wildcard("*Extensions*"), "type": "Window"}
-extensionManager_UI_InstalledExtItem_Qt_Label = {"text": Wildcard("The Qt VS Tools for Visual Studio *"), "type": "Label"}
+extensionManager_UI_InstalledExtItem_Qt_Label = {
+    "text": Wildcard("This official Qt Group extension, Qt Visual Studio Tools*"), "type": "Label"}
 manage_Extensions_Close_Button = {"container": manage_Extensions_Window, "text": "Close", "type": "Button"}
 extensions_and_Updates_lvw_Extensions_ListView = {"container": manage_Extensions_Window, "name": "lvw_Extensions", "type": "ListView"}
 lvw_Extensions_Microsoft_VisualStudio_ExtensionManager_UI_InstalledExtensionItem_ListViewItem = {"container": extensions_and_Updates_lvw_Extensions_ListView, "id": "Qt Visual Studio Tools", "text": "Microsoft.VisualStudio.ExtensionManager.UI.InstalledExtensionItem", "type": "ListViewItem"}
