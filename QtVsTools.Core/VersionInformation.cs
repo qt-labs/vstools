@@ -35,6 +35,22 @@ namespace QtVsTools.Core
 
         public string VsPlatformName { get; }
         public string QMakeSpecDirectory { get; }
+
+        /// <summary>
+        /// Retrieves the value of a variable from the qmake.conf file.
+        /// </summary>
+        /// <param name="entryName">The name of the variable.</param>
+        /// <returns>
+        /// The value of the variable specified by <paramref name="entryName" />,
+        /// or <see langword="null" /> if the variable is not found.
+        /// </returns>
+        /// <exception cref="System.ArgumentNullException">
+        /// Thrown when <paramref name="entryName" /> is <see langword="null" />.
+        /// </exception>
+        /// <exception cref="System.NullReferenceException">
+        /// Thrown when the qmake configuration file has not been successfully loaded,
+        /// causing the internal qmake configuration data to be <see langword="null" />.
+        /// </exception>
         public string GetQMakeConfEntry(string entryName) => qmakeConf[entryName];
 
         private string targetMachine;

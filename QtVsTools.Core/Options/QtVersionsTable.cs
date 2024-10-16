@@ -564,10 +564,15 @@ namespace QtVsTools.Core.Options
                     continue;
                 }
 
-                var generator = versionInfo.GetQMakeConfEntry("MAKEFILE_GENERATOR");
-                if (generator is not ("MSVC.NET" or "MSBUILD")) {
-                    Messages.Print($"Skip incompatible Qt version: {versionName}, "
-                      + $"path: '{compilerDir}', makefile generator: {generator}.");
+                try {
+                    var generator = versionInfo.GetQMakeConfEntry("MAKEFILE_GENERATOR");
+                    if (generator is not ("MSVC.NET" or "MSBUILD")) {
+                        Messages.Print($"Skip incompatible Qt version: {versionName}, "
+                            + $"path: '{compilerDir}', makefile generator: {generator}.");
+                        continue;
+                    }
+                } catch (Exception exception) {
+                    exception.Log();
                     continue;
                 }
 
