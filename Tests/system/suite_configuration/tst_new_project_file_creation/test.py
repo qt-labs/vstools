@@ -221,9 +221,9 @@ def main():
                         else:
                             test.exception("waitForObjectExists(names.qt_cpp_Label, 10000)",
                                            "No file should be opened for %s" % templateName)
-                        test.verify(all(map(os.path.exists,
-                                            listExpectedWrittenFiles(workDir, projectName,
-                                                                     templateName, cmakeBased))),
+                        written = listExpectedWrittenFiles(workDir, projectName,
+                                                           templateName, cmakeBased)
+                        test.verify(waitFor(lambda: all(map(os.path.exists, written)), 12000),
                                     "Were all expected files created?")
                         if (templateName != "Qt ActiveQt Server"
                             and buildSolution(projectName, cmakeBased)):
