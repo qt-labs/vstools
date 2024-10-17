@@ -429,8 +429,8 @@ namespace QtVsTools.Core.Options
 
         [Category("QML Language Server")]
         [DisplayName("Enable")]
-        [Description("Connect to a QML language server for enhanced code editing experience. "
-            + "Restarting Visual Studio might be required after enabling the QML Language server.")]
+        [Description("Connect to a QML Language Server for enhanced code editing experience. "
+            + "Restarting Visual Studio might be required after enabling the QML Language Server.")]
         [TypeConverter(typeof(EnableDisableConverter))]
         public bool QmlLspEnableOption
         {
@@ -444,7 +444,7 @@ namespace QtVsTools.Core.Options
 
         [Category("QML Language Server")]
         [DisplayName("Qt Version")]
-        [Description("Look for a QML language server in the specified Qt installation.")]
+        [Description("Look for a QML Language Server in the specified Qt installation.")]
         [TypeConverter(typeof(QmlLspProviderConverter))]
         public string QmlLspVersionOption
         {

@@ -110,7 +110,7 @@ href="https://marketplace.visualstudio.com/items?itemName=TheQtCompany.QtVisualS
 <p><h3><span>Experimental features of Qt VS Tools:</span></h3></p>
 <ul>
     <li>
-        Support for QML language server.
+        Support for QML Language Server.
     </li>
     <li>
         Support for the Visual Studio test adapter for the Qt Test framework.
