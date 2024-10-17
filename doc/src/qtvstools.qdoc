@@ -119,7 +119,7 @@
                 \li \l {Start \QD}
                 \li \l {Start \QL}
                 \li \l {Start Qt Resource Editor}
-                \li \l {Turn on QML language server}
+                \li \l {Turn on QML Language Server}
                 \li \l {Update IntelliSense info}
                 \li \l {Update Qt translation files}
                 \li \l {Visualize C++ types}
@@ -214,7 +214,7 @@
     code editing features for C++ and QML types.
 
     \list
-        \li \l {Turn on QML language server}
+        \li \l {Turn on QML Language Server}
         \li \l {Update IntelliSense info}
     \endlist
 
@@ -2067,14 +2067,14 @@
     \page qtvstools-how-to-enable-qmlls.html
     \ingroup qtvstools-how-to
 
-    \title Turn on QML language server
+    \title Turn on QML Language Server
 
     For several programming languages, a language server offers information
     about the code to IDEs as long as they support communication via the
     \l{QML Language Server Reference}{language server protocol (LSP)}. The IDE
     can then offer services, such as code completion.
 
-    Turn on the QML language server to get code editing services when developing
+    Turn on the QML Language Server to get code editing services when developing
     Qt Quick applications if:
 
     \list
@@ -2088,7 +2088,7 @@
     The services you get depend on the Qt version and Visual Studio version
     that you use.
 
-    To turn on the QML language server:
+    To turn on the QML Language Server:
 
     \list 1
         \li Go to \uicontrol Extensions > \uicontrol {Qt VS Tools} >
@@ -2096,12 +2096,12 @@
             \uicontrol {QML Language Server}.
             \image qtvstools-options-qt-general-qmlls.webp {QML Language Server section in Qt General Options}
         \li In \uicontrol Enable, select \uicontrol Enable to turn on the
-            QML language server.
+            QML Language Server.
         \li In \uicontrol Log, select \uicontrol Enable to write LSP messages to
             a log file in a temporary folder.
         \li In \uicontrol {Log size}, set the maximum size of the log file in KB.
         \li In \uicontrol {Qt version}, select an installed Qt version that
-            supports the QML language server.
+            supports the QML Language Server.
     \endlist
 
     \sa {Update IntelliSense info}
