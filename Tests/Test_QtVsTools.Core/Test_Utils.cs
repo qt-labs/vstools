@@ -14,7 +14,7 @@ namespace QtVsTools.Test.Core
     using static QtVsTools.Core.Common.Utils;
 
     [TestClass]
-    public class Test_Utils
+    public partial class Test_Utils
     {
         private double NanosecondsPerTick => Math.Pow(10.0, 9.0) / Stopwatch.Frequency;
 

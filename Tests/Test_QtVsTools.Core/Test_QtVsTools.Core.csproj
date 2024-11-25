@@ -106,6 +106,7 @@
     <Compile Include="Test_LazyFactory.cs" />
     <Compile Include="Test_Utils.cs" />
     <Compile Include="Test_IdleTaskManager.cs" />
+    <Compile Include="Test_Utils.Zip.cs" />
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
