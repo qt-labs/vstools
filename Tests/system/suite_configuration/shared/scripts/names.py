@@ -93,3 +93,5 @@ name_Edit = {"container": options_WPFControl, "leftObject": name_Label, "type": 
 location_Label = {"container": options_WPFControl, "text": "Location:", "type": "Label"}
 location_Edit = {"container": options_WPFControl, "leftObject": location_Label, "type": "Edit"}
 remove_Button = {"container": options_WPFControl, "text": "Remove", "type": "Button"}
+view_Solution_Explorer_MenuItem = {"container": view_MenuItem, "text": "Solution Explorer",
+                                   "type": "MenuItem"}

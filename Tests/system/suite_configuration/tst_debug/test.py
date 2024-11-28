@@ -80,6 +80,8 @@ def main():
     clickButton(waitForObject(names.qt_Wizard_Finish_Button))
     fixAppContext()
 
+    mouseClick(waitForObject(names.view_MenuItem))
+    mouseClick(waitForObject(names.view_Solution_Explorer_MenuItem))
     doubleClick(waitForObjectItem(names.msvs_SolutionExplorer_List, "Source Files"))
     doubleClick(waitForObjectItem(names.msvs_SolutionExplorer_List, "main.cpp"))
     for _ in range(13): # move to line "if (engine.rootObjects().isEmpty())"
