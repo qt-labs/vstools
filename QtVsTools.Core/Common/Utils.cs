@@ -21,7 +21,7 @@ namespace QtVsTools.Core.Common
 
         public static class ProjectTypes
         {
-            public const string C_PLUS_PLUS = "{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}";
+            public const string CPlusPlus = "{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}";
         }
 
         public static StringComparison IgnoreCase => StringComparison.OrdinalIgnoreCase;
@@ -38,7 +38,7 @@ namespace QtVsTools.Core.Common
             }
 
             int pos = 0, index;
-            var result = new System.Text.StringBuilder();
+            var result = new StringBuilder();
             while ((index = original.IndexOf(oldValue, pos, comparison)) >= 0) {
                 result.Append(original, pos, index - pos).Append(newValue);
                 pos = index + oldValue.Length;

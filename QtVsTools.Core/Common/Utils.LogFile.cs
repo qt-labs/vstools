@@ -67,10 +67,7 @@ namespace QtVsTools.Core.Common
                     > 0 when truncSize < maxSize => truncSize,
                     _ => throw new ArgumentOutOfRangeException(nameof(truncSize))
                 };
-                Delimiters = delimiters
-                    ?.Select(Encoding.UTF8.GetBytes)
-                    ?.ToList()
-                    ?? new();
+                Delimiters = delimiters?.Select(Encoding.UTF8.GetBytes).ToList() ?? new();
             }
 
             public void Write(string logEntry)

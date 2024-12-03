@@ -91,7 +91,7 @@ namespace QtVsTools.Package.CMake
             if (selection.FirstOrDefault() is not IFileSystemNode node)
                 return (int)Constants.OLECMDERR_E_NOTSUPPORTED;
 
-            var projectTypeGuid = new Guid(Utils.ProjectTypes.C_PLUS_PLUS);
+            var projectTypeGuid = new Guid(Utils.ProjectTypes.CPlusPlus);
             const uint uiFlags = (uint)(__VSADDITEMFLAGS.VSADDITEM_AddNewItems
                 | __VSADDITEMFLAGS.VSADDITEM_SuggestTemplateName
                 | __VSADDITEMFLAGS.VSADDITEM_AllowHiddenTreeView);
