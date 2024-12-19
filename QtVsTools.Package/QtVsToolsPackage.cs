@@ -266,9 +266,11 @@ namespace QtVsTools
 
         protected override async Task OnAfterPackageLoadedAsync(CancellationToken cancellationToken)
         {
-            QtVersionManager.MoveRegisteredQtVersions();
-
             await Task.WhenAll(
+                /////////
+                // Move registered Qt versions
+                //
+                Task.Run(QtVersionManager.MoveRegisteredQtVersions, cancellationToken),
 
                 /////////
                 // Initialize Qt versions information
@@ -278,22 +280,29 @@ namespace QtVsTools
                 /////////
                 // Copy natvis files
                 //
-                CopyVisualizersFilesAsync());
+                CopyVisualizersFilesAsync(),
 
-            if (QtVersionManager.GetInstallPath("$(DefaultQtVersion)") is {} path) {
-                if (!new[] { "SSH:", "WSL:" }.Any(path.StartsWith)) {
+                /////////
+                // Setup QTDIR environment variable
+                //
+                Task.Run(() =>
+                {
+                    if (QtVersionManager.GetInstallPath("$(DefaultQtVersion)") is not {} path)
+                        return;
+                    if (new[] { "SSH:", "WSL:" }.Any(path.StartsWith))
+                        return;
                     if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable("QTDIR"))) {
                         Environment.SetEnvironmentVariable("QTDIR", path,
                             EnvironmentVariableTarget.Process);
                     }
-                }
-            }
+                }, cancellationToken)
+            );
+
 
             /////////
             // Show banner
             //
             Messages.Print(trim: false, text: @$"
-
 
     ################################################################
         == Qt Visual Studio Tools version {Version.USER_VERSION} ==
