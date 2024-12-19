@@ -174,7 +174,7 @@ namespace QtVsTools.Qml.Debug.AD7
         {
             get
             {
-                var qrcPath = Engine.FileSystem[Parent.FileName];
+                var qrcPath = Engine.FileSystem.ToFilePath(Parent.FileName);
                 if (qrcPath == null)
                     return string.Empty;
                 if (qrcPath.StartsWith("qrc:///", IgnoreCase))

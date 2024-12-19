@@ -28,7 +28,7 @@ namespace QtVsTools.Qml.Debug
             };
         }
 
-        static readonly string[] KNOWN_EXTENSIONS = { ".qml", ".js" };
+        private static readonly string[] KnownExtensions = { ".qml", ".js" };
 
         private FileSystem()
         { }
@@ -42,9 +42,8 @@ namespace QtVsTools.Qml.Debug
                 {
                     DtdProcessing = DtdProcessing.Ignore
                 };
-                using (var reader = XmlReader.Create(new StringReader(xmlText), settings)) {
-                    rccXml = XDocument.Load(reader);
-                }
+                using var reader = XmlReader.Create(new StringReader(xmlText), settings);
+                rccXml = XDocument.Load(reader);
             } catch (Exception exception) {
                 exception.Log();
                 return;
@@ -60,7 +59,7 @@ namespace QtVsTools.Qml.Debug
                         Alias = y.Attribute("alias"),
                         Path = HelperFunctions.ToNativeSeparator((string)y)
                     })
-                    .Where(z => KNOWN_EXTENSIONS.Contains(Path.GetExtension(z.Path), CaseIgnorer)));
+                    .Where(z => KnownExtensions.Contains(Path.GetExtension(z.Path), CaseIgnorer)));
 
             var rccFileDir = Path.GetDirectoryName(rccFilePath);
             foreach (var file in files) {
@@ -75,13 +74,19 @@ namespace QtVsTools.Qml.Debug
                 var qrcPathPrefix = file.Prefix != null ? (string)file.Prefix : "";
                 if (!string.IsNullOrEmpty(qrcPathPrefix) && !qrcPathPrefix.EndsWith("/"))
                     qrcPathPrefix += Path.AltDirectorySeparatorChar;
-
-                while (!string.IsNullOrEmpty(qrcPathPrefix) && qrcPathPrefix[0] == Path.AltDirectorySeparatorChar)
-                    qrcPathPrefix = qrcPathPrefix.Substring(1);
-
+                qrcPathPrefix = RemoveLeadingAltDirectorySeparators(qrcPathPrefix);
                 qrcToLocalFileMap[$"qrc:///{qrcPathPrefix}{qrcPath}"] =
                     HelperFunctions.ToNativeSeparator(Path.Combine(rccFileDir!, file.Path));
             }
+        }
+
+        public string ToFilePath(string path)
+        {
+            if (path.StartsWith("qrc:", IgnoreCase))
+                return FromQrcPath(path);
+            if (path.StartsWith("file:", IgnoreCase))
+                return FromFileUrl(path);
+            return FromFilePath(path);
         }
 
         private string FromQrcPath(string qrcPath)
@@ -94,23 +99,15 @@ namespace QtVsTools.Qml.Debug
             //  - then the "normalized" prefix "qrc:///" is added
             if (!qrcPath.StartsWith("qrc:"))
                 return default;
-            qrcPath = qrcPath.Substring("qrc:".Length);
-
-            while (!string.IsNullOrEmpty(qrcPath) && qrcPath[0] == Path.AltDirectorySeparatorChar)
-                qrcPath = qrcPath.Substring(1);
-
+            qrcPath = RemoveLeadingAltDirectorySeparators(qrcPath.Substring("qrc:".Length));
             qrcPath = $"qrc:///{qrcPath}";
             return qrcToLocalFileMap.TryGetValue(qrcPath, out var filePath) ? filePath : default;
         }
 
         private static string FromFileUrl(string fileUrl)
         {
-            var filePath = fileUrl.Substring("file://".Length);
-
-            while (!string.IsNullOrEmpty(filePath) && filePath[0] == Path.AltDirectorySeparatorChar)
-                filePath = filePath.Substring(1);
-
-            return File.Exists(filePath) ? HelperFunctions.ToNativeSeparator(filePath) : default;
+            var path = RemoveLeadingAltDirectorySeparators(fileUrl.Substring("file://".Length));
+            return File.Exists(path) ? HelperFunctions.ToNativeSeparator(path) : default;
         }
 
         private static string FromFilePath(string filePath)
@@ -123,16 +120,11 @@ namespace QtVsTools.Qml.Debug
             }
         }
 
-        public string this[string path]
+        private static string RemoveLeadingAltDirectorySeparators(string path)
         {
-            get
-            {
-                if (path.StartsWith("qrc:", IgnoreCase))
-                    return FromQrcPath(path);
-                if (path.StartsWith("file:", IgnoreCase))
-                    return FromFileUrl(path);
-                return FromFilePath(path);
-            }
+            while (!string.IsNullOrEmpty(path) && path[0] == Path.AltDirectorySeparatorChar)
+                path = path.Substring(1);
+            return path;
         }
     }
 }
