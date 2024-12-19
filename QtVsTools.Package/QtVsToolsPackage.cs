@@ -7,7 +7,6 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Net.Http;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -19,20 +18,17 @@ using Microsoft.VisualStudio.TaskStatusCenter;
 using Microsoft.VisualStudio.Threading;
 using Microsoft.Win32;
 
-using Task = System.Threading.Tasks.Task;
 using static Microsoft.VisualStudio.Shell.PackageAutoLoadFlags;
+using Task = System.Threading.Tasks.Task;
 
 namespace QtVsTools
 {
     using Core;
-    using Core.Options;
     using Package;
     using Package.CMake;
     using Qml.Debug;
     using QtVsTools.Core.Common;
     using VisualStudio;
-
-    using static SyntaxAnalysis.RegExpr;
 
     public static partial class Instances
     {
@@ -95,6 +91,8 @@ namespace QtVsTools
 
     [ProvideLaunchHook(typeof(QmlDebugLaunchHook))]
 
+    [ProvideService((typeof(SIdleTaskManager)), IsAsyncQueryable = true)]
+
     public sealed class QtVsToolsPackage : AsyncPackage, IVsServiceProvider
     {
         public DTE Dte { get; private set; }
@@ -123,7 +121,9 @@ namespace QtVsTools
         {
             try {
                 InitTimer = ConcurrentStopwatch.StartNew();
+
                 VsServiceProvider.Instance = Instance = this;
+                AddService(typeof(SIdleTaskManager), CreateServiceAsync);
 
                 var packages = await GetServiceAsync<
                     SVsPackageInfoQueryService, IVsPackageInfoQueryService>();
@@ -303,22 +303,6 @@ namespace QtVsTools
     ################################################################");
 
             /////////
-            // If configured, show link to dev release, if any
-            //
-            if (QtOptionsPage.SearchDevRelease) {
-                var result = await GetLatestDevelopmentReleaseAsync();
-                if (result != null) {
-                    Messages.Print(
-                        trim: false, text: $@"
-
-    ################################################################
-      Qt Visual Studio Tools version {result.Value.Version} PREVIEW available at:
-      {result.Value.Uri}
-    ################################################################");
-                }
-            }
-
-            /////////
             // Switch to main (UI) thread
             //
             await JoinableTaskFactory.SwitchToMainThreadAsync();
@@ -349,6 +333,10 @@ namespace QtVsTools
             //
             Messages.Initialized = true;
             Messages.ActivateMessagePane();
+
+
+            if (await GetServiceAsync<SIdleTaskManager, IIdleTaskManager>() is {} service)
+                service.Add(new DevReleaseMonitorTask());
 
             /////////
             // Signal package initialization complete.
@@ -522,40 +510,20 @@ namespace QtVsTools
             return await GetServiceAsync(typeof(T)) as I;
         }
 
-        private static async Task<(string Version, string Uri)?> GetLatestDevelopmentReleaseAsync()
+        private SIdleTaskManager idleTaskManager;
+        private async Task<object> CreateServiceAsync(IAsyncServiceContainer container,
+            CancellationToken cancellationToken, Type serviceType)
         {
-            const string urlDownloadQtIo = "https://download.qt.io/development_releases/vsaddin/";
-
-            var currentVersion = new System.Version(Version.PRODUCT_VERSION);
-            try {
-                using var http = new HttpClient();
-                http.Timeout = TimeSpan.FromSeconds(QtOptionsPage.SearchDevReleaseTimeout);
-                var response = await http.GetAsync(urlDownloadQtIo);
-                if (!response.IsSuccessStatusCode)
-                    return null;
-
-                var tokenVersion = new Token("VERSION", Number & "." & Number & "." & Number)
-                {
-                    new Rule<System.Version> { Capture(value => new System.Version(value)) }
-                };
-                var regexHrefVersion = "href=\"" & tokenVersion & Chars["/"].Optional() & "\"";
-                var regexResponse = (regexHrefVersion | AnyChar | VertSpace).Repeat();
-                var parserResponse = regexResponse.Render();
-
-                var responseData = await response.Content.ReadAsStringAsync();
-                var devVersion = parserResponse.Parse(responseData)
-                    .GetValues<System.Version>("VERSION")
-                    .Where(v => currentVersion < v)
-                    .Max();
-                if (devVersion == null)
-                    return null;
-
-                var requestUri = $"{urlDownloadQtIo}{devVersion}/";
-                response = await http.GetAsync(requestUri);
-                return response.IsSuccessStatusCode ? (devVersion.ToString(), requestUri) : null;
-            } catch {
+            if (container != this || serviceType != typeof(SIdleTaskManager))
                 return null;
-            }
+
+            if (idleTaskManager != null)
+                return idleTaskManager;
+
+            var service = new IdleTaskManager(ThreadHelper.JoinableTaskContext);
+            await service.InitializeAsync(this, cancellationToken);
+
+            return idleTaskManager ??= service;
         }
     }
 }

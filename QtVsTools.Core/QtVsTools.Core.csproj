@@ -147,6 +147,7 @@
     <Compile Include="Common\VsTemplate.cs" />
     <Compile Include="CompilerToolWrapper.cs" />
     <Compile Include="CxxStream.cs" />
+    <Compile Include="DevReleaseMonitorTask.cs" />
     <Compile Include="FakeFilter.cs" />
     <Compile Include="FilesToList.cs" />
     <Compile Include="Common\SettingsAttribute.cs" />

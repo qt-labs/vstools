@@ -111,7 +111,8 @@ namespace QtVsTools.Core
             new TextSpacer(2),
             Utils.EmDash,
             new TextSpacer(2),
-            "can automatically search for development releases during startup."
+            "can auto-search for development releases every 24 hours if Visual Studio has been "
+            + "idle for at least 60 seconds."
         };
 
         protected override Hyperlink[] Hyperlinks => new Hyperlink[]

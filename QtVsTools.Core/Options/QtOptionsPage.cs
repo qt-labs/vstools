@@ -538,8 +538,8 @@ namespace QtVsTools.Core.Options
 
         [Category("Development releases")]
         [DisplayName("Search automatically")]
-        [Description("If enabled, automatically searches for development releases on "
-            + "Visual Studio startup.")]
+        [Description("If enabled, runs once every 24 hours after Visual Studio has been idle for "
+            + "60 seconds.")]
         [TypeConverter(typeof(EnableDisableConverter))]
         public bool SearchDevReleaseOption
         {
@@ -555,7 +555,7 @@ namespace QtVsTools.Core.Options
         }
 
         [Category("Development releases")]
-        [DisplayName("Search timeout")]
+        [DisplayName("Search timeout in seconds")]
         [Description("Sets the time in seconds to wait before the search request for development "
             + "releases times out.")]
         public int SearchDevReleaseTimeoutOption
