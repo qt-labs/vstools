@@ -72,7 +72,8 @@ namespace QtVsTools.Core.Options
             [String("Notifications_UpdateProjectFormat")] UpdateProjectFormat,
             [String("Notifications_CMake_Incompatible")] CMakeIncompatible,
             [String("Notifications_CMake_Conversion")] CMakeConversion,
-            [String("NotifySearchDevRelease")] NotifySearchDevRelease
+            [String("NotifySearchDevRelease")] NotifySearchDevRelease,
+            [String("Notifications_SearchDevRelease")] NotifyQmllsUpdateInstalled
         }
 
         public enum Natvis
@@ -411,6 +412,24 @@ namespace QtVsTools.Core.Options
         {
             get => QtOptionsPageSettings.Instance.GetValue(() => NotifyCMakeConversion);
             set => QtOptionsPageSettings.Instance.SetValue(() => NotifyCMakeConversion, value);
+        }
+
+        [Category("Notifications")]
+        [DisplayName("QML language server update")]
+        [Description("Show notification when a new version of the local QML language server was"
+            + " installed.")]
+        [TypeConverter(typeof(EnableDisableConverter))]
+        public bool NotifyQmllsUpdateInstalledOption
+        {
+            get => NotifyQmllsUpdateInstalled;
+            set => NotifyQmllsUpdateInstalled = value;
+        }
+
+        [Settings(Notifications.NotifyQmllsUpdateInstalled, true)]
+        public static bool NotifyQmllsUpdateInstalled
+        {
+            get => QtOptionsPageSettings.Instance.GetValue(() => NotifyQmllsUpdateInstalled);
+            set => QtOptionsPageSettings.Instance.SetValue(() => NotifyQmllsUpdateInstalled, value);
         }
 
         [Category("Natvis")]

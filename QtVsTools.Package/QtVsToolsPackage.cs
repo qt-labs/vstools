@@ -295,7 +295,13 @@ namespace QtVsTools
                         Environment.SetEnvironmentVariable("QTDIR", path,
                             EnvironmentVariableTarget.Process);
                     }
-                }, cancellationToken)
+                }, cancellationToken),
+
+                /////////
+                // Force download and install of local qmlls, otherwise it's periodically checked
+                // if Visual Studio is idling.
+                //
+                RunLocalQmllsMonitorTaskOnceAsync(cancellationToken)
             );
 
 
@@ -344,8 +350,10 @@ namespace QtVsTools
             Messages.ActivateMessagePane();
 
 
-            if (await GetServiceAsync<SIdleTaskManager, IIdleTaskManager>() is {} service)
+            if (await GetServiceAsync<SIdleTaskManager, IIdleTaskManager>() is {} service) {
                 service.Add(new DevReleaseMonitorTask());
+                service.Add(new LocalQmllsMonitorTask());
+            }
 
             /////////
             // Signal package initialization complete.
@@ -533,6 +541,17 @@ namespace QtVsTools
             await service.InitializeAsync(this, cancellationToken);
 
             return idleTaskManager ??= service;
+        }
+
+        private static async Task RunLocalQmllsMonitorTaskOnceAsync(CancellationToken token)
+        {
+            if (Directory.Exists(LocalQmllsManager.InstallDir))
+                return;
+            try {
+                await new LocalQmllsMonitorTask().RunAsync(token);
+            } catch {
+                Utils.DeleteDirectory(LocalQmllsManager.InstallDir, Utils.Option.Recursive);
+            }
         }
     }
 }

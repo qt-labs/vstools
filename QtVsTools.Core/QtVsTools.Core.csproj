@@ -152,9 +152,12 @@
     <Compile Include="FakeFilter.cs" />
     <Compile Include="FilesToList.cs" />
     <Compile Include="Common\SettingsAttribute.cs" />
+    <Compile Include="LocalQmllsMonitorTask.cs" />
     <Compile Include="VisualStudio\IdleTaskManager.cs" />
     <Compile Include="Options\QtOptionsPageSettings.cs" />
     <Compile Include="Common\SettingsBase.cs" />
+    <Compile Include="LocalQmllsDownloader.cs" />
+    <Compile Include="LocalQmllsManager.cs" />
     <Compile Include="QtBuildTool.cs" />
     <Compile Include="QtPaths.cs" />
     <Compile Include="QtPathsQuery.cs" />

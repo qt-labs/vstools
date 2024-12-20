@@ -18,7 +18,7 @@ namespace QtVsTools.Core
     using QtVsTools.Common;
     using VisualStudio;
 
-    public static class Notifications
+    public static partial class Notifications
     {
         static LazyFactory StaticLazy { get; } = new();
 
