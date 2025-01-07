@@ -7,6 +7,7 @@ using System;
 using System.Linq;
 using System.Net.Http;
 using System.Threading;
+using System.Text.RegularExpressions;
 
 using Tasks = System.Threading.Tasks;
 
@@ -27,6 +28,7 @@ namespace QtVsTools.Core
                 return;
 
             var currentVersion = new System.Version(Version.PRODUCT_VERSION);
+            var currentVersionNoRevision = currentVersion.ToVersionWithoutRevision();
             try {
                 using var http = new HttpClient();
                 http.Timeout = TimeSpan.FromSeconds(QtOptionsPage.SearchDevReleaseTimeout);
@@ -45,7 +47,7 @@ namespace QtVsTools.Core
                 var responseData = await response.Content.ReadAsStringAsync();
                 var devVersion = parserResponse.Parse(responseData)
                     .GetValues<System.Version>("VERSION")
-                    .Where(v => currentVersion < v)
+                    .Where(v => v >= currentVersionNoRevision)
                     .Max();
                 if (devVersion == null)
                     return;
@@ -53,6 +55,26 @@ namespace QtVsTools.Core
                 var requestUri = $"{UrlDownloadQtIo}{devVersion}/";
                 response = await http.GetAsync(requestUri, cancellationToken);
                 if (!response.IsSuccessStatusCode)
+                    return;
+
+                responseData = await response.Content.ReadAsStringAsync();
+                var matches = Regex.Matches(responseData, @"<a href=""qt-vsaddin-[a-zA-Z0-9-]+-"
+                    + @"(?<version>\d+\.\d+\.\d+)" // capture the main version
+                    + @"(?:-(?<revision>rev\.\d+))?" // optionally capture the revision part
+                    + @"\.vsix"">");
+
+                devVersion = matches.Cast<Match>()
+                    .Select(match =>
+                    {
+                        var mainVersion = match.Groups["version"].Value;
+                        var revision = match.Groups["revision"].Success
+                            ? match.Groups["revision"].Value.Replace("rev.", "") : "0";
+                        return new System.Version(mainVersion + "." + revision);
+                    })
+                    .Where(v => currentVersion < v)
+                    .Max();
+
+                if (devVersion == null)
                     return;
 
                 Messages.Print(trim: false, text: $@"
@@ -66,6 +88,14 @@ namespace QtVsTools.Core
             } catch (Exception exception) {
                 exception.Log();
             }
+        }
+    }
+
+    internal static class VersionExtension
+    {
+        public static System.Version ToVersionWithoutRevision(this System.Version version)
+        {
+            return new System.Version(version.Major, version.Minor, version.Build);
         }
     }
 }
