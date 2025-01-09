@@ -3,14 +3,15 @@ Copyright (C) 2024 The Qt Company Ltd.
 SPDX-License-Identifier: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
 ***************************************************************************************************/
 
+using System.Diagnostics;
+using System.Threading.Tasks;
+using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 
 namespace QtVsTools.VisualStudio
 {
-    using System.Diagnostics;
     using Common;
-    using Microsoft.VisualStudio;
 
     public static class StatusBar
     {
@@ -26,41 +27,60 @@ namespace QtVsTools.VisualStudio
 
         public static void SetText(string text)
         {
-            ThreadHelper.ThrowIfNotOnUIThread();
-            Self.SetText(text);
+            ThreadHelper.JoinableTaskFactory.Run(async () => await SetTextAsync(text));
         }
 
-        public static string Label
+        public static async Task SetTextAsync(string text)
         {
-            get
-            {
-                ThreadHelper.ThrowIfNotOnUIThread();
-                string value = "";
-                Debug.Assert(Self.GetText(out value) == VSConstants.S_OK);
-                return value;
-            }
-            set
-            {
-                ThreadHelper.ThrowIfNotOnUIThread();
-                Debug.Assert(Self.SetText(value) == VSConstants.S_OK);
-            }
+            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+
+            Self.FreezeOutput(0);
+            Self.SetText(text);
+            Self.FreezeOutput(1);
+        }
+
+        public static string GetText()
+        {
+            return ThreadHelper.JoinableTaskFactory.Run(async () => await GetTextAsync());
+        }
+
+        public static async Task<string> GetTextAsync()
+        {
+            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+
+            Debug.Assert(Self.GetText(out var value) == VSConstants.S_OK);
+            return value;
         }
 
         public static void Clear()
         {
-            ThreadHelper.ThrowIfNotOnUIThread();
+            ThreadHelper.JoinableTaskFactory.Run(async () => await ClearAsync());
+        }
+
+        public static async Task ClearAsync()
+        {
+            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+
+            Self.FreezeOutput(0);
             Debug.Assert(Self.Clear() == VSConstants.S_OK);
+            Self.FreezeOutput(1);
         }
 
         public static void Progress(string text, int totalSteps, int currentStep = 0)
         {
-            ThreadHelper.ThrowIfNotOnUIThread();
             Progress(text, (uint)totalSteps, (uint)currentStep);
         }
 
         public static void Progress(string text, uint totalSteps, uint currentStep = 0)
         {
-            ThreadHelper.ThrowIfNotOnUIThread();
+            ThreadHelper.JoinableTaskFactory.Run(async () => await ProgressAsync(text, totalSteps,
+                currentStep));
+        }
+
+        public static async Task ProgressAsync(string text, uint totalSteps, uint currentStep = 0)
+        {
+            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+
             if (Self is null)
                 return;
             if (Cookie == 0)
@@ -72,7 +92,13 @@ namespace QtVsTools.VisualStudio
 
         public static void ResetProgress()
         {
-            ThreadHelper.ThrowIfNotOnUIThread();
+            ThreadHelper.JoinableTaskFactory.Run(async () => await ResetProgressAsync());
+        }
+
+        public static async Task ResetProgressAsync()
+        {
+            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+
             if (Self is null)
                 return;
             if (Cookie == 0)
