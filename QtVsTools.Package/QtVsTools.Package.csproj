@@ -66,7 +66,7 @@
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
     <Reference Include="Microsoft.VisualStudio.Debugger.Interop.Internal">
-      <HintPath>$(VsInstallRoot)\Common7\IDE\PrivateAssemblies\Microsoft.VisualStudio.Debugger.Interop.Internal.dll</HintPath>
+      <HintPath>$(DevEnvDir)\PrivateAssemblies\Microsoft.VisualStudio.Debugger.Interop.Internal.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
@@ -99,13 +99,21 @@
     <PackageReference Include="$(Name_Microsoft_VisualStudio_Workspace)" Version="$(Version_Microsoft_VisualStudio_Workspace)" />
     <PackageReference Include="$(Name_Microsoft_VisualStudio_Workspace_VSIntegration)" Version="$(Version_Microsoft_VisualStudio_Workspace_VSIntegration)" />
     <PackageReference Include="$(Name_Microsoft_VisualStudio_LanguageServer_Client)" Version="$(Version_Microsoft_VisualStudio_LanguageServer_Client)" />
-    <PackageReference Include="Community.VisualStudio.VSCT">
-      <Version>16.0.29.6</Version>
+    <PackageReference Include="$(Name_Community_VisualStudio_VSCT)" Version="$(Version_Community_VisualStudio_VSCT)">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="$(Name_System_Management)" Version="$(Version_System_Management)" />
     <PackageReference Include="$(Name_Microsoft_TestPlatform_ObjectModel)" Version="$(Version_Microsoft_TestPlatform_ObjectModel)" />
+    <PackageReference Include="$(Name_Microsoft_VisualStudio_Threading_Analyzers)" Version="$(Version_Microsoft_VisualStudio_Threading_Analyzers)">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="$(Name_Microsoft_VisualStudio_SDK_Analyzers)" Version="$(Version_Microsoft_VisualStudio_SDK_Analyzers)">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="$(Name_Microsoft_VisualStudio_Debugger_Interop_10_0)" Version="$(Version_Microsoft_VisualStudio_Debugger_Interop_10_0)" />
   </ItemGroup>
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -114,18 +122,9 @@
   <Choose>
     <When Condition="'$(VisualStudioVersion)'=='17.0'">
       <ItemGroup>
-        <PackageReference Include="Community.VisualStudio.SourceGenerators">
-          <Version>1.0.3</Version>
+        <PackageReference Include="$(Name_Community_VisualStudio_SourceGenerators)" Version="$(Version_Community_VisualStudio_SourceGenerators)">
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
           <PrivateAssets>all</PrivateAssets>
-        </PackageReference>
-        <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" Version="17.6.40">
-          <PrivateAssets>all</PrivateAssets>
-          <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
-        </PackageReference>
-        <PackageReference Include="Microsoft.VisualStudio.SDK.Analyzers" Version="16.10.10">
-          <PrivateAssets>all</PrivateAssets>
-          <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
         </PackageReference>
       </ItemGroup>
     </When>
