@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
 
 namespace QtVsTools.Editors
 {
@@ -15,12 +16,12 @@ namespace QtVsTools.Editors
 
     internal class QtLinguistFileSniffer : IFileTypeSniffer
     {
+        private static readonly Regex Regex = new(@"<\s*\!\s*DOCTYPE\s*(?i:TS)\s*>");
+
         public bool IsSupportedFile(string filePath)
         {
-            try
-            {
-                var line = File.ReadLines(filePath).Skip(1).FirstOrDefault();
-                return line?.Trim().Equals("<!DOCTYPE TS>") ?? false;
+            try {
+                return File.ReadLines(filePath).Take(3).Any(line => Regex.IsMatch(line.Trim()));
             } catch {
                 return false;
             }

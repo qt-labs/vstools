@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <UI version="4.0" >
  <class>$classname$Class</class>
  <widget class="$baseclass$" name="$classname$Class" >

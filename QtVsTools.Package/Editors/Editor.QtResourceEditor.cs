@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
 
 namespace QtVsTools.Editors
 {
@@ -16,12 +17,12 @@ namespace QtVsTools.Editors
 
     internal class QtResourceFileSniffer : IFileTypeSniffer
     {
+        private static readonly Regex Regex = new(@"<\s*(?i:rcc)\s*>");
+
         public bool IsSupportedFile(string filePath)
         {
-            try
-            {
-                var line = File.ReadLines(filePath).FirstOrDefault();
-                return line?.Trim().Equals("<RCC>") ?? false;
+            try {
+                return File.ReadLines(filePath).Take(3).Any(line => Regex.IsMatch(line.Trim()));
             } catch {
                 return false;
             }

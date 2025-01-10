@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.VCProjectEngine;
 
@@ -21,13 +22,12 @@ namespace QtVsTools.Editors
 
     internal class QtDesignerFileSniffer : IFileTypeSniffer
     {
-        private const string Pattern = @"<\s*UI\s+version\s*=\s*""*\d+\.\d+""\s*>";
+        private static readonly Regex Regex = new(@"<\s*(?i:ui)\s+version\s*=\s*""\d+\.\d+""\s*>");
 
         public bool IsSupportedFile(string filePath)
         {
             try {
-                var line = File.ReadLines(filePath).FirstOrDefault();
-                return System.Text.RegularExpressions.Regex.IsMatch(line?.Trim() ?? "", Pattern);
+                return File.ReadLines(filePath).Take(3).Any(line => Regex.IsMatch(line.Trim()));
             } catch {
                 return false;
             }
