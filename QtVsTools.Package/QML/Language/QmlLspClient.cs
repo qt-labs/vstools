@@ -34,7 +34,6 @@ namespace QtVsTools.Qml.Language
     using Core.CMake;
     using Core.Options;
     using static Core.Common.Utils;
-    using static Core.HelperFunctions;
     using static Instances;
 
     [Export(typeof(ILanguageClient))]
@@ -96,24 +95,30 @@ namespace QtVsTools.Qml.Language
             if (Server is { HasExited: false })
                 Disconnect();
 
-            var qtVersionName = QtOptionsPage.QmlLspVersion switch
+            var qmlLsVersion = QtOptionsPage.QmlLspVersion switch
             {
                 { Length: > 0 } x when !string.Equals(x, "$(DefaultQtVersion)", IgnoreCase) => x,
                 _ => QtVersionManager.GetDefaultVersion()
             };
-            if (VersionInformation.GetOrAddByName(qtVersionName) is not { } qtVersion)
+
+            var qmLlsPath = await DetermineQmlLsPathAsync(qmlLsVersion);
+
+            qmLlsPath = HelperFunctions.ToNativeSeparator(qmLlsPath);
+            if (string.IsNullOrEmpty(qmLlsPath) || !File.Exists(qmLlsPath))
                 return Disconnect();
 
-            var qmLlsPath = Path.Combine(ToNativeSeparator(qtVersion.LibExecs), "qmlls.exe");
-            if (qmLlsPath is not { Length: > 0 } || !File.Exists(qmLlsPath))
-                return Disconnect();
+            var buildDir = await GetBuildDirAsync();
+            var qmlDir = await GetQmlDirAsync();
+            var docDir = await GetDocDirAsync();
+
+            var arguments = BuildArguments(qmlLsVersion, buildDir, qmlDir, docDir);
 
             Server = new Process
             {
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = qmLlsPath,
-                    Arguments = $"-b \"{await GetBuildDirAsync()}\"",
+                    Arguments = arguments,
                     RedirectStandardInput = true,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
@@ -146,7 +151,7 @@ namespace QtVsTools.Qml.Language
             return Connect();
         }
 
-        private async Task<string> GetBuildDirAsync()
+        private static async Task<string> GetBuildDirAsync()
         {
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
 
@@ -160,6 +165,91 @@ namespace QtVsTools.Qml.Language
                 return Path.GetDirectoryName(docPath);
 
             return Environment.CurrentDirectory;
+        }
+
+        private static async Task<VersionInformation> GetProjectQtVersionAsync()
+        {
+            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+
+            if (CMakeProject.ActiveProject is {} cMakeProject) {
+                var prefixPath = cMakeProject["cmake", "CMAKE_PREFIX_PATH"];
+                return VersionInformation.GetOrAddByPath(prefixPath);
+            }
+            if (HelperFunctions.GetSelectedQtProject(Package.Dte) is { } msBuildProject)
+                return msBuildProject.VersionInfo;
+            return null;
+        }
+
+        private static async Task<string> GetQmlDirAsync()
+        {
+            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+
+            if (CMakeProject.ActiveProject is {} cMakeProject)
+                return Path.Combine(cMakeProject["cmake", "CMAKE_PREFIX_PATH"], "qml");
+            if (HelperFunctions.GetSelectedQtProject(Package.Dte) is {} msBuildProject)
+                return Path.Combine(msBuildProject.InstallPath, "qml");
+            return "";
+        }
+
+        private static async Task<string> GetDocDirAsync()
+        {
+            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+
+            if (CMakeProject.ActiveProject is { } cMakeProject)
+                return Path.Combine(cMakeProject["cmake", "CMAKE_PREFIX_PATH"], "doc");
+            if (HelperFunctions.GetSelectedQtProject(Package.Dte) is {} msBuildProject)
+                return msBuildProject.VersionInfo.QtInstallDocs;
+            return "";
+        }
+
+        private static async Task<string> DetermineQmlLsPathAsync(string version)
+        {
+            // Determine the qmlls path based on the version.
+            if (string.Equals(version, "$(Local LS)", StringComparison.OrdinalIgnoreCase))
+                return await GetLocalQmlLsPathAsync();
+            return await GetCustomQmlLsPathAsync(version);
+        }
+
+        private static async Task<string> GetLocalQmlLsPathAsync()
+        {
+            // Check if the project's Qt version is supported by the latest qmlls.
+            var projectsQtVersion = await GetProjectQtVersionAsync();
+            if (projectsQtVersion >= System.Version.Parse("6.5.0"))
+                return LocalQmllsManager.QmlLspServerExePath;
+
+            Messages.Print("Qt version not supported by the latest qmlls.");
+            return Path.Combine(projectsQtVersion.LibExecs, "qmlls.exe");
+        }
+
+        private static async Task<string> GetCustomQmlLsPathAsync(string version)
+        {
+            if (VersionInformation.GetOrAddByName(version) is { } qtVersion)
+                return Path.Combine(qtVersion.LibExecs, "qmlls.exe");
+            return await Task.FromResult("");
+        }
+
+        private static string BuildArguments(string version, string buildDir, string qmlDir,
+            string docDir)
+        {
+            var arguments = $@"-b ""{buildDir}""";
+
+            // Build up the options based on the qmlls version.
+            // If using the GitHub-provided qmlls, assume it supports all possible options.
+            if (string.Equals(version, "$(Local LS)", StringComparison.OrdinalIgnoreCase))
+                return $@" -I ""{qmlDir}"" -d ""{docDir}""";
+
+            if (VersionInformation.GetOrAddByName(version) is not {} qtVersion)
+                return "";
+
+            // The supported options for qmlls vary depending on the Qt version it comes from.
+            System.Version qtVersionValue = qtVersion;
+            if (qtVersionValue >= System.Version.Parse("6.8.0"))
+                arguments += $@" -I ""{qmlDir}""";
+
+            if (qtVersionValue >= System.Version.Parse("6.8.1"))
+                arguments += $@" -d ""{docDir}""";
+
+            return arguments;
         }
 
         private void SetupLog()

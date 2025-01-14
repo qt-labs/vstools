@@ -148,6 +148,17 @@ namespace QtVsTools.Core.Options
 
         private class QmlLspProviderConverter : QtVersionConverter
         {
+            protected override object[] GetCollection
+            {
+                get
+                {
+                    var objects = base.GetCollection;
+                    return File.Exists(LocalQmllsManager.QmlLspServerExePath)
+                        ? objects.Prepend("$(Local LS)").ToArray()
+                        : objects;
+                }
+            }
+
             protected override bool IsCompatible(string qtVersion)
             {
                 return VersionInformation.GetOrAddByName(qtVersion) is {LibExecs: {}  libExecs}
@@ -466,7 +477,9 @@ namespace QtVsTools.Core.Options
 
         [Category("QML Language Server")]
         [DisplayName("Qt Version")]
-        [Description("Look for a QML Language Server in the specified Qt installation.")]
+        [Description("Select the QML language server to use. '$(Local LS)' uses the statically "
+            + "built version from the development branch, which includes the latest features and "
+            + "fixes. Other options use the language server bundled of the specified Qt version.")]
         [TypeConverter(typeof(QmlLspProviderConverter))]
         public string QmlLspVersionOption
         {
@@ -474,7 +487,7 @@ namespace QtVsTools.Core.Options
             set => QtOptionsPageSettings.Instance.SetValue(() => QmlLspVersion, value);
         }
 
-        [Settings(QmlLsp.QtVersion, "$(DefaultQtVersion)")]
+        [Settings(QmlLsp.QtVersion, "$(Local LS)")]
         public static string QmlLspVersion
             => QtOptionsPageSettings.Instance.GetValue(() => QmlLspVersion);
 
