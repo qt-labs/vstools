@@ -108,6 +108,7 @@
     <Compile Include="BigSolution.cs" />
     <Compile Include="Logger.Format.cs" />
     <Compile Include="Logger.Views.cs" />
+    <Compile Include="QTVSADDINBUG\Test_QTVSADDINBUG_1283.cs" />
     <Compile Include="TempProject.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Logger.cs" />
