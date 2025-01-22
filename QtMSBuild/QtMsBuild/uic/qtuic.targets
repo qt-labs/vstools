@@ -71,7 +71,11 @@
       <QtUic Remove="@(QtUic)"/>
       <QtUic Include="@(QtUicAux)"/>
       <QtUicAux Remove="@(QtUicAux)"/>
+      <QtUicDirs Include="$([System.IO.Path]::GetFullPath('%(QtUic.QtUicDir)'))" />
     </ItemGroup>
+    <CreateProperty Value="@(QtUicDirs->Distinct())">
+      <Output TaskParameter="ValueSetByTask" PropertyName="QtUicOutputPath" />
+    </CreateProperty>
     <!--
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // Add uic output dir to C++ include path
