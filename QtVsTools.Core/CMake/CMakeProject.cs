@@ -10,6 +10,7 @@ using System.Linq;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Workspace;
 using Microsoft.VisualStudio.Workspace.Debug;
+using Microsoft.VisualStudio.Workspace.Evaluator;
 using Microsoft.VisualStudio.Workspace.Indexing;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -83,6 +84,7 @@ namespace QtVsTools.Core.CMake
         private IFileWatcherService FileWatcher { get; set; }
         private IProjectConfigurationService2 Config { get; set; }
         private ILaunchDebugService2 Debug { get; set; }
+        private IPropertyEvaluatorService PropertyEvaluator { get; set; }
 
         private CMakeProject(IWorkspace projectFolder)
         {
@@ -101,6 +103,8 @@ namespace QtVsTools.Core.CMake
             FileWatcher = await Project.GetServiceAsync<IFileWatcherService>();
             Config = await Project.GetServiceAsync<IProjectConfigurationService2>();
             Debug = await Project.GetServiceAsync<ILaunchDebugService2>();
+            PropertyEvaluator = await Project.GetServiceAsync<IPropertyEvaluatorService>();
+
             SubscribeEvents();
             await CheckQtStatusAsync();
         }

@@ -4,10 +4,8 @@
 ***************************************************************************************************/
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.Workspace.Evaluator;
-using Microsoft.VisualStudio.Workspace.Indexing;
 
 namespace QtVsTools.Core.CMake
 {
@@ -47,25 +45,10 @@ namespace QtVsTools.Core.CMake
         {
             get
             {
-                if (!Variables.TryGetValue(nameSpace, out var group))
-                    return null;
-                return group.TryGetValue(name, out var value) ? value : null;
-            }
-        }
-
-        private Dictionary<string, Dictionary<string, string>> Variables { get; } = new();
-
-        private void RefreshVariables(IReadOnlyCollection<FileDataValue> values)
-        {
-            Variables.Clear();
-            var variables = values
-                .Select(x => x.Value as PropertyGroup)
-                .Where(x => x is not null && x.Properties.Any())
-                .SelectMany(x => x.Properties.Select(y => new { x.Namespace, y.Name, y.Value }));
-            foreach (var variable in variables) {
-                if (!Variables.TryGetValue(variable.Namespace, out var varGroup))
-                    Variables.Add(variable.Namespace, varGroup = new());
-                varGroup[variable.Name] = variable.Value;
+                var evaluators = PropertyEvaluator.GetPropertyEvaluators(nameSpace);
+                var matchPropertyResults = PropertyEvaluator.SelectPropertyEvaluators(
+                    new PropertyContext("CMakeList.txt", nameSpace, name, null), evaluators);
+                return matchPropertyResults.FirstOrDefault()?.Property.Value;
             }
         }
     }
