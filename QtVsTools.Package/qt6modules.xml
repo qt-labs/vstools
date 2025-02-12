@@ -424,7 +424,7 @@
     <LibraryPrefix>QtVirtualKeyboard</LibraryPrefix>
   </Module>
   <Module>
-    <Name>Qt Quick 3D</Name>
+    <Name>Qt 3D Quick</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>Qt3DQuick</LibraryPrefix>
     <proVarQT>3dquick</proVarQT>
@@ -452,6 +452,14 @@
     <AdditionalLibrariesDebug>Qt63DQuickInputd.lib</AdditionalLibrariesDebug>
     <AdditionalLibrariesDebug>Qt63DQuickRenderd.lib</AdditionalLibrariesDebug>
     <AdditionalLibrariesDebug>Qt63DQuickScene2Dd.lib</AdditionalLibrariesDebug>
+  </Module>
+  <Module>
+    <Name>Qt Quick 3D</Name>
+    <Selectable>true</Selectable>
+    <LibraryPrefix>QtQuick3D</LibraryPrefix>
+    <proVarQT>quick3d</proVarQT>
+    <IncludePath>$(QTDIR)\include\QtQuick3D</IncludePath>
+    <Defines>QT_QUICK3D_LIB</Defines>
   </Module>
   <Module>
     <Name>Qt Quick Timeline</Name>
