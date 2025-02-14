@@ -1,7 +1,5 @@
-/***************************************************************************************************
- Copyright (C) 2024 The Qt Company Ltd.
- SPDX-License-Identifier: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
-***************************************************************************************************/
+// Copyright (C) 2025 The Qt Company Ltd.
+// SPDX-License-Identifier: LicenseRef-Qt-Commercial OR GPL-3.0-only
 
 using System;
 using System.Diagnostics;
@@ -107,7 +105,6 @@ namespace QtVsTools
         public static QtVsToolsPackage Instance { get; private set; }
 
         private DteEventsHandler EventHandler { get; set; }
-        private string VisualizersPath { get; set; }
 
         private Guid LegacyPackageId = new("6E7FA583-5FAA-4EC9-9E90-4A0AE5FD61EE");
         private const string LegacyPackageName = "QtVsToolsLegacyPackage";
@@ -167,7 +164,6 @@ namespace QtVsTools
                 if (!string.IsNullOrEmpty(VsShell.InstallRootDir))
                     QMakeImport.VcPath = Path.Combine(VsShell.InstallRootDir, "VC");
 
-                SetVisualizersPathProperty();
 
                 ///////////////////////////////////////////////////////////////////////////////////
                 // Switch to background thread
@@ -280,7 +276,7 @@ namespace QtVsTools
                 /////////
                 // Copy natvis files
                 //
-                CopyVisualizersFilesAsync(),
+                NatvisHelper.CopyVisualizersFilesAsync(),
 
                 /////////
                 // Setup QTDIR environment variable
@@ -457,60 +453,6 @@ namespace QtVsTools
 
             //Remove TextMate-based QML syntax highlighting
             Utils.DeleteDirectory(Path.Combine(qtTmLanguagePath, "qml"), Utils.Option.Recursive);
-        }
-
-        private void SetVisualizersPathProperty()
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
-            try {
-                using var vsRootKey = Registry.CurrentUser.OpenSubKey(Dte.RegistryRoot);
-                if (vsRootKey?.GetValue("VisualStudioLocation") is string vsLocation)
-                    VisualizersPath = Path.Combine(vsLocation, "Visualizers");
-            } catch {
-            }
-
-            if (string.IsNullOrEmpty(VisualizersPath)) {
-                VisualizersPath = Path.Combine(
-                    Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
-#if VS2022
-                    @"Visual Studio 2022\Visualizers\");
-#elif VS2019
-                    @"Visual Studio 2019\Visualizers\");
-#endif
-            }
-        }
-
-        public async Task CopyVisualizersFilesAsync(string qtNamespace = null)
-        {
-            string[] files = { "qt5.natvis.xml", "qt6.natvis.xml" };
-            foreach (var file in files)
-                await CopyVisualizersFileAsync(file, qtNamespace);
-        }
-
-        private async Task CopyVisualizersFileAsync(string filename, string qtNamespace)
-        {
-            try {
-                var text = await Utils.ReadAllTextAsync(Path.Combine(Utils.PackageInstallPath,
-                    filename));
-
-                string visualizerFile;
-                if (string.IsNullOrEmpty(qtNamespace)) {
-                    text = text.Replace("##NAMESPACE##::", string.Empty);
-                    visualizerFile = Path.GetFileNameWithoutExtension(filename);
-                } else {
-                    text = text.Replace("##NAMESPACE##", qtNamespace);
-                    visualizerFile = filename.Substring(0, filename.IndexOf('.'))
-                        + $"_{qtNamespace.Replace("::", "_")}.natvis";
-                }
-
-                if (!Directory.Exists(VisualizersPath))
-                    Directory.CreateDirectory(VisualizersPath);
-
-                await Utils.WriteAllTextAsync(Path.Combine(VisualizersPath, visualizerFile), text);
-            } catch (Exception exception) {
-                exception.Log();
-            }
         }
 
         public I GetService<T, I>()

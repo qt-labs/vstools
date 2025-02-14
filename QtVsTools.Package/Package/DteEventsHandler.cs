@@ -1,7 +1,5 @@
-/***************************************************************************************************
- Copyright (C) 2024 The Qt Company Ltd.
- SPDX-License-Identifier: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
-***************************************************************************************************/
+// Copyright (C) 2025 The Qt Company Ltd.
+// SPDX-License-Identifier: LicenseRef-Qt-Commercial OR GPL-3.0-only
 
 using System;
 using System.IO;
@@ -183,7 +181,7 @@ namespace QtVsTools
             var @namespace = project.VersionInfo?.Namespace;
             if (!string.IsNullOrEmpty(@namespace)) {
                 ThreadHelper.JoinableTaskFactory.Run(async () =>
-                    await QtVsToolsPackage.Instance.CopyVisualizersFilesAsync(@namespace)
+                    await NatvisHelper.CopyVisualizersFilesAsync(@namespace)
                 );
             }
             return VSConstants.S_OK;
