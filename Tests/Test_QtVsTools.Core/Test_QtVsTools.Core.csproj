@@ -107,6 +107,7 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Test_LazyFactory.cs" />
+    <Compile Include="Test_ProjectImporter.cs" />
     <Compile Include="Test_Qmlls.cs" />
     <Compile Include="Test_Utils.cs" />
     <Compile Include="Test_IdleTaskManager.cs" />

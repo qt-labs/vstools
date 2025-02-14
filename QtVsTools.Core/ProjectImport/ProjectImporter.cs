@@ -24,52 +24,78 @@ namespace QtVsTools.Core
     public static class ProjectImporter
     {
         private static DTE _dteObject;
-
         private const string ProjectFileExtension = ".vcxproj";
+
+        private static bool Setup(EnvDTE.DTE dte)
+        {
+            _dteObject ??= dte;
+            return _dteObject != null;
+        }
+
+        private static FileInfo OpenFileDialog(string title, string filter, string file, string ext)
+        {
+            var openFileDialog = new OpenFileDialog
+            {
+                Title = title,
+                Filter = filter,
+                FileName = file,
+                CheckFileExists = true
+            };
+            if (openFileDialog.ShowDialog() != DialogResult.OK)
+                return null;
+
+            var fileInfo = new FileInfo(openFileDialog.FileName);
+            if (string.Equals(fileInfo.Extension, ext, IgnoreCase))
+                return fileInfo;
+            Messages.Print($"The selected file was not a {ext} file.");
+            return null;
+        }
 
         public static void ImportProFile(DTE dte)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            _dteObject = dte;
-            if (_dteObject is null || GetQtInstallPath() is not {} qtDir)
+            const string noQt = "Cannot find qmake. Make sure you have specified a "
+                + "default Qt version.";
+            const string wrongVersion = "The default Qt version to import the .pro file is no "
+                + "longer supported. To import the file, please use Qt 5.0 or later as default.";
+            if (!Setup(dte) || GetQtInstallPath("$(DefaultQtVersion)", noQt, wrongVersion) == null)
                 return;
 
-            if (VersionInformation.GetOrAddByPath(qtDir) is not { Major: >= 5 }) {
-                Messages.DisplayErrorMessage("The default Qt version does not support Visual "
-                    + "Studio. To import .pro files, specify Qt 5.0 or later as the default.");
-                return;
-            }
-
-            var toOpen = new OpenFileDialog
-            {
-                CheckFileExists = true,
-                Filter = "Qt Project files (*.pro)|*.pro|All files (*.*)|*.*",
-                FilterIndex = 1,
-                Title = "Select a Qt Project to Add to the Solution"
-            };
-
-            if (DialogResult.OK != toOpen.ShowDialog())
+            var proFile = OpenFileDialog("Select a Qt Project to Add to the Solution",
+                "Qt Project files (*.pro)|*.pro", "", ".pro");
+            if (proFile == null)
                 return;
 
-            var mainInfo = new FileInfo(toOpen.FileName);
-            if (IsSubDirsFile(mainInfo.FullName)) {
-                // we use the safe way. Make the user close the existing solution manually
-                if (!string.IsNullOrEmpty(_dteObject.Solution.FullName)
-                    || HelperFunctions.ProjectsInSolution(_dteObject).Count > 0) {
-                    if (MessageBox.Show("This seems to be a SUBDIRS .pro file. To open this file, "
-                            + "the existing solution needs to be closed (pending changes will be saved).",
-                            "Open Solution", MessageBoxButtons.OKCancel, MessageBoxIcon.Question)
-                        == DialogResult.OK) {
-                        _dteObject.Solution.Close(true);
-                    } else {
-                        return;
-                    }
+            const string subDirsMessage = "You selected a SUBDIRS .pro file. To open this file, "
+                + "the existing solution needs to be closed (pending changes will be saved).";
+
+            switch (GetTemplateType(File.ReadLines(proFile.FullName))) {
+            case TemplateType.SubDirs:
+                var result = DialogResult.None;
+                if (!string.IsNullOrEmpty(_dteObject.Solution.FullName)) {
+                    result = MessageBox.Show(subDirsMessage, "Open Solution",
+                        MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
+                } else if (HelperFunctions.ProjectsInSolution(_dteObject).Count > 0) {
+                    result = MessageBox.Show(subDirsMessage, "Open Solution",
+                        MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
                 }
 
-                ImportSolution(mainInfo, QtVersionManager.GetDefaultVersion());
-            } else {
-                ImportProject(mainInfo, QtVersionManager.GetDefaultVersion());
+                if (result != DialogResult.OK)
+                    return;
+                _dteObject.Solution.Close(true);
+                ImportSolution(proFile, QtVersionManager.GetDefaultVersion());
+                break;
+            case TemplateType.App:
+            case TemplateType.Lib:
+            case TemplateType.VcApp:
+            case TemplateType.VcLib:
+            case TemplateType.Unknown: // no TEMPLATE type defaults to 'app'
+                ImportProject(proFile, QtVersionManager.GetDefaultVersion());
+                break;
+            case TemplateType.Aux:
+                Messages.Print("Unsupported TEMPLATE type 'aux' in .pro file.");
+                return;
             }
         }
 
@@ -77,22 +103,20 @@ namespace QtVsTools.Core
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            _dteObject = dte;
-            if (dte is null || HelperFunctions.GetSelectedQtProject(dte) is not {} project)
+            if (!Setup(dte) || HelperFunctions.GetSelectedQtProject(dte) is not {} project)
                 return;
 
-            using var fd = new OpenFileDialog
-            {
-                FileName = $"{project.VcProjectDirectory}{project.VcProject.Name}.pri",
-                Filter = "Project Include Files (*.pri)|*.pri",
-                Title = "Import from .pri File",
-                Multiselect = false
-            };
-
-            if (fd.ShowDialog() != DialogResult.OK)
+            const string notQt = "Cannot find qmake. Make sure you have specified installed the "
+                + "project's Qt version.";
+            const string wrongVersion = "The project's Qt version is no longer supported. To "
+                + "import the .pri file, please use Qt 5.0 or later for your project.";
+            if (GetQtInstallPath(project.QtVersion, notQt, wrongVersion) is not {} qtDir)
                 return;
 
-            if (GetQtInstallPath() is not {} qtDir)
+            var priFile = OpenFileDialog("Import from .pri File",
+                "Qt Project Include Files (*.pri)|*.pri",
+                $"{project.VcProjectDirectory}{project.VcProject.Name}.pri", ".pri");
+            if (priFile == null)
                 return;
 
             var qmake = new QMakeWrapper
@@ -100,9 +124,8 @@ namespace QtVsTools.Core
                 QtDir = qtDir,
                 PkgInstallPath = pkgInstallPath
             };
-            var priFileInfo = new FileInfo(fd.FileName);
-            if (!qmake.ReadFile(priFileInfo.FullName)) {
-                Messages.Print($"--- (Importing .pri file) file: {priFileInfo} could not be read.");
+            if (!qmake.ReadFile(priFile.FullName)) {
+                Messages.Print($"--- (Importing .pri file) file: {priFile} could not be read.");
                 return;
             }
 
@@ -114,7 +137,7 @@ namespace QtVsTools.Core
                 (qmake.ResourceFiles, FilesToList.FL_Resources, FakeFilter.ResourceFiles())
             };
 
-            var directoryName = priFileInfo.DirectoryName;
+            var directoryName = priFile.DirectoryName;
             foreach (var tuple in tuples) {
                 var priFiles = ResolveFilesFromQMake(tuple.Files, project, directoryName);
                 var projFiles = HelperFunctions.GetProjectFiles(project, tuple.FilesToList);
@@ -426,8 +449,8 @@ namespace QtVsTools.Core
                     continue;
                 }
 
-                var filter = BestMatch(path, pathFilterTable);
-
+                if (BestMatch(path, pathFilterTable) is not {} filter)
+                    continue;
                 var filterDir = filterPathTable[filter];
                 var name = path;
                 if (!name.StartsWith("..", IgnoreCase) && name.StartsWith(filterDir, IgnoreCase))
@@ -435,7 +458,6 @@ namespace QtVsTools.Core
 
                 if (filter.AddFilter(name) is not VCFilter newFilter)
                     continue;
-
                 newFilter.AddFile(file);
                 filterPathTable.Add(newFilter, path);
                 pathFilterTable.Add(path, newFilter);
@@ -465,50 +487,54 @@ namespace QtVsTools.Core
                 p => string.Equals(p.ProjectFile, new FileInfo(fullName).FullName, IgnoreCase));
         }
 
-        /// <summary>
-        /// Reads lines from a .pro file that is opened with a StreamReader
-        /// and concatenates strings that end with a backslash.
-        /// </summary>
-        /// <param name="streamReader"></param>
-        /// <returns>the composite string</returns>
-        private static string ReadProFileLine(TextReader streamReader)
+        private enum TemplateType
         {
-            var line = streamReader.ReadLine();
-            if (line is null)
-                return null;
-
-            line = line.TrimEnd(' ', '\t');
-            while (line.EndsWith("\\", IgnoreCase)) {
-                line = line.Remove(line.Length - 1);
-                var appendix = streamReader.ReadLine();
-                if (appendix is not null)
-                    line += appendix.TrimEnd(' ', '\t');
-            }
-            return line;
+            Unknown,
+            App,
+            Lib,
+            SubDirs,
+            Aux,
+            VcApp,
+            VcLib
         }
 
         /// <summary>
-        /// Reads a .pro file and returns true if it is a subdirs template.
+        /// Reads a .pro file content from a string array or list and returns the template type.
         /// </summary>
-        /// <param name="profile">full name of .pro file to read</param>
-        /// <returns>true if this is a subdirs file</returns>
-        private static bool IsSubDirsFile(string profile)
+        /// <param name="fileContent">Strings representing the lines in a .pro file</param>
+        /// <returns>The template type based on the TEMPLATE variable</returns>
+        private static TemplateType GetTemplateType(IEnumerable<string> fileContent)
         {
-            StreamReader sr = null;
-            try {
-                sr = new StreamReader(profile);
-
-                while (ReadProFileLine(sr) is {} line) {
-                    line = line.Replace(" ", string.Empty).Replace("\t", string.Empty);
-                    if (line.StartsWith("TEMPLATE", StringComparison.Ordinal))
-                        return line.StartsWith("TEMPLATE=subdirs", StringComparison.Ordinal);
+            var concatenatedLine = "";
+            foreach (var lineContent in fileContent) {
+                var line = lineContent.Trim();
+                if (line.EndsWith("\\")) {
+                    concatenatedLine += line.TrimEnd('\\').Trim() + " ";
+                    continue;
                 }
-            } catch (Exception e) {
-                Messages.DisplayErrorMessage(e);
-            } finally {
-                sr?.Dispose();
+
+                concatenatedLine += line.Trim();
+
+                if (concatenatedLine.StartsWith("TEMPLATE", IgnoreCase)) {
+                    var parts = concatenatedLine.Split('=');
+                    if (parts.Length == 2) {
+                        var key = parts[0].Trim();
+                        var value = parts[1].Trim();
+
+                        if (string.Equals(key, "TEMPLATE", IgnoreCase)) {
+                            return value.ToLower() switch
+                            {
+                                "app" => TemplateType.App,
+                                "lib" => TemplateType.Lib,
+                                "subdirs" => TemplateType.SubDirs,
+                                _ => TemplateType.Unknown
+                            };
+                        }
+                    }
+                }
+                concatenatedLine = "";
             }
-            return false;
+            return TemplateType.Unknown;
         }
 
         private static void CollapseFilter(UIHierarchyItem item, UIHierarchy hierarchy, string nodeToCollapseFilter)
@@ -906,14 +932,16 @@ namespace QtVsTools.Core
 
         #region ExtLoader
 
-        private static string GetQtInstallPath()
+        private static string GetQtInstallPath(string qtVersion, string noQt, string wrongVersion)
         {
-            var qtVersion = QtVersionManager.GetDefaultVersion();
-            var path = QtVersionManager.GetInstallPath(qtVersion);
-
-            if (path is null)
-                Messages.DisplayErrorMessage("Cannot find qmake. Make sure you have specified a Qt version.");
-            return path;
+            if (VersionInformation.GetOrAddByName(qtVersion) is {} vi) {
+                if (vi.Major >= 5)
+                    return vi.InstallPrefix;
+                Messages.DisplayErrorMessage(wrongVersion);
+            } else {
+                Messages.DisplayErrorMessage(noQt);
+            }
+            return null;
         }
 
         private static List<string> ResolveFilesFromQMake(IEnumerable<string> files,
