@@ -20,7 +20,7 @@ insert_final_newline = false
 # Organize usings
 dotnet_separate_import_directive_groups = false
 dotnet_sort_system_directives_first = true
-file_header_template = ************************************************************************************************\nCopyright (C) 2024 The Qt Company Ltd.\nSPDX-License-Identifier: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0\n************************************************************************************************
+file_header_template = Copyright (C) 2025 The Qt Company Ltd.\nSPDX-License-Identifier: LicenseRef-Qt-Commercial OR GPL-3.0-only
 
 # this. and Me. preferences
 dotnet_style_qualification_for_event = false
@@ -582,7 +582,6 @@ dotnet_style_qualification_for_field = false:suggestion
 dotnet_style_qualification_for_method = false:suggestion
 dotnet_style_qualification_for_property = false:suggestion
 dotnet_style_require_accessibility_modifiers = for_non_interface_members:suggestion
-file_header_template =
 
 # ReSharper properties
 resharper_accessor_owner_body = expression_body
