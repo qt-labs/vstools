@@ -48,7 +48,8 @@ namespace QtVsTools.VisualStudio
         {
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
 
-            Debug.Assert(Self.GetText(out var value) == VSConstants.S_OK);
+            var status = Self.GetText(out var value);
+            Debug.Assert(status == VSConstants.S_OK);
             return value;
         }
 
@@ -62,7 +63,8 @@ namespace QtVsTools.VisualStudio
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
 
             Self.FreezeOutput(0);
-            Debug.Assert(Self.Clear() == VSConstants.S_OK);
+            var status = Self.Clear();
+            Debug.Assert(status == VSConstants.S_OK);
             Self.FreezeOutput(1);
         }
 
