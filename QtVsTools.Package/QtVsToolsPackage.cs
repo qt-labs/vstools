@@ -113,6 +113,9 @@ namespace QtVsTools
         private ConcurrentStopwatch InitTimer { get; set; }
         private ConcurrentStopwatch UiTimer { get; set; }
 
+        private uint debuggerEventsCookie;
+        private DebuggerEvents debuggerEventsHandler;
+
         protected override async Task InitializeAsync(
             CancellationToken cancellationToken,
             IProgress<ServiceProgressData> progress)
@@ -148,6 +151,11 @@ namespace QtVsTools
                 if (Dte.CommandLineArguments?.Contains("/Command QtVSTools.ClearSettings") == true) {
                     Registry.CurrentUser.DeleteSubKeyTree(Resources.ObsoleteRegistryPath, false);
                     Registry.CurrentUser.DeleteSubKeyTree(Resources.RegistryPath, false);
+                }
+
+                if (await VsServiceProvider.GetServiceAsync<IVsDebugger>() is {} service) {
+                    debuggerEventsHandler = new DebuggerEvents(Dte);
+                    service.AdviseDebuggerEvents(debuggerEventsHandler, out debuggerEventsCookie);
                 }
 
                 Qml.Debug.Launcher.Initialize();
@@ -518,6 +526,19 @@ namespace QtVsTools
             } catch {
                 Utils.DeleteDirectory(LocalQmllsManager.InstallDir, Utils.Option.Recursive);
             }
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            ThreadHelper.ThrowIfNotOnUIThread();
+            if (disposing) {
+                var debugger = GetService<IVsDebugger, IVsDebugger>();
+                if (debugger != null && debuggerEventsCookie != 0) {
+                    debugger.UnadviseDebuggerEvents(debuggerEventsCookie);
+                    debuggerEventsCookie = 0;
+                }
+            }
+            base.Dispose(disposing);
         }
     }
 }

@@ -153,6 +153,7 @@
     <Compile Include="Common\SettingsAttribute.cs" />
     <Compile Include="LocalQmllsMonitorTask.cs" />
     <Compile Include="NatvisHelper.cs" />
+    <Compile Include="VisualStudio\DebuggerEvents.cs" />
     <Compile Include="VisualStudio\IdleTaskManager.cs" />
     <Compile Include="Options\QtOptionsPageSettings.cs" />
     <Compile Include="Common\SettingsBase.cs" />

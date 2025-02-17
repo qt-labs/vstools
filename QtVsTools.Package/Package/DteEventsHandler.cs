@@ -8,7 +8,6 @@ using EnvDTE;
 using EnvDTE80;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.VCProjectEngine;
 
 using Tasks = System.Threading.Tasks;
@@ -22,7 +21,7 @@ namespace QtVsTools
     using VisualStudio;
     using static Core.Common.Utils;
 
-    internal class DteEventsHandler : IVsDebuggerEvents
+    internal class DteEventsHandler
     {
         private readonly DTE dte;
         private readonly SolutionEvents solutionEvents;
@@ -83,9 +82,6 @@ namespace QtVsTools
                 if (MsBuildProject.GetOrAdd(vcProject) is {} project)
                     InitializeMsBuildProjectProject(project);
             }
-
-            if (VsServiceProvider.GetService<IVsDebugger, IVsDebugger>() is {} service)
-                service.AdviseDebuggerEvents(this, out _);
         }
 
         private async Tasks.Task OnActiveWorkspaceChangedAsync(object sender, EventArgs args)
@@ -169,22 +165,6 @@ namespace QtVsTools
                 }
                 cancelDefault = true;
             }
-        }
-
-        public int OnModeChange(DBGMODE dbgmodeNew)
-        {
-            if (dbgmodeNew != DBGMODE.DBGMODE_Run)
-                return VSConstants.S_OK;
-            if (HelperFunctions.GetSelectedQtProject(dte) is not {} project)
-                return VSConstants.S_OK;
-
-            var @namespace = project.VersionInfo?.Namespace;
-            if (!string.IsNullOrEmpty(@namespace)) {
-                ThreadHelper.JoinableTaskFactory.Run(async () =>
-                    await NatvisHelper.CopyVisualizersFilesAsync(@namespace)
-                );
-            }
-            return VSConstants.S_OK;
         }
 
         public void Disconnect()
