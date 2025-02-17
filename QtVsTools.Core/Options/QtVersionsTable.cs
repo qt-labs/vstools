@@ -548,7 +548,7 @@ namespace QtVsTools.Core.Options
 
             // Create a list of new versions
             foreach (var qmakePath in allQMakePath) {
-                if (!File.Exists(qmakePath))
+                if (!File.Exists(qmakePath) || IsDesignStudioInstallation(qmakePath))
                     continue;
                 var qmakeBinDir = Path.GetDirectoryName(qmakePath);
                 var compilerDir = Path.GetDirectoryName(qmakeBinDir);
@@ -661,6 +661,8 @@ namespace QtVsTools.Core.Options
             var path = NormalizePath(version.Path);
             if (string.IsNullOrEmpty(path))
                 return "Invalid path format";
+            if (IsDesignStudioInstallation(path))
+                return "Design Studio installation is not supported";
             return QtPaths.Exists(path) || QMake.Exists(path) ? "" : "Cannot find qtpaths or qmake";
         }
 
@@ -683,6 +685,11 @@ namespace QtVsTools.Core.Options
             if (version.Host == BuildHost.Windows)
                 return "";
             return version.Compiler.Contains(':') ? "Invalid character in name" : "";
+        }
+
+        private static bool IsDesignStudioInstallation(string qmakePath)
+        {
+            return qmakePath.ToLower().Contains("reduced_version");
         }
 
         private void UpdateSelection(int index)
