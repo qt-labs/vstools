@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.Design;
 using Microsoft.VisualStudio.Shell;
 
@@ -69,6 +70,12 @@ namespace QtVsTools
 
             if (sender is not OleMenuCommand command)
                 return;
+
+            var properties = new Dictionary<string, string>
+            {
+                {"Command", Enum.GetName(typeof(CommandId), command.CommandID.ID)}
+            };
+            Telemetry.TrackEvent(typeof(QtSolutionContextMenu) + ".ExecHandler", properties);
 
             var dte = QtVsToolsPackage.Instance.Dte;
             switch (command.CommandID.ID) {

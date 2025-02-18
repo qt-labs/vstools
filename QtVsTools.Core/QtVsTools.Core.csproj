@@ -71,6 +71,7 @@
     <PackageReference Include="$(Name_Microsoft_VisualStudio_Workspace)" Version="$(Version_Microsoft_VisualStudio_Workspace)" />
     <PackageReference Include="$(Name_Microsoft_VisualStudio_Workspace_VSIntegration)" Version="$(Version_Microsoft_VisualStudio_Workspace_VSIntegration)" />
     <PackageReference Include="$(Name_DiffPlex)" Version="$(Version_DiffPlex)" />
+    <PackageReference Include="$(Name_Microsoft_ApplicationInsights)" Version="$(Version_Microsoft_ApplicationInsights)" />
   </ItemGroup>
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -242,6 +243,7 @@
     <Compile Include="VisualStudio\VsSearch.cs" />
     <Compile Include="VisualStudio\VsServiceProvider.cs" />
     <Compile Include="VisualStudio\VsShell.cs" />
+    <Compile Include="Telemetry.cs" />
     <Compile Include="WaitDialog.cs" />
     <Content Include="QtVsTools.Core.ico" />
     <EmbeddedResource Include="Resources\delete.png" />

@@ -232,11 +232,20 @@ namespace QtVsTools.Wizards.ProjectWizard
         public virtual void RunFinished()
         {
             ThreadHelper.ThrowIfNotOnUIThread();
+
+            var properties = new Dictionary<string, string>();
+
             if (WizardData.ProjectModel == WizardData.ProjectModels.CMake) {
                 Dte.Solution.Close();
                 CleanupVcxProject();
                 OpenCMakeProject();
+                properties.Add("ProjectModel", "CMake");
             }
+            else {
+                properties.Add("ProjectModel", "MsBuild");
+            }
+
+            Telemetry.TrackEvent(GetType().FullName + ".RunFinished", properties);
         }
 
         public virtual bool ShouldAddProjectItem(string filePath)

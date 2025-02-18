@@ -169,6 +169,11 @@ namespace QtVsTools.Core
 
                 Messages.Print($"--- (Import): Finished opening {vcInfo.Name}");
             } catch (Exception e) {
+                var properties = new Dictionary<string, string>()
+                {
+                    {"Operation", typeof(ProjectImporter).FullName + ".ImportSolution"}
+                };
+                Telemetry.TrackException(e, properties);
                 Messages.DisplayErrorMessage(e);
             }
         }
@@ -229,6 +234,11 @@ namespace QtVsTools.Core
 
                 ApplyPostImportSteps(project);
             } catch (Exception e) {
+                var properties = new Dictionary<string, string>()
+                {
+                    {"Operation", typeof(ProjectImporter).FullName + ".ImportProject"}
+                };
+                Telemetry.TrackException(e, properties);
                 Messages.DisplayCriticalErrorMessage($"{e} (Maybe the.vcxproj or.sln file is corrupt?)");
             }
         }

@@ -72,6 +72,13 @@ namespace QtVsTools.Package.MsBuild
                     .Union(extraQt ?? Enumerable.Empty<string>())
                     .ToHashSet();
             }
+
+            var properties = new Dictionary<string, string>
+            {
+                {"Modules", string.Join(";", selectedQt)}
+            };
+            Telemetry.TrackEvent(GetType().FullName + ".EditValueAsync", properties);
+
             return selectedQt?.Any() == true ? string.Join(";", selectedQt) : "";
         }
     }

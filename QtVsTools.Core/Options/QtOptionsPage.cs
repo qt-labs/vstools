@@ -93,6 +93,11 @@ namespace QtVsTools.Core.Options
             [String("Style_CustomStylesheetPath")] StylesheetPath
         }
 
+        public enum Telemetry
+        {
+            [String("Telemetry_Enable")] Enable
+        }
+
         public enum DevelopmentReleases
         {
             [String("SearchDevRelease")] SearchDevRelease,
@@ -534,6 +539,20 @@ namespace QtVsTools.Core.Options
         [Settings(Style.StylesheetPath, "")]
         public static string StylesheetPath =>
             QtOptionsPageSettings.Instance.GetValue(() => StylesheetPath);
+
+        [Category("Telemetry")]
+        [DisplayName("Enable")]
+        [Description("Enable telemetry.")]
+        [TypeConverter(typeof(EnableDisableConverter))]
+        public bool TelemetryEnableOption
+        {
+            get => TelemetryEnable;
+            set => QtOptionsPageSettings.Instance.SetValue(() => TelemetryEnable, value);
+        }
+
+        [Settings(Telemetry.Enable, true)]
+        public static bool TelemetryEnable
+            => QtOptionsPageSettings.Instance.GetValue(() => TelemetryEnable);
 
         [Category("Notifications")]
         [DisplayName("Development releases")]

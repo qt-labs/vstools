@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -244,6 +245,11 @@ namespace QtVsTools
                 InitTimer.Stop();
 
             } catch (Exception ex) {
+                var properties = new Dictionary<string, string>
+                {
+                    {"Operation", GetType().FullName + ".InitializeAsync"}
+                };
+                Telemetry.TrackException(ex, properties);
                 var activityLog = await GetServiceAsync<SVsActivityLog, IVsActivityLog>();
                 activityLog?.LogEntry((uint)__ACTIVITYLOG_ENTRYTYPE.ALE_ERROR, ToString(),
                     $"Failed to load QtVsTools package. Exception details:\n"
@@ -317,6 +323,23 @@ namespace QtVsTools
             // Switch to main (UI) thread
             //
             await JoinableTaskFactory.SwitchToMainThreadAsync();
+
+            /////////
+            // Send telemetry
+            //
+            var properties = new Dictionary<string, string>
+            {
+                {"VSVersion", Dte.Version},
+                {"VSToolsVersion", Version.PRODUCT_VERSION},
+                {"QtVersions", string.Join(";", QtVersionManager.GetVersions())}
+            };
+            var metrics = new Dictionary<string, double>
+            {
+                {"InitTimer", InitTimer.Elapsed.TotalMilliseconds},
+                {"UiTimer", UiTimer.Elapsed.TotalMilliseconds}
+            };
+            Telemetry.TrackEvent(GetType().FullName + ".OnAfterPackageLoadedAsync", properties,
+                metrics);
 
             /////////
             // Initialize DTE event handlers.
@@ -438,6 +461,7 @@ namespace QtVsTools
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
+            Telemetry.Flush();
             EventHandler?.Disconnect();
             return base.QueryClose(out canClose);
         }

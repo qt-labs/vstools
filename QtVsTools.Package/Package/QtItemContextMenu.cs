@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.Design;
 using Microsoft.VisualStudio.Shell;
 
@@ -33,6 +34,16 @@ namespace QtVsTools
         }
 
         /// <summary>
+        /// Command ID.
+        /// TODO: Remove, take form QtMenus.Package
+        /// </summary>
+        private enum CommandId
+        {
+            LUpdateOnItem = QtMenus.Package.lUpdateOnItem,
+            LReleaseOnItem = QtMenus.Package.lReleaseOnItem
+        }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="QtMainMenu"/> class.
         /// Adds our command handlers for menu (commands must exist in the command table file)
         /// </summary>
@@ -43,15 +54,12 @@ namespace QtVsTools
             if (commandService == null)
                 return;
 
-            var command = new OleMenuCommand(ExecHandler,
-                new CommandID(QtMenus.Package.Guid, QtMenus.Package.lUpdateOnItem));
-            command.BeforeQueryStatus += BeforeQueryStatus;
-            commandService.AddCommand(command);
-
-            command = new OleMenuCommand(ExecHandler,
-                new CommandID(QtMenus.Package.Guid, QtMenus.Package.lReleaseOnItem));
-            command.BeforeQueryStatus += BeforeQueryStatus;
-            commandService.AddCommand(command);
+            foreach (int id in Enum.GetValues(typeof(CommandId))) {
+                var command = new OleMenuCommand(ExecHandler,
+                    new CommandID(QtMenus.Package.Guid, id));
+                command.BeforeQueryStatus += BeforeQueryStatus;
+                commandService.AddCommand(command);
+            }
         }
 
         private static void ExecHandler(object sender, EventArgs e)
@@ -60,6 +68,12 @@ namespace QtVsTools
 
             if (sender is not OleMenuCommand command)
                 return;
+
+            var properties = new Dictionary<string, string>
+            {
+                {"Command", Enum.GetName(typeof(CommandId), command.CommandID.ID)}
+            };
+            Telemetry.TrackEvent(typeof(QtItemContextMenu) + ".ExecHandler", properties);
 
             switch (command.CommandID.ID) {
             case QtMenus.Package.lUpdateOnItem:

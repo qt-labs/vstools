@@ -230,6 +230,14 @@
       >17.5.33428.388</Version_Microsoft_VisualStudio_Debugger_Interop_10_0>
   </PropertyGroup>
 
+  <!-- Microsoft.ApplicationInsights -->
+  <PropertyGroup>
+    <Name_Microsoft_ApplicationInsights
+      >Microsoft.ApplicationInsights</Name_Microsoft_ApplicationInsights>
+    <Version_Microsoft_ApplicationInsights
+      >2.23.0</Version_Microsoft_ApplicationInsights>
+  </PropertyGroup>
+
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////
   // Visual Studio 2019 only
