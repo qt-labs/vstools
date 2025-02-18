@@ -65,14 +65,6 @@
     <PackageReference Include="$(Name_Microsoft_VSSDK_BuildTools)" Version="$(Version_Microsoft_VSSDK_BuildTools)" />
     <PackageReference Include="$(Name_Microsoft_VisualStudio_SDK)" Version="$(Version_Microsoft_VisualStudio_SDK)" ExcludeAssets="runtime" />
     <PackageReference Include="$(Name_Microsoft_VisualStudio_TemplateWizardInterface)" Version="$(Version_Microsoft_VisualStudio_TemplateWizardInterface)" />
-    <PackageReference Include="$(Name_Microsoft_VisualStudio_Threading_Analyzers)" Version="$(Version_Microsoft_VisualStudio_Threading_Analyzers)">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="$(Name_Microsoft_VisualStudio_SDK_Analyzers)" Version="$(Version_Microsoft_VisualStudio_SDK_Analyzers)">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
-    </PackageReference>
   </ItemGroup>
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -81,6 +73,14 @@
   <Choose>
     <When Condition="'$(VisualStudioVersion)'=='17.0'">
       <ItemGroup>
+        <PackageReference Include="$(Name_Microsoft_VisualStudio_Threading_Analyzers)" Version="$(Version_Microsoft_VisualStudio_Threading_Analyzers)">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="$(Name_Microsoft_VisualStudio_SDK_Analyzers)" Version="$(Version_Microsoft_VisualStudio_SDK_Analyzers)">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+        </PackageReference>
       </ItemGroup>
     </When>
     <When Condition="'$(VisualStudioVersion)'=='16.0'">

@@ -10,6 +10,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace QtVsTools.Test.QtMsBuild.Build
 {
+#if ENABLE_ASSEMBLY_RESOLVER
     [TestClass]
     public class AssemblyResolver
     {
@@ -35,4 +36,5 @@ namespace QtVsTools.Test.QtMsBuild.Build
             return Assembly.LoadFrom(deployedAssembly);
         }
     }
+#endif
 }

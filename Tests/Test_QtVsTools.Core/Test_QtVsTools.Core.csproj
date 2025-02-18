@@ -66,13 +66,13 @@
     <PackageReference Include="$(Name_Microsoft_Build_Tasks_Core)" Version="$(Version_Microsoft_Build)" />
     <PackageReference Include="$(Name_MSTest_TestAdapter)" Version="$(Version_MSTest_TestAdapter)" />
     <PackageReference Include="$(Name_MSTest_TestFramework)" Version="$(Version_MSTest_TestFramework)" />
-    <PackageReference Include="Microsoft.VisualStudio.Sdk.TestFramework">
-      <Version>17.2.7</Version>
-    </PackageReference>
-    <PackageReference Include="Moq">
-      <Version>4.20.72</Version>
-    </PackageReference>
+    <PackageReference Include="Moq" Version="4.20.72" />
   </ItemGroup>
+  <PropertyGroup>
+    <NoWarn>$(NoWarn);NU1603</NoWarn>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
+  </PropertyGroup>
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////
   // Version specific package references
@@ -80,10 +80,13 @@
   <Choose>
     <When Condition="'$(VisualStudioVersion)'=='17.0'">
       <ItemGroup>
+        <PackageReference Include="Microsoft.ServiceHub.Framework" Version="4.8.3" />
+        <PackageReference Include="Microsoft.VisualStudio.Sdk.TestFramework" Version="17.6.16" />
       </ItemGroup>
     </When>
     <When Condition="'$(VisualStudioVersion)'=='16.0'">
       <ItemGroup>
+        <PackageReference Include="Microsoft.VisualStudio.Sdk.TestFramework" Version="16.5.22-beta" />
       </ItemGroup>
     </When>
   </Choose>

@@ -21,10 +21,6 @@ namespace QtVsTools.Test.Core
         [TestMethod]
         public void Test_LastIndexOfArray()
         {
-#if !ENABLE_TEST_LASTINDEXOFARRAY
-            Assert.Inconclusive("Skip to avoid System.Memory version mismatch issues.");
-#endif
-
             Assert.AreEqual(-1, Array.Empty<int>().LastIndexOfArray(Array.Empty<int>()));
             Assert.AreEqual(-1, Array.Empty<int>().LastIndexOfArray(new[] { 1, 2, 3 }));
             Assert.AreEqual(-1, new[] { 1, 2, 3 }.LastIndexOfArray(Array.Empty<int>()));
@@ -60,10 +56,6 @@ namespace QtVsTools.Test.Core
         [TestMethod]
         public void Test_LogFile()
         {
-#if !ENABLE_TEST_LOGFILE
-            Assert.Inconclusive("Skip to avoid System.Memory version mismatch issues.");
-#endif
-
             Assert.ThrowsException<ArgumentException>(() => new LogFile("<foo>", 0, 0));
             Assert.ThrowsException<ArgumentOutOfRangeException>(() => new LogFile("foo", 0, 20));
             Assert.ThrowsException<ArgumentOutOfRangeException>(() => new LogFile("foo", 10, 0));

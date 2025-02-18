@@ -6,11 +6,12 @@
 using System;
 using System.IO;
 using System.Threading;
-using System.Threading.Tasks;
 using Microsoft.VisualStudio.Imaging;
 using Microsoft.VisualStudio.Imaging.Interop;
 using Microsoft.VisualStudio.Shell;
 using Newtonsoft.Json;
+
+using Tasks = System.Threading.Tasks;
 
 namespace QtVsTools.Core
 {
@@ -81,7 +82,7 @@ namespace QtVsTools.Core
 
     public class LocalQmllsMonitorTask : IIdleTask
     {
-        public async Task RunAsync(CancellationToken cancellationToken)
+        public async Tasks.Task RunAsync(CancellationToken cancellationToken)
         {
 #pragma warning disable VSTHRD010
             try {
@@ -141,7 +142,7 @@ namespace QtVsTools.Core
 
                     Utils.DeleteDirectory(downloadDir, Utils.Option.Recursive);
                 }
-            } catch (TaskCanceledException) {
+            } catch (Tasks.TaskCanceledException) {
                 // ignore
             } catch (Exception exception) {
                 exception.Log();

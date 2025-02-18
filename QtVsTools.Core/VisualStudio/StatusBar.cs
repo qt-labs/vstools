@@ -4,10 +4,11 @@ SPDX-License-Identifier: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-ex
 ***************************************************************************************************/
 
 using System.Diagnostics;
-using System.Threading.Tasks;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
+
+using Tasks = System.Threading.Tasks;
 
 namespace QtVsTools.VisualStudio
 {
@@ -30,7 +31,7 @@ namespace QtVsTools.VisualStudio
             ThreadHelper.JoinableTaskFactory.Run(async () => await SetTextAsync(text));
         }
 
-        public static async Task SetTextAsync(string text)
+        public static async Tasks.Task SetTextAsync(string text)
         {
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
 
@@ -44,7 +45,7 @@ namespace QtVsTools.VisualStudio
             return ThreadHelper.JoinableTaskFactory.Run(async () => await GetTextAsync());
         }
 
-        public static async Task<string> GetTextAsync()
+        public static async Tasks.Task<string> GetTextAsync()
         {
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
 
@@ -58,7 +59,7 @@ namespace QtVsTools.VisualStudio
             ThreadHelper.JoinableTaskFactory.Run(async () => await ClearAsync());
         }
 
-        public static async Task ClearAsync()
+        public static async Tasks.Task ClearAsync()
         {
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
 
@@ -79,7 +80,7 @@ namespace QtVsTools.VisualStudio
                 currentStep));
         }
 
-        public static async Task ProgressAsync(string text, uint totalSteps, uint currentStep = 0)
+        public static async Tasks.Task ProgressAsync(string text, uint totalSteps, uint currentStep = 0)
         {
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
 
@@ -97,7 +98,7 @@ namespace QtVsTools.VisualStudio
             ThreadHelper.JoinableTaskFactory.Run(async () => await ResetProgressAsync());
         }
 
-        public static async Task ResetProgressAsync()
+        public static async Tasks.Task ResetProgressAsync()
         {
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
 

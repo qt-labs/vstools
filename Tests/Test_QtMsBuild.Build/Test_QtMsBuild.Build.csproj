@@ -63,6 +63,10 @@
     <PackageReference Include="$(Name_Microsoft_Build_Tasks_Core)" Version="$(Version_Microsoft_Build)" />
     <PackageReference Include="$(Name_Microsoft_Build_Utilities_Core)" Version="$(Version_Microsoft_Build)" />
   </ItemGroup>
+  <PropertyGroup>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
+  </PropertyGroup>
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////
   // Version specific package references

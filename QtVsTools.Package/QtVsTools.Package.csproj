@@ -105,14 +105,6 @@
     </PackageReference>
     <PackageReference Include="$(Name_System_Management)" Version="$(Version_System_Management)" />
     <PackageReference Include="$(Name_Microsoft_TestPlatform_ObjectModel)" Version="$(Version_Microsoft_TestPlatform_ObjectModel)" />
-    <PackageReference Include="$(Name_Microsoft_VisualStudio_Threading_Analyzers)" Version="$(Version_Microsoft_VisualStudio_Threading_Analyzers)">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="$(Name_Microsoft_VisualStudio_SDK_Analyzers)" Version="$(Version_Microsoft_VisualStudio_SDK_Analyzers)">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
-    </PackageReference>
     <PackageReference Include="$(Name_Microsoft_VisualStudio_Debugger_Interop_10_0)" Version="$(Version_Microsoft_VisualStudio_Debugger_Interop_10_0)" />
   </ItemGroup>
   <!--
@@ -125,6 +117,14 @@
         <PackageReference Include="$(Name_Community_VisualStudio_SourceGenerators)" Version="$(Version_Community_VisualStudio_SourceGenerators)">
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
           <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
+        <PackageReference Include="$(Name_Microsoft_VisualStudio_Threading_Analyzers)" Version="$(Version_Microsoft_VisualStudio_Threading_Analyzers)">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="$(Name_Microsoft_VisualStudio_SDK_Analyzers)" Version="$(Version_Microsoft_VisualStudio_SDK_Analyzers)">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
         </PackageReference>
       </ItemGroup>
     </When>

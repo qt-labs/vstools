@@ -4,10 +4,11 @@
 using System;
 using System.IO;
 using System.Threading;
-using System.Threading.Tasks;
 using EnvDTE;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.Win32;
+
+using Tasks = System.Threading.Tasks;
 
 namespace QtVsTools.Core
 {
@@ -16,7 +17,7 @@ namespace QtVsTools.Core
 
     public static class NatvisHelper
     {
-        private static Task _initTask;
+        private static Tasks.Task _initTask;
         private static string _visualizersPath;
 
         public static void CopyVisualizersFiles(string qtNamespace = null)
@@ -28,14 +29,14 @@ namespace QtVsTools.Core
                 await CopyVisualizersFilesAsync(qtNamespace));
         }
 
-        public static async Task CopyVisualizersFilesAsync(string qtNamespace = null)
+        public static async Tasks.Task CopyVisualizersFilesAsync(string qtNamespace = null)
         {
             string[] files = { "qt5.natvis.xml", "qt6.natvis.xml" };
             foreach (var file in files)
                 await CopyVisualizersFileAsync(file, qtNamespace);
         }
 
-        private static async Task CopyVisualizersFileAsync(string filename, string qtNamespace)
+        private static async Tasks.Task CopyVisualizersFileAsync(string filename, string qtNamespace)
         {
             await EnsureVisualizersPathInitializedAsync();
 
@@ -62,7 +63,7 @@ namespace QtVsTools.Core
             }
         }
 
-        private static async Task EnsureVisualizersPathInitializedAsync()
+        private static async Tasks.Task EnsureVisualizersPathInitializedAsync()
         {
             if (!string.IsNullOrEmpty(_visualizersPath))
                 return;
@@ -75,7 +76,7 @@ namespace QtVsTools.Core
             await initTask;
         }
 
-        private static async Task InitializeVisualizersPathAsync()
+        private static async Tasks.Task InitializeVisualizersPathAsync()
         {
             await VsShell.UiThreadAsync(() =>
             {
