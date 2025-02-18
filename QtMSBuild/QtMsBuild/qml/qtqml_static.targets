@@ -62,7 +62,7 @@
     <ItemGroup>
       <QtQmlImportFileSource
         Include="$([System.Text.RegularExpressions.Regex]::Matches('%(QtQmlSourceText.Identity)',
-        '^\s*import[^\n]*'))" />
+        '^\s*import\s+[^\n]*'))" />
       <QtQmlImportFileSource Include="QmlObject { }" />
     </ItemGroup>
 
