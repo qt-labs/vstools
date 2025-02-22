@@ -29,7 +29,7 @@ namespace QtVsTools.Wizards.Util
                 return ValidationResult.ValidResult;
 
             var files = HelperFunctions.GetProjectFiles(project, Filter);
-            if (files.Count == 0)
+            if (files == null || files.Count == 0)
                 return ValidationResult.ValidResult;
 
             var fileName = @string.ToUpperInvariant();
