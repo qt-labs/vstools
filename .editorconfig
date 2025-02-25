@@ -20,7 +20,7 @@ insert_final_newline = false
 # Organize usings
 dotnet_separate_import_directive_groups = false
 dotnet_sort_system_directives_first = true
-file_header_template = Copyright (C) 2025 The Qt Company Ltd.\nSPDX-License-Identifier: LicenseRef-Qt-Commercial OR GPL-3.0-only
+file_header_template = Copyright (C) 2025 The Qt Company Ltd.\nSPDX-License-Identifier: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
 
 # this. and Me. preferences
 dotnet_style_qualification_for_event = false

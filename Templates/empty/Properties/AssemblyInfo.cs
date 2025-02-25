@@ -1,11 +1,11 @@
-/***************************************************************************************************
- Copyright (C) 2024 The Qt Company Ltd.
- SPDX-License-Identifier: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
-****************************************************************************************************
+// Copyright (C) 2025 The Qt Company Ltd.
+// SPDX-License-Identifier: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
+
+/*
 <#@output extension="tt.cs" #>
 <#@include file="$(SolutionDir)\version.tt" #>
-**              <#=WARNING_GENERATED_FILE#>
-****************************************************************************/
+              <#=WARNING_GENERATED_FILE#>
+*/
 
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -18,7 +18,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("The Qt Company Ltd.")]
 [assembly: AssemblyProduct("Qt Visual Studio Tools")]
-[assembly: AssemblyCopyright("Copyright (C) 2024 The Qt Company Ltd.")]
+[assembly: AssemblyCopyright("Copyright (C) 2025 The Qt Company Ltd.")]
 [assembly: AssemblyTrademark("The Qt Company Ltd. Qt and their respective logos are trademarks of The Qt Company Ltd. in Finland and/or other countries worldwide. All other trademarks are property of their respective owners.")]
 [assembly: AssemblyCulture("")]
 

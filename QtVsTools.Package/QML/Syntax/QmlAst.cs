@@ -1,7 +1,5 @@
-/***************************************************************************************************
- Copyright (C) 2024 The Qt Company Ltd.
- SPDX-License-Identifier: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
-***************************************************************************************************/
+// Copyright (C) 2025 The Qt Company Ltd.
+// SPDX-License-Identifier: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
 
 /// The data types in this file represent nodes in the QML abstract sytax tree (AST).
 /// They correspond to classes defined in qqmljsast_p.h

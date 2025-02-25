@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright 2009,  Adam Cataldo
 // https://www.codeproject.com/Articles/32629/A-better-panel-for-data-binding-to-a-WrapPanel-in
 //

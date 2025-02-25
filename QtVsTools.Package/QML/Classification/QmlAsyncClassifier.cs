@@ -1,7 +1,5 @@
-/***************************************************************************************************
- Copyright (C) 2024 The Qt Company Ltd.
- SPDX-License-Identifier: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
-***************************************************************************************************/
+// Copyright (C) 2025 The Qt Company Ltd.
+// SPDX-License-Identifier: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
 
 /// This file contains the definition of the abstract class QmlAsyncClassifier which is the base
 /// class for asynchronous implementations of text classifiers, e.g. for syntax highlighting and

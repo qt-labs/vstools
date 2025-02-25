@@ -1,14 +1,14 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!--
-***************************************************************************************************
- Copyright (C) 2024 The Qt Company Ltd.
+ Copyright (C) 2025 The Qt Company Ltd.
  SPDX-License-Identifier: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
-***************************************************************************************************
-
+-->
+<!--
+****************************************************************************************************
 <#@output extension="vsct" #>
 <#@include file="$(SolutionDir)\version.tt" #>
     **          <#=WARNING_GENERATED_FILE#>
-    *****************************************************************************
+****************************************************************************************************
 -->
 
 <CommandTable xmlns="http://schemas.microsoft.com/VisualStudio/2005-10-18/CommandTable"

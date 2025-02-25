@@ -1,7 +1,5 @@
-/***************************************************************************************************
- Copyright (C) 2024 The Qt Company Ltd.
- SPDX-License-Identifier: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
-***************************************************************************************************/
+// Copyright (C) 2025 The Qt Company Ltd.
+// SPDX-License-Identifier: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
 
 #include "mainwindow.h"
 #include "qrceditor.h"
@@ -121,7 +119,7 @@ void MainWindow::slotSave()
 void MainWindow::slotAbout()
 {
     QMessageBox::about(this, tr("About Qt Resource Editor"),
-        tr("Qt Resource Editor") + "\n\n" + tr("Copyright (C) 2024 The Qt Company Ltd."));
+        tr("Qt Resource Editor") + "\n\n" + tr("Copyright (C) 2025 The Qt Company Ltd."));
 }
 
 void MainWindow::slotAboutQt()
