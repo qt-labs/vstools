@@ -1,0 +1,12 @@
+<testconfig version="1.0">
+    <information>
+        <summary/>
+        <description/>
+    </information>
+    <testsettings>
+        <logScreenshotOnError>true</logScreenshotOnError>
+        <logScreenshotOnWarning>true</logScreenshotOnWarning>
+        <logScreenshotOnFail>true</logScreenshotOnFail>
+    </testsettings>
+    <passwords/>
+</testconfig>
