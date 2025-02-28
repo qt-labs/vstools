@@ -59,10 +59,25 @@ def main():
         # test handling of invalid directory
         def testErrorMessage(nameEntered):
             clickButton(waitForObject(names.options_OK_Button))
-            dialogText = waitForObjectExists(names.msvs_Qt_VS_Tools_Invalid_Qt_versions).text
+            if getMsvsVersionAsList() >= [17, 13, 0]:
+                dialog = {"text": "Microsoft Visual Studio", "type": "Window"}
+                if getMsvsVersionAsList() >= [17, 13, 3]:
+                    dialog["id"] = "Microsoft.VisualStudio.MessageBox"
+                else:
+                    dialog["id"] = "vs:DialogWindow_1"
+            else:
+                dialog = globalnames.microsoft_Visual_Studio_Dialog
+            invalidVersionLabel = ({"container": dialog,
+                                    "id": "Text", "type": "Edit"}
+                                   if getMsvsVersionAsList() >= [17, 13, 0] else
+                                   {"container": dialog,
+                                    "id": "65535", "type": "Label"})
+            dialogText = waitForObjectExists(invalidVersionLabel).text
             test.verify(("Name cannot be empty" in dialogText) ^ nameEntered)
             test.verify("Cannot find qtpaths or qmake" in dialogText)
-            clickButton(waitForObject(globalnames.microsoft_Visual_Studio_OK_Button))
+            okButton = ({"container": dialog,
+                         "text": "OK", "type": "Button"})
+            clickButton(waitForObject(okButton))
 
         nonExistingDir = "C:\\this\does\\not\\exist"
         while os.path.exists(nonExistingDir):
