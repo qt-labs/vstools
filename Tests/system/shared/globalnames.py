@@ -22,7 +22,7 @@ extensions_Qt_VS_Tools_MenuItem = {"container": extensions_MenuItem, "text": "Qt
 msvs_Services_SignIn_WizardFrame = {"class": "Microsoft.VisualStudio.Services.SignIn.WizardFrame",
                                     "text": "Microsoft Visual Studio", "type": "Window"}
 msvs_Skip_this_for_now_Button = {"container": msvs_Services_SignIn_WizardFrame,
-                                 "text": "Skip this for now.", "type": "Button"}
+                                 "text": Wildcard("Skip *"), "type": "Button"}
 msvs_Start_Visual_Studio_Button = {"container": msvs_Services_SignIn_WizardFrame,
                                    "text": "Start Visual Studio", "type": "Button"}
 msvs_Not_now_maybe_later_Label = {"container": msvs_Services_SignIn_WizardFrame,
