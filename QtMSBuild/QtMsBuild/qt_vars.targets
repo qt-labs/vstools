@@ -273,13 +273,15 @@
         &lt;file&gt;import.qml&lt;/file&gt;
     &lt;/qresource&gt;
 &lt;/RCC&gt;
-"/>
+"
+      Overwrite="true"/>
 
     <!--// Write .pro file to temp path -->
     <WriteLinesToFile
       File="$(QtVarsWorkDir)\qtvars.pro"
       Lines="$(QtVarsProFileConfig)
-            ;$(QtVarsProFileInput)"/>
+            ;$(QtVarsProFileInput)"
+      Overwrite="true"/>
 
     <!--// Write start of Qt vars data file:
         //  * Open property group tag -->
