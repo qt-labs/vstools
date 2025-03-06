@@ -70,7 +70,7 @@ namespace QtVsTools.Core
 
             switch (GetTemplateType(File.ReadLines(proFile.FullName))) {
             case TemplateType.SubDirs:
-                var result = DialogResult.None;
+                var result = DialogResult.OK;
                 if (!string.IsNullOrEmpty(_dteObject.Solution.FullName)) {
                     result = MessageBox.Show(subDirsMessage, "Open Solution",
                         MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
