@@ -117,6 +117,7 @@ namespace QtVsTools.Core.CMake
         private string PresetsPath => Path.Combine(RootPath, "CMakePresets.json");
         private string UserPresetsPath => Path.Combine(RootPath, "CMakeUserPresets.json");
         private string SettingsPath => Path.Combine(RootPath, "CMakeSettings.json");
+        public string ConfigurationName { get; set; }
 
         private static HashSet<string> ProjectFileNames { get; } = new(Utils.CaseIgnorer)
         {

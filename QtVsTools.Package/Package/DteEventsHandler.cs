@@ -32,6 +32,9 @@ namespace QtVsTools
         private WindowEvents windowEvents;
         private readonly OutputWindowEvents outputWindowEvents;
 
+        public delegate void ProjectConfigurationDelegate(ProjectConfigurationEventArgs args);
+        public event ProjectConfigurationDelegate ProjectConfigurationChanged;
+
         public DteEventsHandler(DTE _dte)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
@@ -376,7 +379,7 @@ namespace QtVsTools
             }
         }
 
-        private static void OnVcProjectEngineItemPropertyChange2(object item, string propertySheet,
+        private void OnVcProjectEngineItemPropertyChange2(object item, string propertySheet,
             string itemType, string propertyName)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
@@ -391,6 +394,11 @@ namespace QtVsTools
                 return;
 
             project.Refresh(vcConfiguration.Name);
+            ProjectConfigurationChanged?.Invoke(new ProjectConfigurationEventArgs
+            {
+                ProjectPath = project.VcProjectPath,
+                ConfigurationName = vcConfiguration.Name
+            });
         }
     }
 }

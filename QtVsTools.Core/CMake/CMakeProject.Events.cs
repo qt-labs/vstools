@@ -6,8 +6,13 @@ using System.Threading.Tasks;
 
 namespace QtVsTools.Core.CMake
 {
+    using static Common.Utils;
+
     public partial class CMakeProject : Concurrent<CMakeProject>
     {
+        public delegate void ProjectConfigurationDelegate(ProjectConfigurationEventArgs args);
+        public event ProjectConfigurationDelegate ProjectConfigurationChanged;
+
         private void SubscribeEvents()
         {
             FileWatcher.OnFileSystemChanged += OnFileSystemChangedAsync;
@@ -20,8 +25,27 @@ namespace QtVsTools.Core.CMake
 
         private async Task OnFileSystemChangedAsync(object sender, FileSystemEventArgs args)
         {
-            if (IsProjectFile(args.FullPath))
+            var fullPath = HelperFunctions.ToNativeSeparator(args.FullPath);
+            if (IsProjectFile(fullPath))
                 await CheckQtStatusAsync();
+
+            if (!string.Equals(fullPath, GetConfigurationFileName(), IgnoreCase))
+                return;
+
+            var configurationName = GetActiveConfigurationName();
+            if (string.IsNullOrEmpty(ConfigurationName))
+                ConfigurationName = configurationName;
+
+            if (ConfigurationName == configurationName)
+                return;
+
+            ConfigurationName = configurationName;
+            ProjectConfigurationChanged?.Invoke(new ProjectConfigurationEventArgs
+            {
+                ProjectPath = RootPath,
+                IsCMakeProject = true,
+                ConfigurationName = configurationName
+            });
         }
     }
 }

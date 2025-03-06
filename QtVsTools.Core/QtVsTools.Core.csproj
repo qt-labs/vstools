@@ -113,6 +113,7 @@
   // -->
   <ItemGroup>
     <Compile Include="BuildConfig.cs" />
+    <Compile Include="CMake\CMakeProject.BuildConfiguration.cs" />
     <Compile Include="CMake\CMakeProject.Debug.cs" />
     <Compile Include="CMake\CMakeProject.Presets.cs" />
     <Compile Include="CMake\CMakeProject.Records.cs" />
@@ -153,6 +154,7 @@
     <Compile Include="Common\SettingsAttribute.cs" />
     <Compile Include="LocalQmllsMonitorTask.cs" />
     <Compile Include="NatvisHelper.cs" />
+    <Compile Include="ProjectConfigurationEventArgs.cs" />
     <Compile Include="VisualStudio\DebuggerEvents.cs" />
     <Compile Include="VisualStudio\IdleTaskManager.cs" />
     <Compile Include="Options\QtOptionsPageSettings.cs" />
@@ -239,6 +241,7 @@
     </Compile>
     <Compile Include="VersionInformation.cs" />
     <Compile Include="VisualStudio\InfoBarMessage.cs" />
+    <Compile Include="VisualStudio\UpdateSolutionEvents.cs" />
     <Compile Include="VisualStudio\VsEditor.cs" />
     <Compile Include="VisualStudio\StatusBar.cs" />
     <Compile Include="VisualStudio\VsSearch.cs" />

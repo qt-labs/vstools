@@ -116,6 +116,9 @@ namespace QtVsTools
         private uint debuggerEventsCookie;
         private DebuggerEvents debuggerEventsHandler;
 
+        private uint buildEventsCookie;
+        private UpdateSolutionEvents buildEventsHandler;
+
         protected override async Task InitializeAsync(
             CancellationToken cancellationToken,
             IProgress<ServiceProgressData> progress)
@@ -172,7 +175,6 @@ namespace QtVsTools
 
                 if (!string.IsNullOrEmpty(VsShell.InstallRootDir))
                     QMakeImport.VcPath = Path.Combine(VsShell.InstallRootDir, "VC");
-
 
                 ///////////////////////////////////////////////////////////////////////////////////
                 // Switch to background thread
@@ -353,6 +355,16 @@ namespace QtVsTools
             // Initialize DTE event handlers.
             //
             EventHandler = new DteEventsHandler(Dte);
+
+            /////////
+            // Wire up solution change events. Currently, targets project configuration
+            // changed events only. Used in conjunction with the QML language server.
+            //
+            var manager = await VsServiceProvider.GetServiceAsync<IVsSolutionBuildManager>();
+            if (manager != null) {
+                buildEventsHandler = new UpdateSolutionEvents();
+                manager.AdviseUpdateSolutionEvents(buildEventsHandler, out buildEventsCookie);
+            }
 
             /////////
             // Check if a solution was opened during initialization.
@@ -536,6 +548,12 @@ namespace QtVsTools
                 if (debugger != null && debuggerEventsCookie != 0) {
                     debugger.UnadviseDebuggerEvents(debuggerEventsCookie);
                     debuggerEventsCookie = 0;
+                }
+
+                var buildManager = GetService<SVsSolutionBuildManager, IVsSolutionBuildManager>();
+                if (buildManager != null && buildEventsCookie != 0) {
+                    buildManager.UnadviseUpdateSolutionEvents(buildEventsCookie);
+                    buildEventsCookie = 0;
                 }
             }
             base.Dispose(disposing);
