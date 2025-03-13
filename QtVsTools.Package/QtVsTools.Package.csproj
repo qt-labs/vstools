@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <!--
  Copyright (C) 2025 The Qt Company Ltd.
  SPDX-License-Identifier: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
@@ -345,7 +345,7 @@
       <DependentUpon>AssemblyInfo.cs</DependentUpon>
     </Compile>
     <Compile Include="QML\QmlContentType.cs" />
-    <Compile Include="QML\Language\QmlLspClient.cs" />
+    <Compile Include="QML\Language\QmlLanguageClient.cs" />
     <Compile Include="QtVsToolsPackage.cs" />
     <T4Template Include="QtVersionId.vsct_TT">
       <Generator>TextTemplatingFileGenerator</Generator>

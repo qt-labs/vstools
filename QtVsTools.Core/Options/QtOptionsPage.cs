@@ -71,7 +71,7 @@ namespace QtVsTools.Core.Options
             [String("Notifications_CMake_Incompatible")] CMakeIncompatible,
             [String("Notifications_CMake_Conversion")] CMakeConversion,
             [String("NotifySearchDevRelease")] NotifySearchDevRelease,
-            [String("Notifications_SearchDevRelease")] NotifyQmllsUpdateInstalled
+            [String("Notifications_SearchDevRelease")] NotifyQmlLanguageServersUpdateInstalled
         }
 
         public enum Natvis
@@ -79,7 +79,7 @@ namespace QtVsTools.Core.Options
             [String("LinkNatvis")] Link
         }
 
-        public enum QmlLsp
+        public enum QmlLanguageServer
         {
             [String("QmlLsp_Enable")] Enable,
             [String("QmlLsp_QtVersion")] QtVersion,
@@ -146,14 +146,14 @@ namespace QtVsTools.Core.Options
             }
         }
 
-        private class QmlLspProviderConverter : QtVersionConverter
+        private class QmlLanguageServerVersionProviderConverter : QtVersionConverter
         {
             protected override object[] GetCollection
             {
                 get
                 {
                     var objects = base.GetCollection;
-                    return File.Exists(LocalQmllsManager.QmlLspServerExePath)
+                    return File.Exists(QmlLanguageServerManager.QmlLanguageServerExePath)
                         ? objects.Prepend("$(Local LS)").ToArray()
                         : objects;
                 }
@@ -433,17 +433,19 @@ namespace QtVsTools.Core.Options
         [Description("Show notification when a new version of the local QML language server was"
             + " installed.")]
         [TypeConverter(typeof(EnableDisableConverter))]
-        public bool NotifyQmllsUpdateInstalledOption
+        public bool NotifyQmlLanguageServerUpdateInstalledOption
         {
-            get => NotifyQmllsUpdateInstalled;
-            set => NotifyQmllsUpdateInstalled = value;
+            get => NotifyQmlLanguageServerUpdateInstalled;
+            set => NotifyQmlLanguageServerUpdateInstalled = value;
         }
 
-        [Settings(Notifications.NotifyQmllsUpdateInstalled, true)]
-        public static bool NotifyQmllsUpdateInstalled
+        [Settings(Notifications.NotifyQmlLanguageServersUpdateInstalled, true)]
+        public static bool NotifyQmlLanguageServerUpdateInstalled
         {
-            get => QtOptionsPageSettings.Instance.GetValue(() => NotifyQmllsUpdateInstalled);
-            set => QtOptionsPageSettings.Instance.SetValue(() => NotifyQmllsUpdateInstalled, value);
+            get => QtOptionsPageSettings.Instance.GetValue(
+                () => NotifyQmlLanguageServerUpdateInstalled);
+            set => QtOptionsPageSettings.Instance.SetValue(
+                () => NotifyQmlLanguageServerUpdateInstalled, value);
         }
 
         [Category("Natvis")]
@@ -465,58 +467,58 @@ namespace QtVsTools.Core.Options
         [Description("Connect to a QML Language Server for enhanced code editing experience. "
             + "Restarting Visual Studio might be required after enabling the QML Language Server.")]
         [TypeConverter(typeof(EnableDisableConverter))]
-        public bool QmlLspEnableOption
+        public bool QmlLanguageServerEnableOption
         {
-            get => QmlLspEnable;
-            set => QtOptionsPageSettings.Instance.SetValue(() => QmlLspEnable, value);
+            get => QmlLanguageServerEnable;
+            set => QtOptionsPageSettings.Instance.SetValue(() => QmlLanguageServerEnable, value);
         }
 
-        [Settings(QmlLsp.Enable, false)]
-        public static bool QmlLspEnable
-             => QtOptionsPageSettings.Instance.GetValue(() => QmlLspEnable);
+        [Settings(QmlLanguageServer.Enable, false)]
+        public static bool QmlLanguageServerEnable
+             => QtOptionsPageSettings.Instance.GetValue(() => QmlLanguageServerEnable);
 
         [Category("QML Language Server")]
         [DisplayName("Qt Version")]
         [Description("Select the QML language server to use. '$(Local LS)' uses the statically "
             + "built version from the development branch, which includes the latest features and "
             + "fixes. Other options use the language server bundled of the specified Qt version.")]
-        [TypeConverter(typeof(QmlLspProviderConverter))]
-        public string QmlLspVersionOption
+        [TypeConverter(typeof(QmlLanguageServerVersionProviderConverter))]
+        public string QmlLanguageServerVersionOption
         {
-            get => QmlLspVersion;
-            set => QtOptionsPageSettings.Instance.SetValue(() => QmlLspVersion, value);
+            get => QmlLanguageServerVersion;
+            set => QtOptionsPageSettings.Instance.SetValue(() => QmlLanguageServerVersion, value);
         }
 
-        [Settings(QmlLsp.QtVersion, "$(Local LS)")]
-        public static string QmlLspVersion
-            => QtOptionsPageSettings.Instance.GetValue(() => QmlLspVersion);
+        [Settings(QmlLanguageServer.QtVersion, "$(Local LS)")]
+        public static string QmlLanguageServerVersion
+            => QtOptionsPageSettings.Instance.GetValue(() => QmlLanguageServerVersion);
 
         [Category("QML Language Server")]
         [DisplayName("Log")]
         [Description("Write exchanged LSP messages to log file in %TEMP%.")]
         [TypeConverter(typeof(EnableDisableConverter))]
-        public bool QmlLspLogOption
+        public bool QmlLanguageServerLogOption
         {
-            get => QmlLspLog;
-            set => QtOptionsPageSettings.Instance.SetValue(() => QmlLspLog, value);
+            get => QmlLanguageServerLog;
+            set => QtOptionsPageSettings.Instance.SetValue(() => QmlLanguageServerLog, value);
         }
 
-        [Settings(QmlLsp.Log, false)]
-        public static bool QmlLspLog
-            => QtOptionsPageSettings.Instance.GetValue(() => QmlLspLog);
+        [Settings(QmlLanguageServer.Log, false)]
+        public static bool QmlLanguageServerLog
+            => QtOptionsPageSettings.Instance.GetValue(() => QmlLanguageServerLog);
 
         [Category("QML Language Server")]
         [DisplayName("Log Size")]
         [Description("Maximum size (in KB) of QML LSP log file.")]
-        public int QmlLspLogSizeOption
+        public int QmlLanguageServerLogSizeOption
         {
-            get => QmlLspLogSize;
-            set => QtOptionsPageSettings.Instance.SetValue(() => QmlLspLogSize, value);
+            get => QmlLanguageServerLogSize;
+            set => QtOptionsPageSettings.Instance.SetValue(() => QmlLanguageServerLogSize, value);
         }
 
-        [Settings(QmlLsp.LogSize, 2500)]
-        public static int QmlLspLogSize
-            => QtOptionsPageSettings.Instance.GetValue(() => QmlLspLogSize);
+        [Settings(QmlLanguageServer.LogSize, 2500)]
+        public static int QmlLanguageServerLogSize
+            => QtOptionsPageSettings.Instance.GetValue(() => QmlLanguageServerLogSize);
 
         public enum EditorColorTheme
         {
@@ -649,8 +651,8 @@ namespace QtVsTools.Core.Options
                         "QTMSBUILD", QtMsBuildPath, EnvironmentVariableTarget.Process);
                 }
 
-                if (QmlLspLogSizeOption < 100)
-                    QmlLspLogSizeOption = 100;
+                if (QmlLanguageServerLogSizeOption < 100)
+                    QmlLanguageServerLogSizeOption = 100;
                 SaveSettingsToStorageStatic();
             } catch (Exception exception) {
                 exception.Log();

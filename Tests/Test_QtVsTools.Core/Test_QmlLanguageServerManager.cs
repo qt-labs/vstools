@@ -12,7 +12,7 @@ namespace QtVsTools.Test.Core
     using QtVsTools.Core.Common;
 
     [TestClass]
-    public class Test_LocalQmllsManager
+    public class Test_QmlLanguageServerManager
     {
         private CancellationTokenSource cts;
 
@@ -20,20 +20,20 @@ namespace QtVsTools.Test.Core
         public void TestSetup()
         {
             cts = new CancellationTokenSource();
-            Utils.DeleteDirectory(LocalQmllsManager.InstallDir, Utils.Option.Recursive);
+            Utils.DeleteDirectory(QmlLanguageServerManager.InstallDir, Utils.Option.Recursive);
         }
 
         [TestCleanup]
         public void TestCleanup()
         {
             cts?.Dispose();
-            Utils.DeleteDirectory(LocalQmllsManager.InstallDir, Utils.Option.Recursive);
+            Utils.DeleteDirectory(QmlLanguageServerManager.InstallDir, Utils.Option.Recursive);
         }
 
         [TestMethod]
         public async Task TestFetchAssetToInstallAsync()
         {
-            var asset = await LocalQmllsManager.FetchAssetAsync(cts.Token);
+            var asset = await QmlLanguageServerManager.FetchAssetAsync(cts.Token);
 
             Assert.IsNotNull(asset, "asset != null");
             Assert.IsFalse(string.IsNullOrEmpty(asset.BrowserDownloadUrl),
@@ -43,8 +43,8 @@ namespace QtVsTools.Test.Core
         [TestMethod]
         public async Task TestCheckStatusAgainstAsync()
         {
-            var asset = await LocalQmllsManager.FetchAssetAsync(cts.Token);
-            var checkResult = await LocalQmllsManager
+            var asset = await QmlLanguageServerManager.FetchAssetAsync(cts.Token);
+            var checkResult = await QmlLanguageServerManager
                 .CheckForInstallationUpdateAsync(asset, cts.Token);
 
             Assert.IsNotNull(checkResult, "checkResult != null");
@@ -54,20 +54,20 @@ namespace QtVsTools.Test.Core
         [TestMethod]
         public async Task TestInstallAsync()
         {
-            var asset = await LocalQmllsManager.FetchAssetAsync(cts.Token);
+            var asset = await QmlLanguageServerManager.FetchAssetAsync(cts.Token);
             Assert.IsNotNull(asset, "asset != null");
 
-            var checkResult = await LocalQmllsManager
+            var checkResult = await QmlLanguageServerManager
                 .CheckForInstallationUpdateAsync(asset, cts.Token);
             Assert.IsNotNull(checkResult, "checkResult != null");
             Assert.IsTrue(checkResult.ShouldInstall, "checkResult.ShouldInstall");
 
             if (checkResult.ShouldInstall) {
-                await LocalQmllsManager.InstallAssetAsync(asset, cts.Token);
-                Assert.IsTrue(File.Exists(LocalQmllsManager.QmlLspServerExePath),
-                    "File.Exists(QmlLspServerInstaller.QmlLspServerExePath)");
+                await QmlLanguageServerManager.InstallAssetAsync(asset, cts.Token);
+                Assert.IsTrue(File.Exists(QmlLanguageServerManager.QmlLanguageServerExePath),
+                    "File.Exists(QmlLanguageServerInstaller.QmlLanguageServerExePath)");
 
-                checkResult = await LocalQmllsManager
+                checkResult = await QmlLanguageServerManager
                     .CheckForInstallationUpdateAsync(asset, cts.Token);
                 Assert.IsNotNull(checkResult);
                 Assert.IsTrue(checkResult.Message.Contains("Already Up-to-date"),

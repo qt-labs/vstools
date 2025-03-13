@@ -26,7 +26,7 @@ namespace QtVsTools.Core
         };
     }
 
-    public static class LocalQmllsManager
+    public static class QmlLanguageServerManager
     {
         private const int ReleaseInfoTimeoutMs = 10000; // 10 seconds
         private const string ReleaseInfoUrl = "https://qtccache.qt.io/QMLLS/LatestRelease";
@@ -34,7 +34,7 @@ namespace QtVsTools.Core
         public static string ExtractDir => Path.Combine(InstallDir, "files");
         public static string ReleaseJsonPath => Path.Combine(InstallDir, "release.json");
 
-        public static string QmlLspServerExePath => Path.Combine(ExtractDir, "qmlls.exe");
+        public static string QmlLanguageServerExePath => Path.Combine(ExtractDir, "qmlls.exe");
         public static string InstallDir => Path.Combine(Utils.PackageInstallPath, "qmlls");
 
         public class Asset
@@ -63,7 +63,7 @@ namespace QtVsTools.Core
         public static async Task<CheckResult>
             CheckForInstallationUpdateAsync(AssetWithTag asset, CancellationToken token)
         {
-            if (!File.Exists(ReleaseJsonPath) || !File.Exists(QmlLspServerExePath))
+            if (!File.Exists(ReleaseJsonPath) || !File.Exists(QmlLanguageServerExePath))
                 return new CheckResult { Message = "Not Installed", ShouldInstall = true };
 
             var local = JsonConvert.DeserializeObject<AssetWithTag>(
@@ -77,7 +77,7 @@ namespace QtVsTools.Core
                 };
             }
 
-            if (await IsExecutableAsync(QmlLspServerExePath, token)) {
+            if (await IsExecutableAsync(QmlLanguageServerExePath, token)) {
                 return new CheckResult
                 {
                     Message = $"Already Up-to-date, tag = {asset.TagName}", ShouldInstall = false
@@ -97,7 +97,7 @@ namespace QtVsTools.Core
             try {
                 var tmpPath = Path.Combine(downloadDir, asset.Name);
 
-                await LocalQmllsDownloader.DownloadAsync(asset.BrowserDownloadUrl, tmpPath,
+                await QmlLanguageServerDownloader.DownloadAsync(asset.BrowserDownloadUrl, tmpPath,
                     token, downloadCallback);
                 await Utils.ExtractArchiveAsync(tmpPath, ExtractDir, token, extractCallback);
 

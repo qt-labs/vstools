@@ -24,7 +24,7 @@ namespace QtVsTools
     using Qml.Language;
     public static partial class Instances
     {
-        public static QmlLspClient QmlLspClient => QmlLspClient.Instance;
+        public static QmlLanguageClient QmlLanguageClient => QmlLanguageClient.Instance;
     }
 }
 
@@ -40,7 +40,7 @@ namespace QtVsTools.Qml.Language
     [Export(typeof(IBraceCompletionSessionProvider))]
     [BracePair('{', '}')]
     [ContentType(QmlContentType.Name)]
-    public class QmlLspClient : Concurrent<QmlLspClient>,
+    public class QmlLanguageClient : Concurrent<QmlLanguageClient>,
         ILanguageClient,
         IBraceCompletionSessionProvider,
         IDisposable
@@ -49,7 +49,7 @@ namespace QtVsTools.Qml.Language
         public event AsyncEventHandler<EventArgs> StopAsync;
         public string Name => "QML LSP Client";
 
-        private static string LogFilePath { get; } = @$"{Path.GetTempPath()}\qmllsp.log.txt";
+        private static string LogFilePath { get; } = @$"{Path.GetTempPath()}\qmlls.log.txt";
         private LogFile Log { get; set; }
 
         private Process Server { get; set; }
@@ -59,9 +59,9 @@ namespace QtVsTools.Qml.Language
         private StreamMonitor StdErr { get; } = new();
         private Connection Connection { get; set; }
 
-        public static QmlLspClient Instance { get; private set; }
+        public static QmlLanguageClient Instance { get; private set; }
 
-        public QmlLspClient()
+        public QmlLanguageClient()
         {
             Instance = this;
         }
@@ -75,7 +75,7 @@ namespace QtVsTools.Qml.Language
         {
             await QtVsToolsPackage.WaitUntilInitializedAsync();
 
-            if (!QtOptionsPage.QmlLspEnable)
+            if (!QtOptionsPage.QmlLanguageServerEnable)
                 Disconnect();
             else
                 await StartAsync.InvokeAsync(this, EventArgs.Empty);
@@ -95,29 +95,29 @@ namespace QtVsTools.Qml.Language
             if (Server is { HasExited: false })
                 Disconnect();
 
-            var qmlLsVersion = QtOptionsPage.QmlLspVersion switch
+            var qmlLanguageServerVersion = QtOptionsPage.QmlLanguageServerVersion switch
             {
                 { Length: > 0 } x when !string.Equals(x, "$(DefaultQtVersion)", IgnoreCase) => x,
                 _ => QtVersionManager.GetDefaultVersion()
             };
 
-            var qmLlsPath = await DetermineQmlLsPathAsync(qmlLsVersion);
+            var qmlLanguageServerPath = await DeterminePathAsync(qmlLanguageServerVersion);
 
-            qmLlsPath = HelperFunctions.ToNativeSeparator(qmLlsPath);
-            if (string.IsNullOrEmpty(qmLlsPath) || !File.Exists(qmLlsPath))
+            qmlLanguageServerPath = HelperFunctions.ToNativeSeparator(qmlLanguageServerPath);
+            if (string.IsNullOrEmpty(qmlLanguageServerPath) || !File.Exists(qmlLanguageServerPath))
                 return Disconnect();
 
             var buildDir = await GetBuildDirAsync();
             var qmlDir = await GetQmlDirAsync();
             var docDir = await GetDocDirAsync();
 
-            var arguments = BuildArguments(qmlLsVersion, buildDir, qmlDir, docDir);
+            var arguments = BuildArguments(qmlLanguageServerVersion, buildDir, qmlDir, docDir);
 
             Server = new Process
             {
                 StartInfo = new ProcessStartInfo
                 {
-                    FileName = qmLlsPath,
+                    FileName = qmlLanguageServerPath,
                     Arguments = arguments,
                     RedirectStandardInput = true,
                     RedirectStandardOutput = true,
@@ -135,7 +135,7 @@ namespace QtVsTools.Qml.Language
                 return Disconnect();
             }
 
-            if (!QtOptionsPage.QmlLspLog) {
+            if (!QtOptionsPage.QmlLanguageServerLog) {
                 StdIn.SetStream(Server.StandardInput);
                 StdOut.SetStream(Server.StandardOutput);
                 StdErr.SetStream(Server.StandardError);
@@ -202,26 +202,26 @@ namespace QtVsTools.Qml.Language
             return "";
         }
 
-        private static async Task<string> DetermineQmlLsPathAsync(string version)
+        private static async Task<string> DeterminePathAsync(string version)
         {
-            // Determine the qmlls path based on the version.
+            // Determine the QML language server path based on the version.
             if (string.Equals(version, "$(Local LS)", StringComparison.OrdinalIgnoreCase))
-                return await GetLocalQmlLsPathAsync();
-            return await GetCustomQmlLsPathAsync(version);
+                return await GetLocalQmlLanguageServerPathAsync();
+            return await GetCustomQmlLanguageServerPathAsync(version);
         }
 
-        private static async Task<string> GetLocalQmlLsPathAsync()
+        private static async Task<string> GetLocalQmlLanguageServerPathAsync()
         {
-            // Check if the project's Qt version is supported by the latest qmlls.
+            // Check if the project's Qt version is supported by the latest QML language server.
             var projectsQtVersion = await GetProjectQtVersionAsync();
             if (projectsQtVersion >= System.Version.Parse("6.5.0"))
-                return LocalQmllsManager.QmlLspServerExePath;
+                return QmlLanguageServerManager.QmlLanguageServerExePath;
 
-            Messages.Print("Qt version not supported by the latest qmlls.");
+            Messages.Print("Qt version not supported by the latest QML language server.");
             return Path.Combine(projectsQtVersion.LibExecs, "qmlls.exe");
         }
 
-        private static async Task<string> GetCustomQmlLsPathAsync(string version)
+        private static async Task<string> GetCustomQmlLanguageServerPathAsync(string version)
         {
             if (VersionInformation.GetOrAddByName(version) is { } qtVersion)
                 return Path.Combine(qtVersion.LibExecs, "qmlls.exe");
@@ -233,15 +233,16 @@ namespace QtVsTools.Qml.Language
         {
             var arguments = $@"-b ""{buildDir}""";
 
-            // Build up the options based on the qmlls version.
-            // If using the GitHub-provided qmlls, assume it supports all possible options.
+            // Build up the options based on the QML language server version./ If using the
+            // GitHub-provided QML language server, assume it supports all possible options.
             if (string.Equals(version, "$(Local LS)", StringComparison.OrdinalIgnoreCase))
                 return $@" -I ""{qmlDir}"" -d ""{docDir}""";
 
             if (VersionInformation.GetOrAddByName(version) is not {} qtVersion)
                 return "";
 
-            // The supported options for qmlls vary depending on the Qt version it comes from.
+            // The supported options for QML language server vary depending on the Qt version it
+            // comes from.
             System.Version qtVersionValue = qtVersion;
             if (qtVersionValue >= System.Version.Parse("6.8.0"))
                 arguments += $@" -I ""{qmlDir}""";
@@ -254,14 +255,14 @@ namespace QtVsTools.Qml.Language
 
         private void SetupLog()
         {
-            if (!QtOptionsPage.QmlLspLog) {
+            if (!QtOptionsPage.QmlLanguageServerLog) {
                 Log = null;
                 return;
             }
 
-            var logMaxSize = 1000 * (QtOptionsPage.QmlLspLogSize switch
+            var logMaxSize = 1000 * (QtOptionsPage.QmlLanguageServerLogSize switch
             {
-                >= 10 and <= 10000 => QtOptionsPage.QmlLspLogSize,
+                >= 10 and <= 10000 => QtOptionsPage.QmlLanguageServerLogSize,
                 _ => 2500
             });
             var logTruncSize = 2 * logMaxSize / 3;

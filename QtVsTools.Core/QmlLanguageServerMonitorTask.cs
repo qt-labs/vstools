@@ -19,11 +19,12 @@ namespace QtVsTools.Core
 
     public static partial class Notifications
     {
-        public static QmllsUpdateInstalled NotifyQmllsUpdateInstalled
-            => StaticLazy.Get(() => NotifyQmllsUpdateInstalled, () => new QmllsUpdateInstalled());
+        public static QmlLanguageServerUpdateInstalled NotifyQmlLanguageServerUpdateInstalled
+            => StaticLazy.Get(() => NotifyQmlLanguageServerUpdateInstalled,
+                () => new QmlLanguageServerUpdateInstalled());
     }
 
-    public class QmllsUpdateInstalled : InfoBarMessage
+    public class QmlLanguageServerUpdateInstalled : InfoBarMessage
     {
         protected override ImageMoniker Icon => KnownMonikers.StatusInformation;
 
@@ -48,8 +49,8 @@ namespace QtVsTools.Core
                         var dir = Directory.CreateDirectory(Path.Combine(Path.GetTempPath(),
                             Path.GetRandomFileName()));
 
-                        var asset = JsonConvert.DeserializeObject<LocalQmllsManager.AssetWithTag>(
-                            File.ReadAllText(LocalQmllsManager.ReleaseJsonPath), JsonSerializer.Settings);
+                        var asset = JsonConvert.DeserializeObject<QmlLanguageServerManager.AssetWithTag>(
+                            File.ReadAllText(QmlLanguageServerManager.ReleaseJsonPath), JsonSerializer.Settings);
 
                         var changelog = Path.Combine(dir.FullName, "Changelog");
                         File.WriteAllText(changelog, asset.Body);
@@ -68,7 +69,7 @@ namespace QtVsTools.Core
                 OnClicked = () =>
                 {
                     try {
-                        QtOptionsPage.NotifyQmllsUpdateInstalled = false;
+                        QtOptionsPage.NotifyQmlLanguageServerUpdateInstalled = false;
                         QtOptionsPage.SaveSettingsToStorageStatic();
                     } catch (Exception ex) {
                         ex.Log();
@@ -78,15 +79,15 @@ namespace QtVsTools.Core
         };
     }
 
-    public class LocalQmllsMonitorTask : IIdleTask
+    public class QmlLanguageServerMonitorTask : IIdleTask
     {
         public async Tasks.Task RunAsync(CancellationToken cancellationToken)
         {
 #pragma warning disable VSTHRD010
             try {
-                var asset = await LocalQmllsManager.FetchAssetAsync(cancellationToken);
-                var checkResult = await LocalQmllsManager.CheckForInstallationUpdateAsync(asset,
-                    cancellationToken);
+                var asset = await QmlLanguageServerManager.FetchAssetAsync(cancellationToken);
+                var checkResult = await QmlLanguageServerManager
+                    .CheckForInstallationUpdateAsync(asset, cancellationToken);
                 if (checkResult is { ShouldInstall: false })
                     return;
 
@@ -99,8 +100,8 @@ namespace QtVsTools.Core
                     await StatusBar.ResetProgressAsync();
 
                     var tmpPath = Path.Combine(downloadDir, asset.Name);
-                    await LocalQmllsDownloader.DownloadAsync(asset.BrowserDownloadUrl, tmpPath,
-                        cancellationToken,
+                    await QmlLanguageServerDownloader.DownloadAsync(asset.BrowserDownloadUrl,
+                        tmpPath, cancellationToken,
                         async download =>
                         {
                             await StatusBar.ProgressAsync(
@@ -113,9 +114,9 @@ namespace QtVsTools.Core
 
                     await StatusBar.ResetProgressAsync();
 
-                    // Do not use the idle managers cancellation token here, we do not want
-                    // the unzip process to stop and leave a corrupted qmlls binary behind.
-                    await Utils.ExtractArchiveAsync(tmpPath, LocalQmllsManager.ExtractDir,
+                    // Do not use the idle managers cancellation token here, we do not want the
+                    // unzip process to stop and leave a corrupted QML language server behind.
+                    await Utils.ExtractArchiveAsync(tmpPath, QmlLanguageServerManager.ExtractDir,
                         CancellationToken.None,
                         async progress =>
                         {
@@ -127,12 +128,13 @@ namespace QtVsTools.Core
                         }
                     );
 
-                    await Utils.WriteAllTextAsync(LocalQmllsManager. ReleaseJsonPath, JsonConvert.
-                        SerializeObject(new { asset.TagName, asset.Body }, JsonSerializer.Settings));
+                    await Utils.WriteAllTextAsync(QmlLanguageServerManager. ReleaseJsonPath,
+                        JsonConvert.SerializeObject(new { asset.TagName, asset.Body },
+                            JsonSerializer.Settings));
 
-                    if (QtOptionsPage.NotifyQmllsUpdateInstalled) {
-                        await VsShell.UiThreadAsync(() => Notifications.NotifyQmllsUpdateInstalled
-                            .Show());
+                    if (QtOptionsPage.NotifyQmlLanguageServerUpdateInstalled) {
+                        await VsShell.UiThreadAsync(
+                            () => Notifications.NotifyQmlLanguageServerUpdateInstalled.Show());
                     }
                 } finally {
                     await StatusBar.ResetProgressAsync();

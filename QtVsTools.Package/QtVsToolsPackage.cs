@@ -310,10 +310,10 @@ namespace QtVsTools
                 }, cancellationToken),
 
                 /////////
-                // Force download and install of local qmlls, otherwise it's periodically checked
-                // if Visual Studio is idling.
+                // Force download and install of local QML language server, otherwise it's
+                // periodically checked if Visual Studio is idling.
                 //
-                RunLocalQmllsMonitorTaskOnceAsync(cancellationToken)
+                RunQmlLanguageServerMonitorTaskOnceAsync(cancellationToken)
             );
 
 
@@ -391,7 +391,7 @@ namespace QtVsTools
 
             if (await GetServiceAsync<SIdleTaskManager, IIdleTaskManager>() is {} service) {
                 service.Add(new DevReleaseMonitorTask());
-                service.Add(new LocalQmllsMonitorTask());
+                service.Add(new QmlLanguageServerMonitorTask());
             }
 
             /////////
@@ -529,14 +529,14 @@ namespace QtVsTools
             return idleTaskManager ??= service;
         }
 
-        private static async Task RunLocalQmllsMonitorTaskOnceAsync(CancellationToken token)
+        private static async Task RunQmlLanguageServerMonitorTaskOnceAsync(CancellationToken token)
         {
-            if (Directory.Exists(LocalQmllsManager.InstallDir))
+            if (Directory.Exists(QmlLanguageServerManager.InstallDir))
                 return;
             try {
-                await new LocalQmllsMonitorTask().RunAsync(token);
+                await new QmlLanguageServerMonitorTask().RunAsync(token);
             } catch {
-                Utils.DeleteDirectory(LocalQmllsManager.InstallDir, Utils.Option.Recursive);
+                Utils.DeleteDirectory(QmlLanguageServerManager.InstallDir, Utils.Option.Recursive);
             }
         }
 

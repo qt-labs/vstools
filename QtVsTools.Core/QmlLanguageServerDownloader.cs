@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace QtVsTools.Core
 {
-    internal static class LocalQmllsDownloader
+    internal static class QmlLanguageServerDownloader
     {
         private const int MaxRetries = 3;
         private const int MaxRedirects = 10;
