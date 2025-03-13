@@ -154,7 +154,13 @@ namespace QtVsTools.Core.Options
                     if (generator is "MSVC.NET" or "MSBUILD")
                         continue;
 
-                    var message = $"{version.Name} - Incompatible makefile generator: {generator}";
+                    var message = string.Empty;
+                    if (!string.IsNullOrEmpty(version.Name))
+                        message += $"{version.Name} - ";
+                    message += "Incompatible makefile generator";
+                    if (!string.IsNullOrEmpty(generator))
+                        message += $": {generator}";
+
                     errorMessages.Add(message);
                     version.ErrorMessage = message;
                 }
