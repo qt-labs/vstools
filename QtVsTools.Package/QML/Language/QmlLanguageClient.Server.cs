@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
@@ -10,12 +11,15 @@ using System.Threading.Tasks;
 using Microsoft.VisualStudio.LanguageServer.Client;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Threading;
+using Newtonsoft.Json.Linq;
 
 namespace QtVsTools.Package.QML.Language
 {
     using Core;
     using Core.CMake;
     using Core.Options;
+    using Lsp;
+    using QtVsTools.Core.Common;
 
     using static Core.Common.Utils;
     using static Instances;
@@ -83,6 +87,7 @@ namespace QtVsTools.Package.QML.Language
                     return null;
 
                 var stdIn = new StreamMonitor(server.StandardInput.BaseStream);
+                stdIn.StreamModifier += StreamModifier;
                 stdIn.DataReceived += OnStdInDataReceived;
                 stdIn.LoggingEnabled = QtOptionsPage.QmlLanguageServerLog;
 
@@ -138,7 +143,7 @@ namespace QtVsTools.Package.QML.Language
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
 
             if (CMakeProject.ActiveProject is { } cMakeProject)
-                return Path.Combine(cMakeProject["cmake", "CMAKE_PREFIX_PATH"], "qml");
+                return Path.Combine(cMakeProject["cmake", "CMAKE_PREFIX_PATH"] ?? "", "qml");
             if (HelperFunctions.GetSelectedQtProject(Package.Dte) is { } msBuildProject)
                 return Path.Combine(msBuildProject.InstallPath, "qml");
             return "";
@@ -149,7 +154,7 @@ namespace QtVsTools.Package.QML.Language
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
 
             if (CMakeProject.ActiveProject is { } cMakeProject)
-                return Path.Combine(cMakeProject["cmake", "CMAKE_PREFIX_PATH"], "doc");
+                return Path.Combine(cMakeProject["cmake", "CMAKE_PREFIX_PATH"] ?? "", "doc");
             if (HelperFunctions.GetSelectedQtProject(Package.Dte) is { } msBuildProject)
                 return msBuildProject.VersionInfo.QtInstallDocs;
             return "";
@@ -239,6 +244,80 @@ namespace QtVsTools.Package.QML.Language
         {
             if (!string.IsNullOrEmpty(eventArgs.Data))
                 Messages.Print($">>> qmlls({((Process)sender).Id}): {eventArgs.Data}");
+        }
+
+        private (StreamData Data, StreamAction action) StreamModifier(StreamData streamData)
+        {
+            try {
+                var message = MessageParser.Deserialize(streamData);
+                if (message.Value<string>("method") != "initialize")
+                    return (streamData, StreamAction.KeepStreaming);
+
+                if (!message.TryGetValue("params", out var messageParams))
+                    return (streamData, StreamAction.StopStreaming);
+
+                var capabilities = messageParams["capabilities"];
+                if (capabilities == null)
+                    return (streamData, StreamAction.StopStreaming);
+
+                capabilities["workspace"] ??= new JObject();
+                capabilities["workspace"]["workspaceFolders"] = true;
+                capabilities["workspace"]["didChangeWatchedFiles"] ??= new JObject();
+                capabilities["workspace"]["didChangeWatchedFiles"]["dynamicRegistration"] = true;
+                capabilities["workspace"]["configuration"] = true;
+
+                var workspacesFolders = GetWorkspaceFolders();
+                messageParams["workspaceFolders"] = JToken.FromObject(workspacesFolders.ToArray());
+
+                // Return the modified message and stop further modifications.
+                return (MessageParser.Serialize(message), StreamAction.StopStreaming);
+            } catch (Exception exception) {
+                exception.Log();
+            }
+            return (streamData, StreamAction.KeepStreaming);
+        }
+
+        // The workspace folders configured in the client when the server starts.
+        // This property is only available if the client supports workspace folders.
+        // It can be null if the client supports workspace folders but none are configured.
+        internal static List<WorkspaceFolder> GetWorkspaceFolders()
+        {
+            if (CMakeProject.ActiveProject is { } cMakeProject) {
+                return new List<WorkspaceFolder>
+                {
+                    new()
+                    {
+                        Uri = new Uri(cMakeProject.Project.Location, UriKind.Absolute)
+                            .AbsoluteUri,
+                        Name = GetLastPathSegment(cMakeProject.Project.Location)
+                    }
+                };
+            }
+
+            return ThreadHelper.JoinableTaskFactory.Run(async () =>
+            {
+                await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+                if (HelperFunctions.GetSelectedQtProject(Package.Dte) is { } msBuildProject) {
+                    return new List<WorkspaceFolder>
+                    {
+                        new()
+                        {
+                            Uri = new Uri(msBuildProject.VcProjectDirectory, UriKind.Absolute)
+                                .AbsoluteUri,
+                            Name = msBuildProject.VcProject.Name
+                        }
+                    };
+                }
+                return null;
+            });
+
+            static string GetLastPathSegment(string path)
+            {
+                if (string.IsNullOrEmpty(path))
+                    return path;
+                path = HelperFunctions.ToNativeSeparator(path);
+                return Path.GetFileName(path.TrimEnd(Path.DirectorySeparatorChar));
+            }
         }
     }
 }

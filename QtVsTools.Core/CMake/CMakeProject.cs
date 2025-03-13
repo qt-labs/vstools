@@ -77,7 +77,7 @@ namespace QtVsTools.Core.CMake
         private static LazyFactory StaticLazy { get; } = new();
         private LazyFactory Lazy { get; } = new();
 
-        private IWorkspace Project { get; }
+        public IWorkspace Project { get; }
         private IIndexWorkspaceService3 Index { get; set; }
         private IFileWatcherService FileWatcher { get; set; }
         private IProjectConfigurationService2 Config { get; set; }
