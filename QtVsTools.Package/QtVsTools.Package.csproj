@@ -326,6 +326,8 @@
   // Project items
   // -->
   <ItemGroup>
+    <Compile Include="QML\Language\QmlLanguageClient.BraceCompletionSessionProvider.cs" />
+    <Compile Include="QML\Language\QmlLanguageClient.Server.cs" />
     <Compile Include="TestAdapter\QtTestGlobalSettingsService.cs" />
     <T4Template Include="Properties\AssemblyInfo.cs">
       <Generator>TextTemplatingFileGenerator</Generator>
