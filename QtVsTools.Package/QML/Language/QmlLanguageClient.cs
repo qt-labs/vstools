@@ -24,6 +24,7 @@ namespace QtVsTools
 
 namespace QtVsTools.Package.QML.Language
 {
+    using Core;
     using Qml;
 
     [Export(typeof(ILanguageClient))]
@@ -56,22 +57,36 @@ namespace QtVsTools.Package.QML.Language
             return await ActivateServerAsync(token);
         }
 
-#if VS2019
-        public async Task OnServerInitializeFailedAsync(Exception e)
+        public Task OnServerInitializeFailedAsync(Exception exception)
         {
-            await Task.Yield();
+            exception.Log();
+            return Task.CompletedTask;
         }
-#else
-        public async Task<InitializationFailureContext> OnServerInitializeFailedAsync(
-            ILanguageClientInitializationInfo initializationState)
+
+        public Task<InitializationFailureContext>
+            OnServerInitializeFailedAsync(ILanguageClientInitializationInfo initializationState)
         {
-            await Task.Yield();
-            return new InitializationFailureContext
+            var statusMessage = initializationState.StatusMessage?.Trim(' ', '\r', '\n');
+
+            string failureMessage = null;
+            if (!string.IsNullOrWhiteSpace(statusMessage))
+                failureMessage = statusMessage;
+
+            if (initializationState.InitializationException != null) {
+                var exceptionMessage = initializationState.InitializationException.Message
+                    .Trim(' ', '\r', '\n');
+
+                if (!string.IsNullOrWhiteSpace(failureMessage))
+                    failureMessage += "\r\n" + exceptionMessage;
+                else
+                    failureMessage = exceptionMessage;
+            }
+
+            return Task.FromResult(new InitializationFailureContext
             {
-                FailureMessage = initializationState.StatusMessage
-            };
+                FailureMessage = failureMessage
+            });
         }
-#endif
 
         public IEnumerable<string> ConfigurationSections => null;
 
@@ -79,7 +94,7 @@ namespace QtVsTools.Package.QML.Language
 
         public IEnumerable<string> FilesToWatch => null;
 
-        public bool ShowNotificationOnInitializeFailed => false;
+        public bool ShowNotificationOnInitializeFailed => true;
 
         public async Task OnServerInitializedAsync() => await Task.Yield();
     }
