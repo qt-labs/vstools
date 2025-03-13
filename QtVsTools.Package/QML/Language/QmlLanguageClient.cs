@@ -12,16 +12,6 @@ using Microsoft.VisualStudio.Utilities;
 
 using Task = System.Threading.Tasks.Task;
 
-namespace QtVsTools
-{
-    using Package.QML.Language;
-
-    public static partial class Instances
-    {
-        public static QmlLanguageClient QmlLanguageClient => QmlLanguageClient.Instance;
-    }
-}
-
 namespace QtVsTools.Package.QML.Language
 {
     using Core;
@@ -29,23 +19,13 @@ namespace QtVsTools.Package.QML.Language
 
     [Export(typeof(ILanguageClient))]
     [ContentType(QmlContentType.Name)]
-    public partial class QmlLanguageClient : ILanguageClient, IDisposable
+    public partial class QmlLanguageClient : ILanguageClient
     {
         public event AsyncEventHandler<EventArgs> StartAsync;
+#pragma warning disable CS0067
         public event AsyncEventHandler<EventArgs> StopAsync;
+#pragma warning restore CS0067
         public string Name => "QML LSP Client";
-
-        public static QmlLanguageClient Instance { get; private set; }
-
-        public QmlLanguageClient()
-        {
-            Instance = this;
-        }
-
-        public void Dispose()
-        {
-            Disconnect();
-        }
 
         public async Task OnLoadedAsync()
         {

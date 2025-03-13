@@ -3,137 +3,126 @@
 
 using System;
 using System.IO;
-using System.IO.Pipes;
-using System.Security.AccessControl;
-using System.Security.Principal;
-using System.Threading.Tasks;
+
+using Task = System.Threading.Tasks.Task;
 
 namespace QtVsTools.Core.Common
 {
     public static partial class Utils
     {
-        public class StreamDataEventArgs : EventArgs
+        public enum StreamAction
         {
-            public byte[] Data { get; set; }
+            KeepStreaming,
+            StopStreaming
         }
 
-        public class StreamMonitor : IDisposable
+        public class StreamDataEventArgs : EventArgs
         {
-            public Stream Stream { get; private set; }
-            public static implicit operator Stream(StreamMonitor self) => self.Proxy ?? self.Stream;
-            public bool IsConnected => Pipe is { IsConnected: true }
-                && Stream is { CanRead: true } or { CanWrite: true };
+            public byte[] Data { get; }
 
-            public delegate void StreamDataDelegate(object sender, StreamDataEventArgs args);
-            public event StreamDataDelegate StreamData;
-
-            public delegate void DisconnectedDelegate(object sender, EventArgs args);
-            public event DisconnectedDelegate Disconnected;
-
-            private string PipeName { get; }
-            private PipeSecurity PipeSecurity { get;  }
-            private NamedPipeServerStream Pipe { get; set; }
-            private NamedPipeClientStream Proxy { get; set; }
-
-            public StreamMonitor()
+            public StreamDataEventArgs(byte[] data, int count)
             {
-                PipeName = $"{typeof(StreamMonitor).FullName}.{Path.GetRandomFileName()}";
-                PipeSecurity = new PipeSecurity();
-                PipeSecurity.AddAccessRule(new PipeAccessRule(
-                    new SecurityIdentifier(WellKnownSidType.WorldSid, null),
-                    PipeAccessRights.ReadWrite, AccessControlType.Allow));
+                Data = new byte[count];
+                Buffer.BlockCopy(data, 0, Data, 0, count);
+            }
+        }
+
+        public class StreamMonitor : Stream
+        {
+            private readonly Stream monitoredStream;
+
+            public bool LoggingEnabled { get; set; }
+
+            public delegate void DataReceivedDelegate(StreamDataEventArgs args);
+            public event DataReceivedDelegate DataReceived;
+
+            public delegate (StreamData Data, StreamAction action)
+                StreamModifierDelegate(StreamData data);
+            public StreamModifierDelegate StreamModifier { get; set; }
+
+            public bool IsConnected => monitoredStream is { CanRead: true } or { CanWrite: true };
+
+            public StreamMonitor(Stream stream)
+            {
+                monitoredStream = stream ?? throw new ArgumentNullException(nameof(stream));
             }
 
-            public void Dispose()
+            public override int Read(byte[] buffer, int offset, int count)
             {
-                Stream = null;
-
-                var oldProxy = Proxy;
-                Proxy = null;
-
-                var oldPipe = Pipe;
-                Pipe = null;
-
-                oldProxy?.Dispose();
-                oldPipe?.Dispose();
+                var bytesRead = monitoredStream.Read(buffer, offset, count);
+                if (LoggingEnabled && bytesRead > 0)
+                    _ = Task.Run(() => DataReceived?.Invoke(new StreamDataEventArgs(buffer, bytesRead)));
+                return bytesRead;
             }
 
-            private void NotifyStreamData(byte[] data, int size)
+            public override void Write(byte[] buffer, int offset, int count)
             {
-                if (StreamData is null)
-                    return;
-                var args = new StreamDataEventArgs { Data = new byte[size] };
-                Array.Copy(data, args.Data, size);
-                StreamData.Invoke(this, args);
-            }
+                if (StreamModifier != null) {
+                    var streamData = new StreamData
+                    {
+                        Bytes = buffer,
+                        Offset = offset,
+                        Count = count
+                    };
 
-            private void NotifyDisconnected()
-            {
-                Disconnected?.Invoke(this, EventArgs.Empty);
-            }
+                    var (modifiedData, action) = StreamModifier(streamData);
+                    buffer = modifiedData.Bytes;
+                    count = modifiedData.Count;
 
-            public void SetStream(StreamReader rdr) => SetStream(rdr.BaseStream);
-
-            public void SetStream(StreamWriter wri) => SetStream(wri.BaseStream);
-
-            public void SetStream(Stream stream)
-            {
-                Stream = stream ?? throw new ArgumentNullException(nameof(stream));
-            }
-
-            public async Task ConnectAsync(StreamReader rdr) => await ConnectAsync(rdr.BaseStream);
-
-            public async Task ConnectAsync(StreamWriter wri) => await ConnectAsync(wri.BaseStream);
-
-            public async Task ConnectAsync(Stream stream)
-            {
-                Stream = stream ?? throw new ArgumentNullException(nameof(stream));
-                try {
-                    Pipe = new NamedPipeServerStream(PipeName,
-                        Stream.CanWrite ? PipeDirection.In : PipeDirection.Out, 1,
-                        PipeTransmissionMode.Byte, PipeOptions.None, 0, 0, PipeSecurity);
-                    Proxy = new NamedPipeClientStream(".", PipeName,
-                        Stream.CanWrite ? PipeDirection.Out : PipeDirection.In);
-                    await Task.WhenAll(Pipe.WaitForConnectionAsync(), Proxy.ConnectAsync());
-                } catch (Exception ex) {
-                    ex.Log();
-                    Dispose();
-                    return;
+                    if (action == StreamAction.StopStreaming)
+                        StreamModifier = null;
                 }
 
-                _ = Task.Run(MonitorAsync);
+                monitoredStream.Write(buffer, offset, count);
+
+                if (LoggingEnabled && count > 0)
+                    _ = Task.Run(() => DataReceived?.Invoke(new StreamDataEventArgs(buffer, count)));
             }
 
-            private async Task MonitorAsync()
+            public override bool CanRead => monitoredStream.CanRead;
+
+            public override bool CanSeek => monitoredStream.CanSeek;
+
+            public override bool CanWrite => monitoredStream.CanWrite;
+
+            public override long Length => monitoredStream.Length;
+
+            public override long Position
             {
-                var data = new byte[4096];
-
-                Stream source, target;
-                if (Stream.CanWrite) {
-                    source = Pipe;
-                    target = Stream;
-                } else {
-                    source = Stream;
-                    target = Pipe;
-                }
-
-                try {
-                    while (IsConnected) {
-                        var size = await source.ReadAsync(data, 0, data.Length);
-                        if (!IsConnected)
-                            break;
-                        await target.WriteAsync(data, 0, size);
-                        await target.FlushAsync();
-                        NotifyStreamData(data, size);
-                    }
-                } catch (Exception ex) {
-                    if (Pipe is not null)
-                        ex.Log();
-                } finally {
-                    Dispose();
-                    NotifyDisconnected();
-                }
+                get => monitoredStream.Position;
+                set => monitoredStream.Position = value;
             }
+
+            public override void Flush() => monitoredStream.Flush();
+
+            public override long Seek(long offset, SeekOrigin origin)
+                => monitoredStream.Seek(offset, origin);
+
+            public override void SetLength(long value) => monitoredStream.SetLength(value);
+
+            #region IDisposable
+
+            private bool disposed;
+
+            protected override void Dispose(bool disposing)
+            {
+                if (!disposed) {
+                    if (disposing)
+                        monitoredStream?.Dispose();
+
+                    disposed = true;
+                    GC.SuppressFinalize(this);
+                }
+
+                base.Dispose(disposing);
+            }
+
+            ~StreamMonitor()
+            {
+                Dispose(false);
+            }
+
+            #endregion IDisposable
         }
     }
 }

@@ -142,6 +142,7 @@
     <Compile Include="Common\Utils.cs" />
     <Compile Include="Common\Utils.IO.cs" />
     <Compile Include="Common\Utils.LogFile.cs" />
+    <Compile Include="Common\Utils.StreamData.cs" />
     <Compile Include="Common\Utils.StreamMonitor.cs" />
     <Compile Include="Common\Utils.Registry.cs" />
     <Compile Include="Common\Utils.Zip.cs" />

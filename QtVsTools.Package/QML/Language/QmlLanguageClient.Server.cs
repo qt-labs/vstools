@@ -26,36 +26,19 @@ namespace QtVsTools.Package.QML.Language
         private static string Timestamp => $"{DateTime.Now:yyyy-MM-dd HH:mm:ss.fffffff}";
         private static string LogFilePath { get; } = @$"{Path.GetTempPath()}\qmlls.log.txt";
 
-        private Process Server { get; set; }
-
-        private StreamMonitor StdIn { get; } = new();
-        private StreamMonitor StdOut { get; } = new();
-        private StreamMonitor StdErr { get; } = new();
-        private Connection Connection { get; set; }
-
         private async Task LoadServerAsync()
         {
             await QtVsToolsPackage.WaitUntilInitializedAsync();
 
             if (!QtOptionsPage.QmlLanguageServerEnable)
-                Disconnect();
-            else
-                await StartAsync.InvokeAsync(this, EventArgs.Empty);
+                return;
+
+            await StartAsync.InvokeAsync(this, EventArgs.Empty);
         }
 
         private async Task<Connection> ActivateServerAsync(CancellationToken token)
         {
             SetupLog();
-
-            StdIn.StreamData += OnStdInData;
-            StdIn.Disconnected += OnDisconnected;
-            StdOut.StreamData += OnStdOutData;
-            StdOut.Disconnected += OnDisconnected;
-            StdErr.StreamData += OnStdErrData;
-            StdErr.Disconnected += OnDisconnected;
-
-            if (Server is { HasExited: false })
-                Disconnect();
 
             var qmlLanguageServerVersion = QtOptionsPage.QmlLanguageServerVersion switch
             {
@@ -67,7 +50,7 @@ namespace QtVsTools.Package.QML.Language
 
             qmlLanguageServerPath = HelperFunctions.ToNativeSeparator(qmlLanguageServerPath);
             if (string.IsNullOrEmpty(qmlLanguageServerPath) || !File.Exists(qmlLanguageServerPath))
-                return Disconnect();
+                return null;
 
             var buildDir = await GetBuildDirAsync();
             var qmlDir = await GetQmlDirAsync();
@@ -75,7 +58,7 @@ namespace QtVsTools.Package.QML.Language
 
             var arguments = BuildArguments(qmlLanguageServerVersion, buildDir, qmlDir, docDir);
 
-            Server = new Process
+            var server = new Process
             {
                 StartInfo = new ProcessStartInfo
                 {
@@ -90,27 +73,35 @@ namespace QtVsTools.Package.QML.Language
             };
 
             try {
-                if (!Server.Start())
-                    return Disconnect();
+                server.ErrorDataReceived += OnErrorDataReceived;
+
+                if (!server.Start())
+                    return null;
+
+                server.BeginErrorReadLine();
+                if (server.HasExited)
+                    return null;
+
+                var stdIn = new StreamMonitor(server.StandardInput.BaseStream);
+                stdIn.DataReceived += OnStdInDataReceived;
+                stdIn.LoggingEnabled = QtOptionsPage.QmlLanguageServerLog;
+
+                var stdOut = new StreamMonitor(server.StandardOutput.BaseStream);
+                stdOut.DataReceived += OnStdOutDataReceived;
+                stdOut.LoggingEnabled = QtOptionsPage.QmlLanguageServerLog;
+
+                if (stdIn.IsConnected && stdOut.IsConnected) {
+                    Log?.Write($"CLIENT CONNECTED [{Timestamp}]\r\n");
+                    return new Connection(stdOut, stdIn);
+                }
+
+                stdIn.Dispose();
+                stdOut.Dispose();
             } catch (Exception e) {
                 e.Log();
-                return Disconnect();
             }
 
-            if (!QtOptionsPage.QmlLanguageServerLog) {
-                StdIn.SetStream(Server.StandardInput);
-                StdOut.SetStream(Server.StandardOutput);
-                StdErr.SetStream(Server.StandardError);
-            } else {
-                await Task.WhenAll(
-                    StdIn.ConnectAsync(Server.StandardInput),
-                    StdOut.ConnectAsync(Server.StandardOutput),
-                    StdErr.ConnectAsync(Server.StandardError));
-                if (!StdIn.IsConnected || !StdOut.IsConnected || !StdErr.IsConnected)
-                    return Disconnect();
-            }
-
-            return Connect();
+            return null;
         }
 
         private static async Task<string> GetBuildDirAsync()
@@ -232,69 +223,22 @@ namespace QtVsTools.Package.QML.Language
             Log = new LogFile(LogFilePath, logMaxSize, logTruncSize, "===");
         }
 
-        private Connection Connect()
+        private void OnStdInDataReceived(StreamDataEventArgs args)
         {
-            Log?.Write(@$"
-CLIENT CONNECTED [{Timestamp}]
-===".Trim(' ', '\r', '\n') + "\r\n");
-
-            return Connection = new(StdOut, StdIn);
+            Log?.Write($"CLIENT --> SERVER [{Timestamp}], "
+                + $"{Encoding.UTF8.GetString(args.Data, 0, args.Data.Length)}\r\n===\r\n\r\n");
         }
 
-        public Connection Disconnect()
+        private void OnStdOutDataReceived(StreamDataEventArgs args)
         {
-            if (Server is { HasExited: false })
-                Server.Kill();
-            Server = null;
-
-            StdIn.StreamData -= OnStdInData;
-            StdIn.Disconnected -= OnDisconnected;
-            StdOut.StreamData -= OnStdOutData;
-            StdOut.Disconnected -= OnDisconnected;
-            StdErr.StreamData -= OnStdErrData;
-            StdErr.Disconnected -= OnDisconnected;
-
-            StdIn.Dispose();
-            StdOut.Dispose();
-            StdErr.Dispose();
-
-            _ = Task.Run(async () => await StopAsync.InvokeAsync(this, EventArgs.Empty));
-
-            Log?.Write(@$"
-CLIENT DISCONNECTED [{Timestamp}]
-===".Trim(' ', '\r', '\n') + "\r\n");
-
-            Connection?.Dispose();
-            return Connection = null;
+            Log?.Write($"SERVER --> CLIENT [{Timestamp}], "
+                + $"{Encoding.UTF8.GetString(args.Data, 0, args.Data.Length)}\r\n===\r\n\r\n");
         }
 
-        private void OnDisconnected(object sender, EventArgs args)
+        private static void OnErrorDataReceived(object sender, DataReceivedEventArgs eventArgs)
         {
-            Disconnect();
-        }
-
-        private void OnStdInData(object sender, StreamDataEventArgs args)
-        {
-            Log?.Write(@$"
-CLIENT --> SERVER [{Timestamp}]
-{Encoding.UTF8.GetString(args.Data, 0, args.Data.Length)}
-===".Trim(' ', '\r', '\n') + "\r\n");
-        }
-
-        private void OnStdOutData(object sender, StreamDataEventArgs args)
-        {
-            Log?.Write(@$"
-SERVER --> CLIENT [{Timestamp}]
-{Encoding.UTF8.GetString(args.Data, 0, args.Data.Length)}
-===".Trim(' ', '\r', '\n') + "\r\n");
-        }
-
-        private void OnStdErrData(object sender, StreamDataEventArgs args)
-        {
-            Log?.Write(@$"
-SERVER ERROR [{Timestamp}]
-{Encoding.UTF8.GetString(args.Data, 0, args.Data.Length)}
-===".Trim(' ', '\r', '\n') + "\r\n");
+            if (!string.IsNullOrEmpty(eventArgs.Data))
+                Messages.Print($">>> qmlls({((Process)sender).Id}): {eventArgs.Data}");
         }
     }
 }
