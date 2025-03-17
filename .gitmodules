@@ -1,0 +1,3 @@
+[submodule "QtMSBuild/QtMsBuild/vs-debugtools"]
+	path = QtMSBuild/QtMsBuild/vs-debugtools
+	url = https://code.qt.io/qt-labs/vs-debugtools.git

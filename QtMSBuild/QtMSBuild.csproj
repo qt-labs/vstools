@@ -95,6 +95,12 @@
   // Project items
   // -->
   <ItemGroup>
+    <Content Include="QtMSBuild\vs-debugtools\natvis\qt5.natvis.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="QtMSBuild\vs-debugtools\natvis\qt6.natvis.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <T4Template Include="Properties\AssemblyInfo.cs">
       <Generator>TextTemplatingFileGenerator</Generator>
       <OutputFile>Properties\AssemblyInfo.tt.cs</OutputFile>
@@ -107,12 +113,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>AssemblyInfo.cs</DependentUpon>
     </Compile>
-    <Content Include="QtMSBuild\qt5.natvis.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="QtMSBuild\qt6.natvis.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <!--
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // Qt/MSBuild common property pages and targets

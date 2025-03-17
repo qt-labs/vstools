@@ -24,9 +24,9 @@ Use Git to check out the
 [Qt Visual Studio Tools sources](https://code.qt.io/cgit/qt-labs/vstools.git), using one of the
 following options:
 
-    git clone git://code.qt.io/qt-labs/vstools.git
+    git clone --recurse-submodules git://code.qt.io/qt-labs/vstools.git
 
-    git clone https://code.qt.io/qt-labs/vstools.git
+    git clone --recurse-submodules https://code.qt.io/qt-labs/vstools.git
 
 Contributions to the Qt Visual Studio Tools project must be submitted to the
 [`qt-labs/vstools`](https://codereview.qt-project.org/admin/repos/qt-labs/vstools) Gerrit

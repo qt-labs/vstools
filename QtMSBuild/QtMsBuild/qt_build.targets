@@ -344,12 +344,12 @@
     <WriteLinesToFile Condition="'$(QtNamespace)' == ''"
       Overwrite="true"
       File="$(IntDir)qt.natvis"
-      Lines="$([System.IO.File]::ReadAllText('$(QtMsBuild)\qt$(QtVersionMajor).natvis.xml')
+      Lines="$([System.IO.File]::ReadAllText('$(QtMsBuild)\vs-debugtools\natvis\qt$(QtVersionMajor).natvis.xml')
         .Replace('##NAMESPACE##::',''))" />
     <WriteLinesToFile Condition="'$(QtNamespace)' != ''"
       Overwrite="true"
       File="$(IntDir)qt.natvis"
-      Lines="$([System.IO.File]::ReadAllText('$(QtMsBuild)\qt$(QtVersionMajor).natvis.xml')
+      Lines="$([System.IO.File]::ReadAllText('$(QtMsBuild)\vs-debugtools\natvis\qt$(QtVersionMajor).natvis.xml')
         .Replace('##NAMESPACE##','$(QtNamespace)'))" />
   </Target>
 

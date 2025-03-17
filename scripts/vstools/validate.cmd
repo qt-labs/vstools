@@ -86,5 +86,7 @@ FOR /F "tokens=1,2,3,4 delims=v.- usebackq" %%q IN (`git describe --tags`) DO (
     SET VERSION=%%~q.%%~r.%%~s
     SET VERSION_REV=%%~t
 )
+IF %VERBOSE% %##% git submodule update --init
+git submodule update --init
 
 IF %VERBOSE% CALL %SCRIPTLIB%\info.cmd "vars"

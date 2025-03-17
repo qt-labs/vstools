@@ -31,7 +31,10 @@ namespace QtVsTools.Core
 
         public static async Tasks.Task CopyVisualizersFilesAsync(string qtNamespace = null)
         {
-            string[] files = { "QtMSBuild\\qt5.natvis.xml", "QtMSBuild\\qt6.natvis.xml" };
+            string[] files = {
+                "QtMSBuild\\vs-debugtools\\natvis\\qt5.natvis.xml",
+                "QtMSBuild\\vs-debugtools\\natvis\\qt6.natvis.xml"
+            };
             foreach (var file in files)
                 await CopyVisualizersFileAsync(file, qtNamespace);
         }

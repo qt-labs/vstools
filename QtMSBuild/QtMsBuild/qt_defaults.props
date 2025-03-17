@@ -132,18 +132,11 @@
   // Read subfolder dependencies (qt_import.props)
   // -->
   <PropertyGroup>
-    <SubFolder>$([System.IO.Directory]::GetDirectories('$(MSBuildThisFileDirectory)'))</SubFolder>
-    <SubFolderImports Condition="'$(SubFolder)' != ''"
-      >
-      $([System.String]::Join(
-      '\qt_import.props;',
-      $(SubFolder.Split(';'))))\qt_import.props
-    </SubFolderImports>
-    <QtImports>$(SubFolderImports.Split(';'))</QtImports>
-    <SubFolder/>
-    <SubFolderImports/>
+    <QtImports>$([System.IO.Directory]::GetFiles($(MSBuildThisFileDirectory), 'qt_import.props',
+      SearchOption.AllDirectories))</QtImports>
   </PropertyGroup>
   <Import
+    Condition="'$(QtImports)' != ''"
     Project="$(QtImports)"/>
 
 </Project>
