@@ -228,11 +228,7 @@ def main():
                             and buildSolution(projectName, cmakeBased)):
                             builtFile = getExpectedBuiltFile(projectsBuiltBefore, workDir,
                                                              projectName, templateName, cmakeBased)
-                            # QTVSADDINBUG-1272
-                            tstFunction = (test.xverify if buildSystem.startswith("Qt Visual")
-                                           and templateName == "Qt Designer Custom Widget"
-                                           else test.verify)
-                            tstFunction(waitFor(lambda: os.path.exists(builtFile), 15000),
+                            test.verify(waitFor(lambda: os.path.exists(builtFile), 15000),
                                         "Was %s built as expected?" % builtFile)
                             projectsBuiltBefore += 1
                         mouseClick(waitForObject(globalnames.file_MenuItem))
