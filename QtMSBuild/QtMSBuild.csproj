@@ -48,8 +48,10 @@
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Runtime" />
-    <Reference Condition="'$(Platform)' != 'arm64'" Include="$(VCTargetsPath)\Application Type\Linux\1.0\Microsoft.Build.Linux.Tasks.dll" />
-    <Reference Condition="'$(Platform)' != 'arm64'" Include="$(VCTargetsPath)\Application Type\Linux\1.0\liblinux.dll" />
+  </ItemGroup>
+  <ItemGroup Condition=" '$(Configuration)|$(Platform)' != 'Debug|arm64' AND '$(Configuration)|$(Platform)' != 'Release|arm64' ">
+  <Reference Include="$(VCTargetsPath)\Application Type\Linux\1.0\Microsoft.Build.Linux.Tasks.dll" />
+  <Reference Include="$(VCTargetsPath)\Application Type\Linux\1.0\liblinux.dll" />
   </ItemGroup>
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -424,7 +426,7 @@
     <Compile Include="Tasks\HostExec_Windows.cs" />
   </ItemGroup>
   <Choose>
-    <When Condition="'$(Platform)' != 'arm64'">
+    <When Condition=" '$(Configuration)|$(Platform)' != 'Debug|arm64' AND '$(Configuration)|$(Platform)' != 'Release|arm64' ">
       <ItemGroup>
         <Compile Include="Tasks\HostExec_LinuxWSL_Error.cs" />
         <Compile Include="Tasks\HostTranslatePaths_LinuxWSL_Error.cs" />
