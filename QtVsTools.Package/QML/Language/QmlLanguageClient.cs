@@ -34,6 +34,7 @@ namespace QtVsTools.Package.QML.Language
 
         public async Task<Connection> ActivateAsync(CancellationToken token)
         {
+            await MonitorSolutionOrWorkspaceAsync();
             return await ActivateServerAsync(token);
         }
 
@@ -76,6 +77,6 @@ namespace QtVsTools.Package.QML.Language
 
         public bool ShowNotificationOnInitializeFailed => true;
 
-        public async Task OnServerInitializedAsync() => await Task.Yield();
+        public async Task OnServerInitializedAsync() => await NotifyDidChangeConfigurationAsync();
     }
 }

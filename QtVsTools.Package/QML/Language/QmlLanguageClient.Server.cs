@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -12,6 +13,7 @@ using Microsoft.VisualStudio.LanguageServer.Client;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Threading;
 using Newtonsoft.Json.Linq;
+using QtVsTools.Core.MsBuild;
 
 namespace QtVsTools.Package.QML.Language
 {
@@ -29,6 +31,9 @@ namespace QtVsTools.Package.QML.Language
         private LogFile Log { get; set; }
         private static string Timestamp => $"{DateTime.Now:yyyy-MM-dd HH:mm:ss.fffffff}";
         private static string LogFilePath { get; } = @$"{Path.GetTempPath()}\qmlls.log.txt";
+
+        internal bool InitializeMessageSent { get; private set; }
+        internal List<WorkspaceFolder> WorkspaceFolders { get; set; }
 
         private async Task LoadServerAsync()
         {
@@ -266,8 +271,10 @@ namespace QtVsTools.Package.QML.Language
                 capabilities["workspace"]["didChangeWatchedFiles"]["dynamicRegistration"] = true;
                 capabilities["workspace"]["configuration"] = true;
 
-                var workspacesFolders = GetWorkspaceFolders();
-                messageParams["workspaceFolders"] = JToken.FromObject(workspacesFolders.ToArray());
+                WorkspaceFolders = GetWorkspaceFolders();
+                messageParams["workspaceFolders"] = JToken.FromObject(WorkspaceFolders.ToArray());
+
+                InitializeMessageSent = true;
 
                 // Return the modified message and stop further modifications.
                 return (MessageParser.Serialize(message), StreamAction.StopStreaming);
@@ -287,29 +294,20 @@ namespace QtVsTools.Package.QML.Language
                 {
                     new()
                     {
-                        Uri = new Uri(cMakeProject.Project.Location, UriKind.Absolute)
-                            .AbsoluteUri,
+                        Uri = new Uri(cMakeProject.Project.Location, UriKind.Absolute).AbsoluteUri,
                         Name = GetLastPathSegment(cMakeProject.Project.Location)
                     }
                 };
             }
 
-            return ThreadHelper.JoinableTaskFactory.Run(async () =>
-            {
-                await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
-                if (HelperFunctions.GetSelectedQtProject(Package.Dte) is { } msBuildProject) {
-                    return new List<WorkspaceFolder>
+            return MsBuildProject.GetProjects()
+                .Select(qtProject => new WorkspaceFolder
                     {
-                        new()
-                        {
-                            Uri = new Uri(msBuildProject.VcProjectDirectory, UriKind.Absolute)
-                                .AbsoluteUri,
-                            Name = msBuildProject.VcProject.Name
-                        }
-                    };
-                }
-                return null;
-            });
+                        Uri = new Uri(qtProject.VcProjectDirectory, UriKind.Absolute).AbsoluteUri,
+                        Name = qtProject.VcProject.Name
+                    }
+                )
+                .ToList();
 
             static string GetLastPathSegment(string path)
             {

@@ -75,6 +75,11 @@ namespace QtVsTools.Core.MsBuild
             }
         }
 
+        public static IReadOnlyCollection<MsBuildProject> GetProjects()
+        {
+            return new List<MsBuildProject>(Instances.Values).AsReadOnly();
+        }
+
         public static void Remove(string projectPath)
         {
             lock (StaticCriticalSection)

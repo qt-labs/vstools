@@ -23,4 +23,24 @@ namespace QtVsTools.Package.QML.Language.Lsp
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public string Name { get; set; }
     }
+
+    [DataContract]
+    internal sealed class WorkspaceFoldersChangeEvent
+    {
+        [DataMember(Name = "added")]
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public WorkspaceFolder[] Added { get; set; }
+
+        [DataMember(Name = "removed")]
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public WorkspaceFolder[] Removed { get; set; }
+    }
+
+    [DataContract]
+    internal sealed class DidChangeWorkspaceFoldersParams
+    {
+        [DataMember(Name = "event")]
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public WorkspaceFoldersChangeEvent Event { get; set; }
+    }
 }
