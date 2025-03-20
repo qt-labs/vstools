@@ -510,7 +510,7 @@
 
   <!-- Designer -->
   <Module>
-    <Name>Designer</Name>
+    <Name>Widgets Designer</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtDesigner</LibraryPrefix>
     <HasDLL>true</HasDLL>
