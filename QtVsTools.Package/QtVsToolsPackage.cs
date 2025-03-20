@@ -107,11 +107,11 @@ namespace QtVsTools
 
         private DteEventsHandler EventHandler { get; set; }
 
-        private Guid LegacyPackageId = new("6E7FA583-5FAA-4EC9-9E90-4A0AE5FD61EE");
+        private Guid legacyPackageId = new("6E7FA583-5FAA-4EC9-9E90-4A0AE5FD61EE");
         private const string LegacyPackageName = "QtVsToolsLegacyPackage";
 
-        ConcurrentStopwatch InitTimer { get; set; }
-        ConcurrentStopwatch UiTimer { get; set; }
+        private ConcurrentStopwatch InitTimer { get; set; }
+        private ConcurrentStopwatch UiTimer { get; set; }
 
         protected override async Task InitializeAsync(
             CancellationToken cancellationToken,
@@ -131,7 +131,7 @@ namespace QtVsTools
                 await JoinableTaskFactory.SwitchToMainThreadAsync();
                 UiTimer = ConcurrentStopwatch.StartNew();
 
-                if (packages?.GetPackageInfo(ref LegacyPackageId) is { Name: LegacyPackageName } )
+                if (packages?.GetPackageInfo(ref legacyPackageId) is { Name: LegacyPackageName } )
                     throw new InvalidOperationException("Legacy extension detected.");
 
                 if ((Dte = await VsServiceProvider.GetServiceAsync<DTE>()) == null)
@@ -229,8 +229,8 @@ namespace QtVsTools
                 ///////
                 // Set %QTMSBUILD% by default to point to standard location of Qt/MSBuild
                 //
-                var QtMsBuildPath = Environment.GetEnvironmentVariable("QtMsBuild");
-                if (string.IsNullOrEmpty(QtMsBuildPath)) {
+                var qtMsBuildPath = Environment.GetEnvironmentVariable("QtMsBuild");
+                if (string.IsNullOrEmpty(qtMsBuildPath)) {
 
                     Environment.SetEnvironmentVariable(
                         "QtMsBuild", qtMsBuildDefault,
@@ -252,7 +252,7 @@ namespace QtVsTools
                 Telemetry.TrackException(ex, properties);
                 var activityLog = await GetServiceAsync<SVsActivityLog, IVsActivityLog>();
                 activityLog?.LogEntry((uint)__ACTIVITYLOG_ENTRYTYPE.ALE_ERROR, ToString(),
-                    $"Failed to load QtVsTools package. Exception details:\n"
+                    "Failed to load QtVsTools package. Exception details:\n"
                         + $" Message: {ex.Message}\n"
                         + $" Source: {ex.Source}\n"
                         + $" Stack Trace: {ex.StackTrace}\n"
@@ -315,8 +315,8 @@ namespace QtVsTools
     ################################################################
         == Qt Visual Studio Tools version {Version.USER_VERSION} ==
             Extension package initialized in:
-             * Total: {InitTimer.Elapsed.TotalMilliseconds:0.##} msecs
-             * UI thread: {UiTimer.Elapsed.TotalMilliseconds:0.##} msecs
+             * Total: {InitTimer.Elapsed.TotalMilliseconds:0.##} ms
+             * UI thread: {UiTimer.Elapsed.TotalMilliseconds:0.##} ms
     ################################################################");
 
             /////////
@@ -352,7 +352,7 @@ namespace QtVsTools
             //
             if (VsShell.FolderWorkspace?.CurrentWorkspace is not null)
                 EventHandler.OnActiveWorkspaceChanged();
-            else if (Dte?.Solution?.IsOpen == true)
+            else if (Dte.Solution?.IsOpen == true)
                 EventHandler.SolutionEvents_Opened();
 
             if (Dte.Debugger.CurrentMode != dbgDebugMode.dbgDesignMode) {
@@ -479,18 +479,18 @@ namespace QtVsTools
             Utils.DeleteDirectory(Path.Combine(qtTmLanguagePath, "qml"), Utils.Option.Recursive);
         }
 
-        public I GetService<T, I>()
-            where T : class
-            where I : class
+        public T2 GetService<T1, T2>()
+            where T1 : class
+            where T2 : class
         {
-            return GetService(typeof(T)) as I;
+            return GetService(typeof(T1)) as T2;
         }
 
-        public async Task<I> GetServiceAsync<T, I>()
-            where T : class
-            where I : class
+        public async Task<T2> GetServiceAsync<T1, T2>()
+            where T1 : class
+            where T2 : class
         {
-            return await GetServiceAsync(typeof(T)) as I;
+            return await GetServiceAsync(typeof(T1)) as T2;
         }
 
         private SIdleTaskManager idleTaskManager;
