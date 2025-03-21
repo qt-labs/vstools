@@ -36,6 +36,7 @@ def getMsvsVersionAsList():
     global msvsVersion
     if not msvsVersion:
         versionString = getAppProperty("catalog_productDisplayVersion")
+        test.log("Testing on MSVS " + versionString)
         msvsVersion = list(map(builtins.int, versionString.split(".")))
     return msvsVersion
 
