@@ -507,6 +507,44 @@
     <AdditionalLibraries>Qt6WebEngineQuick.lib</AdditionalLibraries>
     <AdditionalLibrariesDebug>Qt6WebEngineQuickd.lib</AdditionalLibrariesDebug>
   </Module>
+  <Module>
+    <Name>Qt Pdf</Name>
+    <Selectable>true</Selectable>
+    <LibraryPrefix>QtPdf</LibraryPrefix>
+    <proVarQT>pdf</proVarQT>
+    <IncludePath>$(QTDIR)\include\QtPdf</IncludePath>
+    <Defines>QT_PDF_LIB</Defines>
+    <AdditionalLibraries>Qt6Pdf.lib</AdditionalLibraries>
+    <AdditionalLibrariesDebug>Qt6Pdfd.lib</AdditionalLibrariesDebug>
+  </Module>
+  <Module>
+    <Name>Qt Pdf Quick</Name>
+    <Selectable>true</Selectable>
+    <LibraryPrefix>QtPdfQuick</LibraryPrefix>
+    <proVarQT>pdfquick</proVarQT>
+    <IncludePath>$(QTDIR)\include\QtPdf</IncludePath>
+    <IncludePath>$(QTDIR)\include\QtPdfQuick</IncludePath>
+    <Defines>QT_PDF_LIB</Defines>
+    <Defines>QT_PDFQUICK_LIB</Defines>
+    <AdditionalLibraries>Qt6Pdf.lib</AdditionalLibraries>
+    <AdditionalLibrariesDebug>Qt6Pdfd.lib</AdditionalLibrariesDebug>
+    <AdditionalLibraries>Qt6PdfQuick.lib</AdditionalLibraries>
+    <AdditionalLibrariesDebug>Qt6PdfQuickd.lib</AdditionalLibrariesDebug>
+  </Module>
+  <Module>
+    <Name>Qt Pdf Widgets</Name>
+    <Selectable>true</Selectable>
+    <LibraryPrefix>QtPdfWidgets</LibraryPrefix>
+    <proVarQT>pdfwidgets</proVarQT>
+    <IncludePath>$(QTDIR)\include\QtPdf</IncludePath>
+    <IncludePath>$(QTDIR)\include\QtPdfWidgets</IncludePath>
+    <Defines>QT_PDF_LIB</Defines>
+    <Defines>QT_PDFWIDGETS_LIB</Defines>
+    <AdditionalLibraries>Qt6Pdf.lib</AdditionalLibraries>
+    <AdditionalLibrariesDebug>Qt6Pdfd.lib</AdditionalLibrariesDebug>
+    <AdditionalLibraries>Qt6PdfWidgets.lib</AdditionalLibraries>
+    <AdditionalLibrariesDebug>Qt6PdfWidgetsd.lib</AdditionalLibrariesDebug>
+  </Module>
 
   <!-- Designer -->
   <Module>
