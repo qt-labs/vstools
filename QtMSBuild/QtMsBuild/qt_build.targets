@@ -339,7 +339,7 @@
   // -->
   <Target Name="QtNatvis" DependsOnTargets="QtVarsLoad" BeforeTargets="QtUpdateLinkOptions"
           Condition="'$(QtBuildConfig)' == 'debug' AND '$(LinkNatvisFile)' == 'true'"
-          Inputs="$(MSBuildProjectFile);$(QtMsBuild)\qt$(QtVersionMajor).natvis.xml"
+          Inputs="$(MSBuildProjectFile);$(QtMsBuild)\vs-debugtools\natvis\qt$(QtVersionMajor).natvis.xml"
           Outputs="$(IntDir)qt.natvis">
     <WriteLinesToFile Condition="'$(QtNamespace)' == ''"
       Overwrite="true"
