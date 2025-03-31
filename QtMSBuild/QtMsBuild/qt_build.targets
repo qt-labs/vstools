@@ -339,17 +339,17 @@
   // -->
   <Target Name="QtNatvis" DependsOnTargets="QtVarsLoad" BeforeTargets="QtUpdateLinkOptions"
           Condition="'$(QtBuildConfig)' == 'debug' AND '$(LinkNatvisFile)' == 'true'"
-          Inputs="$(MSBuildProjectFile);$(QtMsBuild)\vs-debugtools\natvis\qt$(QtVersionMajor).natvis.xml"
+          Inputs="$(MSBuildProjectFile);$(QtMsBuild)\vs-debugtools\natvis\qt$(QtVersionMajor).natvis"
           Outputs="$(IntDir)qt.natvis">
     <WriteLinesToFile Condition="'$(QtNamespace)' == ''"
       Overwrite="true"
       File="$(IntDir)qt.natvis"
-      Lines="$([System.IO.File]::ReadAllText('$(QtMsBuild)\vs-debugtools\natvis\qt$(QtVersionMajor).natvis.xml')
+      Lines="$([System.IO.File]::ReadAllText('$(QtMsBuild)\vs-debugtools\natvis\qt$(QtVersionMajor).natvis')
         .Replace('##NAMESPACE##::',''))" />
     <WriteLinesToFile Condition="'$(QtNamespace)' != ''"
       Overwrite="true"
       File="$(IntDir)qt.natvis"
-      Lines="$([System.IO.File]::ReadAllText('$(QtMsBuild)\vs-debugtools\natvis\qt$(QtVersionMajor).natvis.xml')
+      Lines="$([System.IO.File]::ReadAllText('$(QtMsBuild)\vs-debugtools\natvis\qt$(QtVersionMajor).natvis')
         .Replace('##NAMESPACE##','$(QtNamespace)'))" />
   </Target>
 

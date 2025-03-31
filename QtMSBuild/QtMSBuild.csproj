@@ -95,10 +95,10 @@
   // Project items
   // -->
   <ItemGroup>
-    <Content Include="QtMSBuild\vs-debugtools\natvis\qt5.natvis.xml">
+    <Content Include="QtMSBuild\vs-debugtools\natvis\qt5.natvis">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="QtMSBuild\vs-debugtools\natvis\qt6.natvis.xml">
+    <Content Include="QtMSBuild\vs-debugtools\natvis\qt6.natvis">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <T4Template Include="Properties\AssemblyInfo.cs">

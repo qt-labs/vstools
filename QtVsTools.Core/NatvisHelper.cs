@@ -32,8 +32,8 @@ namespace QtVsTools.Core
         public static async Tasks.Task CopyVisualizersFilesAsync(string qtNamespace = null)
         {
             string[] files = {
-                "QtMSBuild\\vs-debugtools\\natvis\\qt5.natvis.xml",
-                "QtMSBuild\\vs-debugtools\\natvis\\qt6.natvis.xml"
+                "QtMSBuild\\vs-debugtools\\natvis\\qt5.natvis",
+                "QtMSBuild\\vs-debugtools\\natvis\\qt6.natvis"
             };
             foreach (var file in files)
                 await CopyVisualizersFileAsync(file, qtNamespace);
@@ -50,7 +50,7 @@ namespace QtVsTools.Core
 
                 if (string.IsNullOrEmpty(qtNamespace)) {
                     text = text.Replace("##NAMESPACE##::", string.Empty);
-                    visualizerFile = Path.GetFileNameWithoutExtension(filename);
+                    visualizerFile = Path.GetFileName(filename);
                 } else {
                     text = text.Replace("##NAMESPACE##", qtNamespace);
                     visualizerFile = filename.Substring(0, filename.IndexOf('.'))
