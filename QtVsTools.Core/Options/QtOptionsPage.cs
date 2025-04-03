@@ -3,9 +3,11 @@
 
 using System;
 using System.ComponentModel;
+using System.Drawing.Design;
 using System.Globalization;
-using System.IO;
 using System.Linq;
+using System.Windows.Forms;
+using System.Windows.Forms.Design;
 using EnvDTE;
 using Microsoft.Build.Framework;
 using Microsoft.VisualStudio.Shell;
@@ -82,7 +84,7 @@ namespace QtVsTools.Core.Options
         public enum QmlLanguageServer
         {
             [String("QmlLsp_Enable")] Enable,
-            [String("QmlLsp_QtVersion")] QtVersion,
+            [String("QmlLsp_Path")] Path,
             [String("QmlLsp_Log")] Log,
             [String("QmlLsp_LogSize")] LogSize
         }
@@ -146,23 +148,12 @@ namespace QtVsTools.Core.Options
             }
         }
 
-        private class QmlLanguageServerVersionProviderConverter : QtVersionConverter
+        private class QmlLanguageServerPathEditor : FileNameEditor
         {
-            protected override object[] GetCollection
+            protected override void InitializeDialog(OpenFileDialog openFileDialog)
             {
-                get
-                {
-                    var objects = base.GetCollection;
-                    return File.Exists(QmlLanguageServerManager.QmlLanguageServerExePath)
-                        ? objects.Prepend("$(Local LS)").ToArray()
-                        : objects;
-                }
-            }
-
-            protected override bool IsCompatible(string qtVersion)
-            {
-                return VersionInformation.GetOrAddByName(qtVersion) is {LibExecs: {}  libExecs}
-                    && File.Exists(Path.Combine(libExecs, "qmlls.exe"));
+                openFileDialog.Title = "Select QML Language Server";
+                openFileDialog.Filter = "QML Language Server (qmlls)|qmlls;qmlls.exe";
             }
         }
 
@@ -478,20 +469,20 @@ namespace QtVsTools.Core.Options
              => QtOptionsPageSettings.Instance.GetValue(() => QmlLanguageServerEnable);
 
         [Category("QML Language Server")]
-        [DisplayName("Qt Version")]
-        [Description("Select the QML language server to use. '$(Local LS)' uses the statically "
-            + "built version from the development branch, which includes the latest features and "
-            + "fixes. Other options use the language server bundled of the specified Qt version.")]
-        [TypeConverter(typeof(QmlLanguageServerVersionProviderConverter))]
-        public string QmlLanguageServerVersionOption
+        [DisplayName("QML Language Server path")]
+        [Description("Select the QML Language Server to use. Leave the path empty to use default "
+            + "provided one by the Qt VS Tools extension, which includes the latest features and "
+            + "fixes.")]
+        [Editor(typeof(QmlLanguageServerPathEditor), typeof(UITypeEditor))]
+        public string QmlLanguageServerPathOption
         {
-            get => QmlLanguageServerVersion;
-            set => QtOptionsPageSettings.Instance.SetValue(() => QmlLanguageServerVersion, value);
+            get => QmlLanguageServerPath;
+            set => QtOptionsPageSettings.Instance.SetValue(() => QmlLanguageServerPath, value);
         }
 
-        [Settings(QmlLanguageServer.QtVersion, "$(Local LS)")]
-        public static string QmlLanguageServerVersion
-            => QtOptionsPageSettings.Instance.GetValue(() => QmlLanguageServerVersion);
+        [Settings(QmlLanguageServer.Path, "")]
+        public static string QmlLanguageServerPath
+            => QtOptionsPageSettings.Instance.GetValue(() => QmlLanguageServerPath);
 
         [Category("QML Language Server")]
         [DisplayName("Log")]

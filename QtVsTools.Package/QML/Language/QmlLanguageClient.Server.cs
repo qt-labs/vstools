@@ -49,13 +49,9 @@ namespace QtVsTools.Package.QML.Language
         {
             SetupLog();
 
-            var qmlLanguageServerVersion = QtOptionsPage.QmlLanguageServerVersion switch
-            {
-                { Length: > 0 } x when !string.Equals(x, "$(DefaultQtVersion)", IgnoreCase) => x,
-                _ => QtVersionManager.GetDefaultVersion()
-            };
-
-            var qmlLanguageServerPath = await DeterminePathAsync(qmlLanguageServerVersion);
+            var qmlLanguageServerPath = QtOptionsPage.QmlLanguageServerPath;
+            if (string.IsNullOrWhiteSpace(qmlLanguageServerPath))
+                qmlLanguageServerPath = await GetLocalQmlLanguageServerPathAsync();
 
             qmlLanguageServerPath = HelperFunctions.ToNativeSeparator(qmlLanguageServerPath);
             if (string.IsNullOrEmpty(qmlLanguageServerPath) || !File.Exists(qmlLanguageServerPath))
@@ -65,7 +61,8 @@ namespace QtVsTools.Package.QML.Language
             var qmlDir = await GetQmlDirAsync();
             var docDir = await GetDocDirAsync();
 
-            var arguments = BuildArguments(qmlLanguageServerVersion, buildDir, qmlDir, docDir);
+            var arguments = BuildArguments(QtOptionsPage.QmlLanguageServerPath, buildDir, qmlDir,
+                docDir);
 
             var server = new Process
             {
@@ -165,14 +162,6 @@ namespace QtVsTools.Package.QML.Language
             return "";
         }
 
-        private static async Task<string> DeterminePathAsync(string version)
-        {
-            // Determine the QML language server path based on the version.
-            if (string.Equals(version, "$(Local LS)", StringComparison.OrdinalIgnoreCase))
-                return await GetLocalQmlLanguageServerPathAsync();
-            return await GetCustomQmlLanguageServerPathAsync(version);
-        }
-
         private static async Task<string> GetLocalQmlLanguageServerPathAsync()
         {
             // Check if the project's Qt version is supported by the latest QML language server.
@@ -184,25 +173,19 @@ namespace QtVsTools.Package.QML.Language
             return Path.Combine(projectsQtVersion.LibExecs, "qmlls.exe");
         }
 
-        private static async Task<string> GetCustomQmlLanguageServerPathAsync(string version)
-        {
-            if (VersionInformation.GetOrAddByName(version) is { } qtVersion)
-                return Path.Combine(qtVersion.LibExecs, "qmlls.exe");
-            return await Task.FromResult("");
-        }
-
-        private static string BuildArguments(string version, string buildDir, string qmlDir,
+        private static string BuildArguments(string qmlLsPath, string buildDir, string qmlDir,
             string docDir)
         {
             var arguments = $@"-b ""{buildDir}""";
 
-            // Build up the options based on the QML language server version./ If using the
+            // Build up the options based on the QML language server version. If using the
             // GitHub-provided QML language server, assume it supports all possible options.
-            if (string.Equals(version, "$(Local LS)", StringComparison.OrdinalIgnoreCase))
-                return $@" -I ""{qmlDir}"" -d ""{docDir}""";
+            if (string.IsNullOrWhiteSpace(qmlLsPath))
+                return $@"{arguments} -I ""{qmlDir}"" -d ""{docDir}""";
 
-            if (VersionInformation.GetOrAddByName(version) is not { } qtVersion)
-                return "";
+            var qtLibExecs = Path.GetDirectoryName(qmlLsPath);
+            if (VersionInformation.GetOrAddByPath(qtLibExecs) is not { } qtVersion)
+                return arguments;
 
             // The supported options for QML language server vary depending on the Qt version it
             // comes from.
