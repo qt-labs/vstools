@@ -34,7 +34,7 @@ namespace QtVsTools.Core
             new TextSpacer(2),
             Utils.EmDash,
             new TextSpacer(2),
-            "A new version of the QML language server was installed."
+            "A new version of the QML Language Server was installed."
         };
 
         protected override Hyperlink[] Hyperlinks => new Hyperlink[]
@@ -91,7 +91,7 @@ namespace QtVsTools.Core
                 if (checkResult is { ShouldInstall: false })
                     return;
 
-                await StatusBar.SetTextAsync("Updating QML language server...");
+                await StatusBar.SetTextAsync("Updating QML Language Server...");
 
                 var downloadDir = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
                 Directory.CreateDirectory(downloadDir);
@@ -105,7 +105,7 @@ namespace QtVsTools.Core
                         async download =>
                         {
                             await StatusBar.ProgressAsync(
-                                "Updating QML language server... Downloading "
+                                "Updating QML Language Server... Downloading "
                                 + $"{BytesToKilobytes(download.CurrentBytes)} / "
                                 + $"{BytesToKilobytes(download.MaxBytyes)}",
                                 (uint)download.MaxBytyes, (uint)download.CurrentBytes);
@@ -115,13 +115,13 @@ namespace QtVsTools.Core
                     await StatusBar.ResetProgressAsync();
 
                     // Do not use the idle managers cancellation token here, we do not want the
-                    // unzip process to stop and leave a corrupted QML language server behind.
+                    // unzip process to stop and leave a corrupted QML Language Server behind.
                     await Utils.ExtractArchiveAsync(tmpPath, QmlLanguageServerManager.ExtractDir,
                         CancellationToken.None,
                         async progress =>
                         {
                             await StatusBar.ProgressAsync(
-                                $"Updating QML language server... Extracting '{progress.FullName}'"
+                                $"Updating QML Language Server... Extracting '{progress.FullName}'"
                                 + $": {progress.CurrentEntry} of {progress.TotalEntries} files",
                                 (uint)progress.TotalEntries,
                                 (uint)progress.CurrentEntry);

@@ -310,7 +310,7 @@ namespace QtVsTools
                 }, cancellationToken),
 
                 /////////
-                // Force download and install of local QML language server, otherwise it's
+                // Force download and install of local QML Language Server, otherwise it's
                 // periodically checked if Visual Studio is idling.
                 //
                 RunQmlLanguageServerMonitorTaskOnceAsync(cancellationToken)
@@ -358,7 +358,7 @@ namespace QtVsTools
 
             /////////
             // Wire up solution change events. Currently, targets project configuration
-            // changed events only. Used in conjunction with the QML language server.
+            // changed events only. Used in conjunction with the QML Language Server.
             //
             var manager = await VsServiceProvider.GetServiceAsync<IVsSolutionBuildManager>();
             if (manager != null) {

@@ -420,8 +420,8 @@ namespace QtVsTools.Core.Options
         }
 
         [Category("Notifications")]
-        [DisplayName("QML language server update")]
-        [Description("Show notification when a new version of the local QML language server was"
+        [DisplayName("QML Language Server update")]
+        [Description("Show notification when a new version of the local QML Language Server was"
             + " installed.")]
         [TypeConverter(typeof(EnableDisableConverter))]
         public bool NotifyQmlLanguageServerUpdateInstalledOption
