@@ -4,6 +4,8 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
+using System.IO;
+using System.Text;
 using Microsoft.VisualStudio.Shell;
 
 namespace QtVsTools
@@ -95,10 +97,50 @@ namespace QtVsTools
                 VsShellUtilities.OpenSystemBrowser("https://doc.qt.io/qtvstools/index.html");
                 break;
             case QtMenus.Package.LaunchDesigner:
-                QtVsToolsPackage.Instance.QtDesigner.Start(hideWindow: false);
+                try {
+                    const string uiContent = "<ui version=\"4.0\">\n"
+                        + " <class>Form</class>\n"
+                        + " <widget class=\"QWidget\" name=\"Form\">\n"
+                        + "  <property name=\"objectName\">\n"
+                        + "   <string notr=\"true\">Form</string>\n"
+                        + "  </property>\n"
+                        + "  <property name=\"geometry\">\n"
+                        + "   <rect>\n"
+                        + "    <x>0</x>\n"
+                        + "    <y>0</y>\n"
+                        + "    <width>400</width>\n"
+                        + "    <height>300</height>\n"
+                        + "   </rect>\n"
+                        + "  </property>\n"
+                        + "  <property name=\"windowTitle\">\n"
+                        + "   <string>Form</string>\n"
+                        + "  </property>\n"
+                        + " </widget>\n"
+                        + "</ui>\n";
+                    VsEditor.Open(path: CreateTempFile("form", ".ui", uiContent));
+                } catch (Exception exception) {
+                    exception.Log();
+                    QtVsToolsPackage.Instance.QtDesigner.Start(hideWindow: false);
+                }
                 break;
             case QtMenus.Package.LaunchLinguist:
-                QtVsToolsPackage.Instance.QtLinguist.Start(hideWindow: false);
+                try {
+                    const string tsContent = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
+                        + "<!DOCTYPE TS>\n"
+                        + "<TS version=\"2.1\" language=\"en\">\n"
+                        + "<context>\n"
+                        + " <name>Empty</name>\n"
+                        + " <message>\n"
+                        + "  <source>Empty</source>\n"
+                        + "  <translation type=\"unfinished\"></translation>\n"
+                        + " </message>\n"
+                        + "</context>\n"
+                        + "</TS>\n";
+                    VsEditor.Open(path: CreateTempFile("lang", ".ts", tsContent));
+                } catch (Exception exception) {
+                    exception.Log();
+                    QtVsToolsPackage.Instance.QtLinguist.Start(hideWindow: false);
+                }
                 break;
             case QtMenus.Package.OpenProFile:
                 ProjectImporter.ImportProFile(QtVsToolsPackage.Instance.Dte);
@@ -167,6 +209,25 @@ namespace QtVsTools
                 }
                 break;
             }
+        }
+
+        private static string CreateTempFile(string prefix, string extension, string fileContent)
+        {
+            var tempFolderPath = Path.GetTempPath();
+
+            for (var i = 1; i <= 9999; i++) {
+                var tmpPath = Path.Combine(tempFolderPath, $"{prefix}-{i:D4}{extension}");
+                try {
+                    // Use FileMode.CreateNew to ensure uniqueness.
+                    using var fs = new FileStream(tmpPath, FileMode.CreateNew, FileAccess.Write);
+                    using var writer = new StreamWriter(fs, Encoding.UTF8);
+                    writer.Write(fileContent);
+                    return tmpPath;
+                } catch (IOException) {
+                    // The file already exists, so try the next candidate.
+                }
+            }
+            throw new Exception("No available file name could be generated within the range 1-9999.");
         }
     }
 }

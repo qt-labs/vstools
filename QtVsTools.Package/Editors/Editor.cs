@@ -21,6 +21,7 @@ namespace QtVsTools.Editors
     using Core;
     using Core.MsBuild;
     using Core.Options;
+    using QtVsTools.Core.CMake;
     using QtVsTools.Core.Common;
     using VisualStudio;
 
@@ -57,27 +58,32 @@ namespace QtVsTools.Editors
         protected IVsHierarchy Context { get; private set; }
         protected uint ItemId { get; private set; }
 
-        string GetQtToolsPath()
+        private string GetQtToolsPath()
         {
             return ThreadHelper.JoinableTaskFactory.Run(async () =>
             {
                 await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+                if (CMakeProject.ActiveProject is {} cMakeProject) {
+                    var path = cMakeProject["cmake", "CMAKE_PREFIX_PATH"];
+                    return string.IsNullOrWhiteSpace(path) ? null : Path.Combine(path, "bin");
+                }
 
+                if (Context == null)
+                    return null;
                 if (MsBuildProject.GetOrAdd(VsShell.GetProject(Context)) is not {} project)
                     return null;
                 var qtToolsPath = project.GetPropertyValue("QtToolsPath");
-                return string.IsNullOrEmpty(qtToolsPath) ? null : qtToolsPath;
+                return string.IsNullOrWhiteSpace(qtToolsPath) ? null : qtToolsPath;
             });
         }
 
-        string GetDefaultQtToolsPath()
+        private static string GetDefaultQtToolsPath()
         {
             var defaultVersion = QtVersionManager.GetDefaultVersion();
             var defaultVersionInfo = VersionInformation.GetOrAddByName(defaultVersion);
-            if (defaultVersionInfo == null || string.IsNullOrEmpty(defaultVersionInfo.QtDir))
-                return null;
-
-            return Path.Combine(defaultVersionInfo.QtDir, "bin");
+            return string.IsNullOrEmpty(defaultVersionInfo?.QtDir)
+                ? null
+                : Path.Combine(defaultVersionInfo.QtDir, "bin");
         }
 
         [EnvironmentPermission(SecurityAction.Demand, Unrestricted = true)]
@@ -150,35 +156,61 @@ namespace QtVsTools.Editors
                 : VSConstants.E_NOTIMPL; // return E_NOTIMPL for any unrecognized rguidLogicalView
         }
 
-        protected virtual ProcessStartInfo GetStartInfo(
-            string filePath,
-            string qtToolsPath,
-            bool hideWindow)
+        protected virtual Dictionary<string, (string, bool)> GetArguments(string filePath)
         {
-            var arguments = Utils.SafeQuote(filePath);
-            if (QtOptionsPage.ColorTheme == QtOptionsPage.EditorColorTheme.Dark
-                || (QtOptionsPage.ColorTheme == QtOptionsPage.EditorColorTheme.Consistent
-                && VSColorTheme.GetThemedColor(EnvironmentColors.EditorExpansionFillBrushKey)
-                .GetBrightness() < 0.5f)) {
-                arguments += " -style fusion";
-            }
+            var result = new Dictionary<string, (string Value, bool WithOption)>
+            {
+                { "filepath", (Value: Utils.SafeQuote(filePath), WithOption: false) }
+            };
+
+            var styleValue = QtOptionsPage.ColorTheme switch
+            {
+                QtOptionsPage.EditorColorTheme.Dark => (Value: "fusion", WithOption: true),
+                QtOptionsPage.EditorColorTheme.Consistent when VSColorTheme
+                    .GetThemedColor(EnvironmentColors.EditorExpansionFillBrushKey)
+                    .GetBrightness() < 0.5f => (Value: "fusion", WithOption: true),
+                _ => default((string Value, bool WithOption)?)
+            };
+            if (styleValue.HasValue)
+                result["style"] = styleValue.Value;
+
             if (!string.IsNullOrEmpty(QtOptionsPage.StylesheetPath)) {
-                arguments += $" -stylesheet {Utils.SafeQuote(QtOptionsPage.StylesheetPath)}";
+                result["stylesheet"] = (Value: Utils.SafeQuote(QtOptionsPage.StylesheetPath),
+                    WithOption: true);
             } else if (!Detached) {
-                // Hack: Apply stylesheet resizing embedded window widgets to reasonable defaults.
+                // Hack: Apply stylesheet resizing for embedded window widgets to reasonable defaults.
                 var tempPath = Path.Combine(Path.GetTempPath(), "default.qss");
                 if (!File.Exists(tempPath)) {
-                    var writer = new StreamWriter(tempPath);
+                    using var writer = new StreamWriter(tempPath);
                     writer.WriteLine("QTreeView { min-width: 256; min-height: 256 }");
-                    writer.Close();
                 }
-                arguments += $" -stylesheet {Utils.SafeQuote(tempPath)}";
+                result["stylesheet"] = (Value: Utils.SafeQuote(tempPath), WithOption: true);
+            }
+
+            return result;
+        }
+
+        protected virtual ProcessStartInfo GetStartInfo(string qtToolsPath,
+            Dictionary<string, (string Value, bool WithOption)> arguments, bool hideWindow)
+        {
+            var argsList = new List<string>();
+
+            foreach (var option in arguments.Keys) {
+                var (value, withOption) = arguments[option];
+                switch (withOption) {
+                case true when !string.IsNullOrWhiteSpace(value):
+                    argsList.Add($"-{option} {value}");
+                    break;
+                case false when !string.IsNullOrWhiteSpace(value):
+                    argsList.Add(value);
+                    break;
+                }
             }
 
             return new ProcessStartInfo
             {
                 FileName = Path.GetFullPath(Path.Combine(qtToolsPath, ExecutableName)),
-                Arguments = arguments,
+                Arguments = string.Join(" ", argsList),
                 WindowStyle = hideWindow ? ProcessWindowStyle.Hidden : ProcessWindowStyle.Normal
             };
         }
@@ -190,17 +222,23 @@ namespace QtVsTools.Editors
         {
             if (string.IsNullOrEmpty(qtToolsPath))
                 qtToolsPath = GetDefaultQtToolsPath();
-            var st = GetStartInfo(filePath, qtToolsPath, hideWindow);
+            var arguments = GetArguments(filePath);
+            var st = GetStartInfo(qtToolsPath, arguments, hideWindow);
             try {
                 var process = Process.Start(st);
                 SubprocessTracker.AddProcess(process);
                 return process;
             } catch (Exception exception) {
                 exception.Log();
-                if (!File.Exists(st.Arguments))
-                    Messages.Print("The system cannot find the file: " + st.Arguments);
+                if (!string.IsNullOrWhiteSpace(filePath) && !File.Exists(filePath))
+                    Messages.Print($"The system cannot find the file: '{filePath}'");
                 if (!File.Exists(st.FileName))
-                    Messages.Print("The system cannot find the file: " + st.FileName);
+                    Messages.Print($"The system cannot find the file: '{st.FileName}'");
+                if (arguments.TryGetValue("stylesheet", out (string Path, bool) stylesheet)) {
+                    var path = Utils.Unquote(stylesheet.Path);
+                    if (!string.IsNullOrWhiteSpace(path) && !File.Exists(path))
+                        Messages.Print($"The system cannot find the file: '{path}'");
+                }
                 return null;
             }
         }
