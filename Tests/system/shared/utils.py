@@ -41,8 +41,8 @@ def getMsvsVersionAsList():
     return msvsVersion
 
 
-def fixAppContext(wantedName="devenv"):
-    waitFor(lambda: len(applicationContextList()) > 1, 30000)
+def fixAppContext(wantedName="devenv", timeout=30000):
+    waitFor(lambda: len(applicationContextList()) > 1, timeout)
     appContexts = applicationContextList()
     if len(appContexts) == 1:  # Might have changed after waitFor()
         if appContexts[0].name != wantedName:
@@ -61,6 +61,13 @@ def startApp(waitForInitialDialogs=False, clearSettings=True):
         command += " /Command QtVSTools.ClearSettings"
     startApplication(command % rootSuffix)
     version = getMsvsProductLine()
+
+    # When MSVS with installed Qt VS Tools starts for the first time after an update, it creates a
+    # "ServiceHub.ThreadedWaitDialog" application context. Squish uses that as the current
+    # application context and cannot find any of MSVS' GUI elements. To fix that, wait for the
+    # additional application context and set the current context to "devenv".
+    fixAppContext(timeout=15000)
+
     if waitForInitialDialogs:
         try:
             if version == "2022":
