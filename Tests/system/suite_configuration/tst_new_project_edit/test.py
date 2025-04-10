@@ -15,8 +15,11 @@ def setNames(_, expectedName):
     projectNameEdit = waitForObjectExists(names.msvs_Project_name_Edit)
     myProjectName = "My%sProject" % expectedName
     type(projectNameEdit, myProjectName)
+    waitFor(lambda: projectNameEdit.text == myProjectName, 2000)
     solutionNameEdit = waitForObjectExists(names.solutionNameText_Edit)
-    type(solutionNameEdit, "My%sSolution" % expectedName)
+    mySolutionName = "My%sSolution" % expectedName
+    type(solutionNameEdit, mySolutionName)
+    waitFor(lambda: solutionNameEdit.text == mySolutionName, 2000)
 
 
 def testWizardPage3(templateName, _, __):
