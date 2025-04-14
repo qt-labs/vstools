@@ -1,10 +1,43 @@
+Qt Visual Studio Tools version 3.4.0:
+
+This update to the Qt VS Tools extension introduces telemetry support, enabled by default.
+Telemetry support can be disabled in the extension settings. Additionally, the QML language server
+support, previously marked as experimental, is now enabled by default. It also includes various
+security and cumulative reliability improvements.
+
+Changes
+-------
+ - Allow user-specified QML language server binary
+ - Enable using the GitHub-provided qmlls if available
+ - Fix build on ARM64 platform
+ - Fix potential deadlock in CMake projects
+ - Provide an option to download development releases via VS notification
+ - Fix projects cannot be created in a 'Solution Folder' filter
+ - Fixed QTVSADDINBUG-1288: Prevent duplication of qml.qrc and qtvars.pro content
+ - Fixed QTVSADDINBUG-1300: Qt Widget Designer opens multiple times in detached mode
+ - Fixed QTVSADDINBUG-1259: Omit detection of stripped Qt version shipped with QtDesignStudio
+ - Fixed QTVSADDINBUG-1306: Add QtPDF to qt6modules.xml
+ - Fixed QTVSADDINBUG-1234: Add telemetry support
+ - Fixed QTVSADDINBUG-1301: Fix incompatible makefile generator error format
+ - Fixed QTVSADDINBUG-1291: Fix QUrl content not being visible in the debugger for Qt6
+ - Fixed QTVSADDINBUG-1286: Fix static QML regex matching variable names including the word import
+ - Fixed QTVSADDINBUG-1283: Fix missing macros in moc
+ - Fixed QTVSADDINBUG-1276: Cannot open .ui files from Visual Studio
+ - Fixed QTVSADDINBUG-1284: Cannot open .ui files from Visual Studio
+ - Fixed QTVSADDINBUG-1290: Fix wrong Qt 3D Quick naming schema, add missing Qt Quick 3D
+ - Fixed QTVSADDINBUG-1266: ARM: Fix Common-Controls dependency for c++ projects
+ - Fixed QTVSADDINBUG-1263: Revert "Check $(UseDebugLibraries) in addition to $(Configuration) in config"
+ - Fixed QTVSADDINBUG-1264: Fix cannot "Run" Qt project built with cmake
+ - Fixed QTVSADDINBUG-1261: Limit test discovery to Qt Test framework binaries only
+
+
 Qt Visual Studio Tools version 3.3.1:
 
 This release contains numerous bug fixes for Qt/MSBuild.
 
 Changes
 -------
-- Fixed QTVSADDINBUG-1258: Fix Qt tesat adapter not able to resolve library dependencies
+- Fixed QTVSADDINBUG-1258: Fix Qt test adapter not able to resolve library dependencies
 - Fixed QTVSADDINBUG-1224: Validate .ts files before opening them in the translation editor
 - Fixed QTVSADDINBUG-1239: Fix include path for moc with pre-compiled headers
 - Fixed QTVSADDINBUG-1173: Fix QML static plugin not added to build
