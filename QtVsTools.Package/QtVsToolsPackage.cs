@@ -161,6 +161,10 @@ namespace QtVsTools
                     service.AdviseDebuggerEvents(debuggerEventsHandler, out debuggerEventsCookie);
                 }
 
+                // TODO: At some point, maybe version 4.0 or later, we can remove this call again.
+                Utils.SetRegistryKeyOnce(Resources.SettingsRegistryPath, "QmlLsp_Enable", 1,
+                    RegistryValueKind.DWord, "QmlLsp_Enable_Changed");
+
                 Qml.Debug.Launcher.Initialize();
                 QtMainMenu.Initialize();
                 AddCMakeItem.Initialize();

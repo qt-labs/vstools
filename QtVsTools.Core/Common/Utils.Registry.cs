@@ -34,5 +34,29 @@ namespace QtVsTools.Core.Common
             // Delete source keys recursively
             Registry.CurrentUser.DeleteSubKeyTree(sourcePath, false);
         }
+
+        /// <summary>
+        /// Sets a registry key to a specified value if it hasn't been set before, and marks it as
+        /// changed.
+        /// </summary>
+        /// <param name="registryPath">The path to the registry key.</param>
+        /// <param name="keyToChange">The name of the key to set.</param>
+        /// <param name="newValue">The new value to set for the key.</param>
+        /// <param name="valueKind">The kind of value to set (e.g., DWord, String).</param>
+        /// <param name="indicatorKey">The name of the key to indicate the change has been made.</param>
+        public static void SetRegistryKeyOnce(string registryPath, string keyToChange,
+            object newValue, RegistryValueKind valueKind, string indicatorKey)
+        {
+            using var key = Registry.CurrentUser.OpenSubKey(registryPath, true)
+                ?? Registry.CurrentUser.CreateSubKey(registryPath); // Key does not exist, create.
+
+            // Check if the change indicator key exists and is set to true
+            var changeIndicatorValue = key?.GetValue(indicatorKey);
+            if (changeIndicatorValue != null && (int)changeIndicatorValue == 1)
+                return;
+
+            key?.SetValue(keyToChange, newValue, valueKind);
+            key?.SetValue(indicatorKey, 1, RegistryValueKind.DWord);
+        }
     }
 }
