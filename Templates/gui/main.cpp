@@ -3,8 +3,8 @@ $include$
 
 int main(int argc, char *argv[])
 {
-    QApplication a(argc, argv);
-    $namespace$$classname$ w;
-    w.show();
-    return a.exec();
+    QApplication app(argc, argv);
+    $namespace$$classname$ window;
+    window.show();
+    return app.exec();
 }
