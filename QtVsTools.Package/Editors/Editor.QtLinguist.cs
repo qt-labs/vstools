@@ -10,6 +10,7 @@ using System.Text.RegularExpressions;
 
 namespace QtVsTools.Editors
 {
+    using Core;
     using Core.Options;
 
     internal class QtLinguistFileSniffer : IFileTypeSniffer
@@ -50,5 +51,17 @@ namespace QtVsTools.Editors
         }
 
         protected override bool Detached => QtOptionsPage.LinguistDetached;
+
+        protected override bool ShowDetachNotification => QtOptionsPage.NotifyLinguistDetachable;
+
+        protected override void DisableDetachNotification()
+        {
+            try {
+                QtOptionsPage.NotifyLinguistDetachable = false;
+                QtOptionsPage.SaveSettingsToStorageStatic();
+            } catch (Exception ex) {
+                ex.Log();
+            }
+        }
     }
 }

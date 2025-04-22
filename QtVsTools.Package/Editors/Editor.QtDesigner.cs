@@ -14,6 +14,7 @@ using Task = System.Threading.Tasks.Task;
 
 namespace QtVsTools.Editors
 {
+    using Core;
     using Core.MsBuild;
     using Core.Options;
     using VisualStudio;
@@ -88,5 +89,17 @@ namespace QtVsTools.Editors
         }
 
         protected override bool Detached => QtOptionsPage.DesignerDetached;
+
+        protected override bool ShowDetachNotification => QtOptionsPage.NotifyDesignerDetachable;
+
+        protected override void DisableDetachNotification()
+        {
+            try {
+                QtOptionsPage.NotifyDesignerDetachable = false;
+                QtOptionsPage.SaveSettingsToStorageStatic();
+            } catch (Exception ex) {
+                ex.Log();
+            }
+        }
     }
 }

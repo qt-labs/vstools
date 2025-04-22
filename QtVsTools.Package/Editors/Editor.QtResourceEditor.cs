@@ -10,6 +10,7 @@ using System.Text.RegularExpressions;
 
 namespace QtVsTools.Editors
 {
+    using Core;
     using Core.Options;
     using QtVsTools.Core.Common;
 
@@ -50,5 +51,18 @@ namespace QtVsTools.Editors
         protected override string GetTitle(Process editorProcess) => Title;
 
         protected override bool Detached => QtOptionsPage.ResourceEditorDetached;
+
+        protected override bool ShowDetachNotification => QtOptionsPage
+            .NotifyResourceEditorDetachable;
+
+        protected override void DisableDetachNotification()
+        {
+            try {
+                QtOptionsPage.NotifyResourceEditorDetachable = false;
+                QtOptionsPage.SaveSettingsToStorageStatic();
+            } catch (Exception ex) {
+                ex.Log();
+            }
+        }
     }
 }

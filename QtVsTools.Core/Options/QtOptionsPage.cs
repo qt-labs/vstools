@@ -73,8 +73,12 @@ namespace QtVsTools.Core.Options
             [String("Notifications_CMake_Incompatible")] CMakeIncompatible,
             [String("Notifications_CMake_Conversion")] CMakeConversion,
             [String("NotifySearchDevRelease")] NotifySearchDevRelease,
-            [String("Notifications_SearchDevRelease")] NotifyQmlLanguageServersUpdateInstalled
+            [String("Notifications_SearchDevRelease")] NotifyQmlLanguageServersUpdateInstalled,
+            [String("Notifications_DesignerDetachable")] NotifyDesignerDetachable,
+            [String("Notifications_LinguistDetachable")] NotifyLinguistDetachable,
+            [String("Notifications_ResourceEditorDetachable")] NotifyResourceEditorDetachable
         }
+
 
         public enum Natvis
         {
@@ -609,6 +613,57 @@ namespace QtVsTools.Core.Options
         [Settings(DevelopmentReleases.SearchDevReleaseTimeout, 3)]
         public static int SearchDevReleaseTimeout =>
             QtOptionsPageSettings.Instance.GetValue(() => SearchDevReleaseTimeout);
+
+        [Category("Notifications")]
+        [DisplayName("Designer window detachable")]
+        [Description("Show notification when the Qt Widgets Designer is detachable.")]
+        [TypeConverter(typeof(EnableDisableConverter))]
+        public bool NotifyDesignerDetachableOption
+        {
+            get => NotifyDesignerDetachable;
+            set => NotifyDesignerDetachable = value;
+        }
+
+        [Settings(Notifications.NotifyDesignerDetachable, true)]
+        public static bool NotifyDesignerDetachable
+        {
+            get => QtOptionsPageSettings.Instance.GetValue(() => NotifyDesignerDetachable);
+            set => QtOptionsPageSettings.Instance.SetValue(() => NotifyDesignerDetachable, value);
+        }
+
+        [Category("Notifications")]
+        [DisplayName("Linguist window detachable")]
+        [Description("Show notification when the Qt Linguist is detachable.")]
+        [TypeConverter(typeof(EnableDisableConverter))]
+        public bool NotifyLinguistDetachableOption
+        {
+            get => NotifyLinguistDetachable;
+            set => NotifyLinguistDetachable = value;
+        }
+
+        [Settings(Notifications.NotifyLinguistDetachable, true)]
+        public static bool NotifyLinguistDetachable
+        {
+            get => QtOptionsPageSettings.Instance.GetValue(() => NotifyLinguistDetachable);
+            set => QtOptionsPageSettings.Instance.SetValue(() => NotifyLinguistDetachable, value);
+        }
+
+        [Category("Notifications")]
+        [DisplayName("Qt Resource editor window detachable")]
+        [Description("Show notification when the Qt Resource is detachable.")]
+        [TypeConverter(typeof(EnableDisableConverter))]
+        public bool NotifyResourceEditorDetachableOption
+        {
+            get => NotifyResourceEditorDetachable;
+            set => NotifyResourceEditorDetachable = value;
+        }
+
+        [Settings(Notifications.NotifyResourceEditorDetachable, true)]
+        public static bool NotifyResourceEditorDetachable
+        {
+            get => QtOptionsPageSettings.Instance.GetValue(() => NotifyResourceEditorDetachable);
+            set => QtOptionsPageSettings.Instance.SetValue(() => NotifyResourceEditorDetachable, value);
+        }
 
         public override void LoadSettingsFromStorage()
         {

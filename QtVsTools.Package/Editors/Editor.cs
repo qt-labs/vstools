@@ -252,6 +252,8 @@ namespace QtVsTools.Editors
         }
 
         protected virtual bool Detached => false;
+        protected virtual bool ShowDetachNotification => true;
+        protected abstract void DisableDetachNotification();
 
         private class EditorPane : WindowPane, IVsPersistDocData
         {
@@ -323,9 +325,9 @@ namespace QtVsTools.Editors
                     Editor.OnStart(EditorProcess);
                     CloseParentFrame();
                     return VSConstants.S_OK;
-                } else {
-                    ShowDetachBar();
                 }
+                if (Editor.ShowDetachNotification)
+                    ShowDetachBar();
 
                 EditorProcess.WaitForInputIdle();
                 EditorProcess.EnableRaisingEvents = true;
@@ -440,7 +442,8 @@ namespace QtVsTools.Editors
                         return;
 
                     NotifyDetach?.Close();
-                    NotifyDetach = new NotifyDetach(Detach, infoBarHost);
+                    NotifyDetach = new NotifyDetach(Detach, Editor.DisableDetachNotification,
+                        infoBarHost);
                     NotifyDetach.Show();
                 });
             }

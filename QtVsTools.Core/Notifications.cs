@@ -241,10 +241,13 @@ namespace QtVsTools.Core
     public class NotifyDetach : InfoBarMessage
     {
         private Action DetachAction { get; }
+        private Action StopDetachAction { get; }
 
-        public NotifyDetach(Action detachAction, IVsInfoBarHost host = null) : base(host)
+        public NotifyDetach(Action detachAction, Action stopDetachAction, IVsInfoBarHost host = null)
+            : base(host)
         {
             DetachAction = detachAction;
+            StopDetachAction = stopDetachAction;
         }
 
         protected override ImageMoniker Icon => KnownMonikers.StatusInformation;
@@ -265,6 +268,12 @@ namespace QtVsTools.Core
                 Text = "Detach",
                 CloseInfoBar = false,
                 OnClicked = DetachAction
+            },
+            new()
+            {
+                Text = "Don't show again",
+                CloseInfoBar = true,
+                OnClicked = StopDetachAction
             }
         };
     }
