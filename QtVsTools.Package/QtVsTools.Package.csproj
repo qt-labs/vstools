@@ -326,6 +326,7 @@
   // Project items
   // -->
   <ItemGroup>
+    <Compile Include="Editors\DesignerSession.cs" />
     <Compile Include="Editors\Editor.EditorPane.cs" />
     <Compile Include="Editors\IFileTypeSniffer.cs" />
     <Compile Include="Editors\QtDesignerFileSniffer.cs" />

@@ -68,7 +68,7 @@ namespace QtVsTools.Package.Editors
             });
         }
 
-        private static string GetDefaultQtToolsPath()
+        protected static string GetDefaultQtToolsPath()
         {
             var defaultVersion = QtVersionManager.GetDefaultVersion();
             var defaultVersionInfo = VersionInformation.GetOrAddByName(defaultVersion);
