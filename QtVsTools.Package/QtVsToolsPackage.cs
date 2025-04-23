@@ -53,27 +53,27 @@ namespace QtVsTools
         logicalViewGuid: VSConstants.LOGVIEWID.TextView_string)]
 
     // Custom editor: Qt Designer
-    [ProvideEditorExtension(typeof(Editors.QtDesigner),
+    [ProvideEditorExtension(typeof(Package.Editors.QtDesigner),
         extension: ".ui",
         priority: 999,
-        DefaultName = Editors.QtDesigner.Title)]
-    [ProvideEditorLogicalView(typeof(Editors.QtDesigner),
+        DefaultName = Package.Editors.QtDesigner.Title)]
+    [ProvideEditorLogicalView(typeof(Package.Editors.QtDesigner),
         logicalViewGuid: VSConstants.LOGVIEWID.TextView_string)]
 
     // Custom editor: Qt Linguist
-    [ProvideEditorExtension(typeof(Editors.QtLinguist),
+    [ProvideEditorExtension(typeof(Package.Editors.QtLinguist),
         extension: ".ts",
         priority: 999,
-        DefaultName = Editors.QtLinguist.Title)]
-    [ProvideEditorLogicalView(typeof(Editors.QtLinguist),
+        DefaultName = Package.Editors.QtLinguist.Title)]
+    [ProvideEditorLogicalView(typeof(Package.Editors.QtLinguist),
         logicalViewGuid: VSConstants.LOGVIEWID.TextView_string)]
 
     // Custom editor: Qt Resource Editor
-    [ProvideEditorExtension(typeof(Editors.QtResourceEditor),
+    [ProvideEditorExtension(typeof(Package.Editors.QtResourceEditor),
         extension: ".qrc",
         priority: 999,
-        DefaultName = Editors.QtResourceEditor.Title)]
-    [ProvideEditorLogicalView(typeof(Editors.QtResourceEditor),
+        DefaultName = Package.Editors.QtResourceEditor.Title)]
+    [ProvideEditorLogicalView(typeof(Package.Editors.QtResourceEditor),
         logicalViewGuid: VSConstants.LOGVIEWID.TextView_string)]
 
     // Options page
@@ -96,9 +96,9 @@ namespace QtVsTools
     {
         public DTE Dte { get; private set; }
 
-        public Editors.QtDesigner QtDesigner { get; private set; }
-        public Editors.QtLinguist QtLinguist { get; private set; }
-        private Editors.QtResourceEditor QtResourceEditor { get; set; }
+        public Package.Editors.QtDesigner QtDesigner { get; private set; }
+        public Package.Editors.QtLinguist QtLinguist { get; private set; }
+        private Package.Editors.QtResourceEditor QtResourceEditor { get; set; }
 
         public static EventWaitHandle Initialized { get; } = new(false, EventResetMode.ManualReset);
         private static bool InitializationAwaited { get; set; } = false;
@@ -167,9 +167,9 @@ namespace QtVsTools
                 QtSolutionContextMenu.Initialize();
                 QtProjectContextMenu.Initialize();
                 QtItemContextMenu.Initialize();
-                RegisterEditorFactory(QtDesigner = new Editors.QtDesigner());
-                RegisterEditorFactory(QtLinguist = new Editors.QtLinguist());
-                RegisterEditorFactory(QtResourceEditor = new Editors.QtResourceEditor());
+                RegisterEditorFactory(QtDesigner = new Package.Editors.QtDesigner());
+                RegisterEditorFactory(QtLinguist = new Package.Editors.QtLinguist());
+                RegisterEditorFactory(QtResourceEditor = new Package.Editors.QtResourceEditor());
                 RegisterEditorFactory(new Package.MsBuild.ConversionReportViewer());
                 QtHelp.Initialize();
 

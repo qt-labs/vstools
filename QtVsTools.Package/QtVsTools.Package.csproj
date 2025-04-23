@@ -326,6 +326,11 @@
   // Project items
   // -->
   <ItemGroup>
+    <Compile Include="Editors\Editor.EditorPane.cs" />
+    <Compile Include="Editors\IFileTypeSniffer.cs" />
+    <Compile Include="Editors\QtDesignerFileSniffer.cs" />
+    <Compile Include="Editors\QtLinguistFileSniffer.cs" />
+    <Compile Include="Editors\QtResourceFileSniffer.cs" />
     <Compile Include="QML\Language\Lsp\Configuration.cs" />
     <Compile Include="QML\Language\CustomMessageTarget.cs" />
     <Compile Include="QML\Language\Lsp\MessageParser.cs" />

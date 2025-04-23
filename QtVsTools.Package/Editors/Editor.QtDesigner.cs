@@ -4,34 +4,18 @@
 using System;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text.RegularExpressions;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.VCProjectEngine;
 
 using Task = System.Threading.Tasks.Task;
 
-namespace QtVsTools.Editors
+namespace QtVsTools.Package.Editors
 {
     using Core;
     using Core.MsBuild;
     using Core.Options;
     using VisualStudio;
-
-    internal class QtDesignerFileSniffer : IFileTypeSniffer
-    {
-        private static readonly Regex Regex = new(@"<\s*(?i:ui)\s+version\s*=\s*""\d+\.\d+""\s*>");
-
-        public bool IsSupportedFile(string filePath)
-        {
-            try {
-                return File.ReadLines(filePath).Take(3).Any(line => Regex.IsMatch(line.Trim()));
-            } catch {
-                return false;
-            }
-        }
-    }
 
     [Guid(GuidString)]
     public class QtDesigner : Editor

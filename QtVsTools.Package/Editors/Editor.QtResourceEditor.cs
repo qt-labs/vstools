@@ -3,30 +3,13 @@
 
 using System;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text.RegularExpressions;
 
-namespace QtVsTools.Editors
+namespace QtVsTools.Package.Editors
 {
     using Core;
     using Core.Options;
     using QtVsTools.Core.Common;
-
-    internal class QtResourceFileSniffer : IFileTypeSniffer
-    {
-        private static readonly Regex Regex = new(@"<\s*(?i:rcc)\s*>");
-
-        public bool IsSupportedFile(string filePath)
-        {
-            try {
-                return File.ReadLines(filePath).Take(3).Any(line => Regex.IsMatch(line.Trim()));
-            } catch {
-                return false;
-            }
-        }
-    }
 
     [Guid(GuidString)]
     public class QtResourceEditor : Editor
