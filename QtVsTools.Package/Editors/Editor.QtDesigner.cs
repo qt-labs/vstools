@@ -32,7 +32,7 @@ namespace QtVsTools.Package.Editors
         private static readonly ConcurrentDictionary<string, DesignerSession> Sessions =
             new(Utils.CaseIgnorer);
 
-        private readonly ConcurrentDictionary<int, HashSet<string>> monitors = new();
+        internal static readonly ConcurrentDictionary<int, DesignerMonitor> Monitors = new();
 
         public QtDesigner()
             : base(new QtDesignerFileSniffer())
@@ -133,35 +133,8 @@ namespace QtVsTools.Package.Editors
             if (MsBuildProject.GetOrAdd(vcProject) is not { IsTracked: true } project)
                 return;
 
-            var filePath = document.FullName;
-
-            if (monitors.TryGetValue(process.Id, out var files)) {
-                if (!files.Add(filePath))
-                    return;
-            } else {
-                monitors[process.Id] = new HashSet<string>(Utils.CaseIgnorer) { filePath};
-            }
-
-            var lastWriteTime = File.GetLastWriteTime(filePath);
-
-            _ = Task.Run(async () =>
-            {
-                while (!process.WaitForExit(1000)) {
-                    var latestWriteTime = File.GetLastWriteTime(filePath);
-                    if (lastWriteTime == latestWriteTime)
-                        continue;
-                    lastWriteTime = latestWriteTime;
-                    await project.RefreshAsync();
-                }
-                if (lastWriteTime != File.GetLastWriteTime(filePath))
-                    await project.RefreshAsync();
-
-                if (monitors.TryGetValue(process.Id, out files)) {
-                    files.Remove(filePath);
-                    if (files.Count == 0)
-                        monitors.TryRemove(process.Id, out _);
-                }
-            });
+            if (Monitors.GetOrAdd(process.Id, _ => new DesignerMonitor(process, project)) is {} m)
+                m.Watch(document.FullName);
         }
 
         protected override bool Detached => QtOptionsPage.DesignerDetached;

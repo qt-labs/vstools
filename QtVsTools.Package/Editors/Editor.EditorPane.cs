@@ -84,6 +84,8 @@ namespace QtVsTools.Package.Editors
                 if (EditorProcess == null)
                     return VSConstants.E_FAIL;
 
+                EditorProcess.EnableRaisingEvents = true;
+
                 if (Editor.Detached) {
                     Editor.OnStart(EditorProcess);
                     CloseParentFrame();
@@ -94,7 +96,6 @@ namespace QtVsTools.Package.Editors
                     ShowDetachBar();
 
                 EditorProcess.WaitForInputIdle();
-                EditorProcess.EnableRaisingEvents = true;
                 EditorProcess.Exited += EditorProcess_Exited;
 
                 var t = Stopwatch.StartNew();
