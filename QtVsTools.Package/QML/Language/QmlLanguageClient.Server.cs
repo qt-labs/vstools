@@ -8,12 +8,13 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using Microsoft.VisualStudio.LanguageServer.Client;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Threading;
 using Newtonsoft.Json.Linq;
-using QtVsTools.Core.MsBuild;
+
+using Tasks = System.Threading.Tasks;
+using Task = System.Threading.Tasks.Task;
 
 namespace QtVsTools.Package.QML.Language
 {
@@ -22,6 +23,7 @@ namespace QtVsTools.Package.QML.Language
     using Core.Options;
     using Lsp;
     using QtVsTools.Core.Common;
+    using QtVsTools.Core.MsBuild;
 
     using static Core.Common.Utils;
     using static Instances;
@@ -45,7 +47,7 @@ namespace QtVsTools.Package.QML.Language
             await StartAsync.InvokeAsync(this, EventArgs.Empty);
         }
 
-        private async Task<Connection> ActivateServerAsync(CancellationToken token)
+        private async Tasks.Task<Connection> ActivateServerAsync(CancellationToken token)
         {
             SetupLog();
 
@@ -111,7 +113,7 @@ namespace QtVsTools.Package.QML.Language
             return null;
         }
 
-        private static async Task<string> GetBuildDirAsync()
+        private static async Tasks.Task<string> GetBuildDirAsync()
         {
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
 
@@ -127,7 +129,7 @@ namespace QtVsTools.Package.QML.Language
             return Environment.CurrentDirectory;
         }
 
-        private static async Task<VersionInformation> GetProjectQtVersionAsync()
+        private static async Tasks.Task<VersionInformation> GetProjectQtVersionAsync()
         {
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
 
@@ -140,7 +142,7 @@ namespace QtVsTools.Package.QML.Language
             return null;
         }
 
-        private static async Task<string> GetQmlDirAsync()
+        private static async Tasks.Task<string> GetQmlDirAsync()
         {
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
 
@@ -151,7 +153,7 @@ namespace QtVsTools.Package.QML.Language
             return "";
         }
 
-        private static async Task<string> GetDocDirAsync()
+        private static async Tasks.Task<string> GetDocDirAsync()
         {
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
 
@@ -162,7 +164,7 @@ namespace QtVsTools.Package.QML.Language
             return "";
         }
 
-        private static async Task<string> GetLocalQmlLanguageServerPathAsync()
+        private static async Tasks.Task<string> GetLocalQmlLanguageServerPathAsync()
         {
             // Check if the project's Qt version is supported by the latest QML Language Server.
             var projectsQtVersion = await GetProjectQtVersionAsync();

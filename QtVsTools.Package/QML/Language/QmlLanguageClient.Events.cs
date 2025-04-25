@@ -3,11 +3,12 @@
 
 using System;
 using System.ComponentModel.Composition;
-using System.Threading.Tasks;
 using EnvDTE;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.VCProjectEngine;
 using Microsoft.VisualStudio.Workspace.VSIntegration.Contracts;
+
+using Task = System.Threading.Tasks.Task;
 
 namespace QtVsTools.Package.QML.Language
 {

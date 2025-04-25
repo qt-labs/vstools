@@ -5,11 +5,11 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.VisualStudio.LanguageServer.Client;
 using Microsoft.VisualStudio.Threading;
+using Microsoft.VisualStudio.LanguageServer.Client;
 using Microsoft.VisualStudio.Utilities;
 
+using Tasks = System.Threading.Tasks;
 using Task = System.Threading.Tasks.Task;
 
 namespace QtVsTools.Package.QML.Language
@@ -32,7 +32,7 @@ namespace QtVsTools.Package.QML.Language
             await LoadServerAsync();
         }
 
-        public async Task<Connection> ActivateAsync(CancellationToken token)
+        public async Tasks.Task<Connection> ActivateAsync(CancellationToken token)
         {
             await MonitorSolutionOrWorkspaceAsync();
             return await ActivateServerAsync(token);
@@ -43,8 +43,8 @@ namespace QtVsTools.Package.QML.Language
             exception.Log();
             return Task.CompletedTask;
         }
-
-        public Task<InitializationFailureContext>
+#if VS2022
+        public Tasks.Task<InitializationFailureContext>
             OnServerInitializeFailedAsync(ILanguageClientInitializationInfo initializationState)
         {
             var statusMessage = initializationState.StatusMessage?.Trim(' ', '\r', '\n');
@@ -68,7 +68,7 @@ namespace QtVsTools.Package.QML.Language
                 FailureMessage = failureMessage
             });
         }
-
+#endif
         public IEnumerable<string> ConfigurationSections => null;
 
         public object InitializationOptions => null;
