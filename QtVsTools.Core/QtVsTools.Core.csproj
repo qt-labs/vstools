@@ -153,6 +153,9 @@
     <Compile Include="FakeFilter.cs" />
     <Compile Include="FilesToList.cs" />
     <Compile Include="Common\SettingsAttribute.cs" />
+    <Compile Include="Options\QtOptionsPage.Notifications.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="QmlLanguageServerMonitorTask.cs" />
     <Compile Include="NatvisHelper.cs" />
     <Compile Include="ProjectConfigurationEventArgs.cs" />
