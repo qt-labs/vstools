@@ -26,9 +26,6 @@ namespace QtVsTools.Core
         public static NotifyInstall NotifyInstall
             => StaticLazy.Get(() => NotifyInstall, () => new NotifyInstall());
 
-        public static SearchDevRelease NotifySearchDevRelease
-            => StaticLazy.Get(() => NotifySearchDevRelease, () => new SearchDevRelease());
-
         public static NotifyMessage NotifyMessage
             => StaticLazy.Get(() => NotifyMessage, () => new NotifyMessage());
     }
@@ -94,67 +91,6 @@ namespace QtVsTools.Core
                 {
                     QtOptionsPage.NotifyInstalled = false;
                     QtOptionsPage.SaveSettingsToStorageStatic();
-                }
-            }
-        };
-    }
-
-    public class SearchDevRelease : InfoBarMessage
-    {
-        protected override ImageMoniker Icon => KnownMonikers.StatusInformation;
-
-        protected override TextSpan[] Text => new TextSpan[]
-        {
-            new() { Bold = true, Text = "Qt Visual Studio Tools" },
-            new TextSpacer(2),
-            Utils.EmDash,
-            new TextSpacer(2),
-            "can auto-search for development releases every 24 hours if Visual Studio has been "
-            + "idle for at least 60 seconds."
-        };
-
-        protected override Hyperlink[] Hyperlinks => new Hyperlink[]
-        {
-            new()
-            {
-                Text = "Enable",
-                CloseInfoBar = false,
-                OnClicked= () =>
-                {
-                    try {
-                        QtOptionsPage.SearchDevRelease = true;
-                        QtOptionsPageSettings.Instance.SaveSettings();
-                    } catch (Exception ex) {
-                        ex.Log();
-                    }
-                }
-            },
-            new()
-            {
-                Text = "Disable",
-                CloseInfoBar = false,
-                OnClicked= () =>
-                {
-                    try {
-                        QtOptionsPage.SearchDevRelease = false;
-                        QtOptionsPageSettings.Instance.SaveSettings();
-                    } catch (Exception ex) {
-                        ex.Log();
-                    }
-                }
-            },
-            new()
-            {
-                Text = "Don't show again",
-                CloseInfoBar = true,
-                OnClicked = () =>
-                {
-                    try {
-                        QtOptionsPage.NotifySearchDevRelease = false;
-                        QtOptionsPage.SaveSettingsToStorageStatic();
-                    } catch (Exception ex) {
-                        ex.Log();
-                    }
                 }
             }
         };
