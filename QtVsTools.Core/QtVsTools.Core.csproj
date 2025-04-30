@@ -163,7 +163,7 @@
     <Compile Include="VisualStudio\IdleTaskManager.cs" />
     <Compile Include="Options\QtOptionsPageSettings.cs" />
     <Compile Include="Common\SettingsBase.cs" />
-    <Compile Include="QmlLanguageServerDownloader.cs" />
+    <Compile Include="FileDownloader.cs" />
     <Compile Include="QmlLanguageServerManager.cs" />
     <Compile Include="QtBuildTool.cs" />
     <Compile Include="QtPaths.cs" />

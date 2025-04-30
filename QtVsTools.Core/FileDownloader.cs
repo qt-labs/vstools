@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace QtVsTools.Core
 {
-    internal static class QmlLanguageServerDownloader
+    internal static class FileDownloader
     {
         private const int MaxRetries = 3;
         private const int MaxRedirects = 10;
@@ -19,7 +19,7 @@ namespace QtVsTools.Core
 
         internal static async Task DownloadAsync(string url, string destPath,
             CancellationToken token,
-            Func<(long CurrentBytes, long MaxBytyes), Task> callback = null)
+            Func<(long CurrentBytes, long MaxBytes), Task> callback = null)
         {
             var downloadUrl = url;
             for (var i = 0; i < MaxRedirects; ++i) {
@@ -38,25 +38,21 @@ namespace QtVsTools.Core
                     continue;
                 }
 
-                await DownloadOctetStreamAsync(response, destPath, token, callback);
+                await DownloadFileAsync(response, destPath, token, callback);
                 return;
             }
 
             throw new InvalidOperationException("Too many redirects.");
         }
 
-        private static async Task DownloadOctetStreamAsync(HttpResponseMessage response,
+        private static async Task DownloadFileAsync(HttpResponseMessage response,
             string destPath, CancellationToken token,
-            Func<(long CurrentBytes, long MaxBytyes), Task> callback = null)
+            Func<(long CurrentBytes, long MaxBytes), Task> callback = null)
         {
             if (!response.IsSuccessStatusCode) {
                 throw new InvalidOperationException($"Unexpected status: {response.StatusCode} "
                     + $"for URL: '{response.RequestMessage?.RequestUri}'.");
             }
-
-            var contentType = response.Content.Headers.ContentType?.MediaType;
-            if (contentType != "application/octet-stream")
-                Messages.Print("Warning: Content type is not 'application/octet-stream'.");
 
             var contentLength = response.Content.Headers.ContentLength;
             long downloadedBytes = 0;

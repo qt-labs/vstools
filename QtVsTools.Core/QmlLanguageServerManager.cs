@@ -97,7 +97,7 @@ namespace QtVsTools.Core
             try {
                 var tmpPath = Path.Combine(downloadDir, asset.Name);
 
-                await QmlLanguageServerDownloader.DownloadAsync(asset.BrowserDownloadUrl, tmpPath,
+                await FileDownloader.DownloadAsync(asset.BrowserDownloadUrl, tmpPath,
                     token, downloadCallback);
                 await Utils.ExtractArchiveAsync(tmpPath, ExtractDir, token, extractCallback);
 

@@ -100,15 +100,15 @@ namespace QtVsTools.Core
                     await StatusBar.ResetProgressAsync();
 
                     var tmpPath = Path.Combine(downloadDir, asset.Name);
-                    await QmlLanguageServerDownloader.DownloadAsync(asset.BrowserDownloadUrl,
+                    await FileDownloader.DownloadAsync(asset.BrowserDownloadUrl,
                         tmpPath, cancellationToken,
                         async download =>
                         {
                             await StatusBar.ProgressAsync(
                                 "Updating QML Language Server... Downloading "
                                 + $"{BytesToKilobytes(download.CurrentBytes)} / "
-                                + $"{BytesToKilobytes(download.MaxBytyes)}",
-                                (uint)download.MaxBytyes, (uint)download.CurrentBytes);
+                                + $"{BytesToKilobytes(download.MaxBytes)}",
+                                (uint)download.MaxBytes, (uint)download.CurrentBytes);
                         }
                     );
 
