@@ -25,7 +25,8 @@ namespace QtVsTools.Core.Options
             [String("Notifications_SearchDevRelease")] NotifyQmlLanguageServersUpdateInstalled,
             [String("Notifications_DesignerDetachable")] NotifyDesignerDetachable,
             [String("Notifications_LinguistDetachable")] NotifyLinguistDetachable,
-            [String("Notifications_ResourceEditorDetachable")] NotifyResourceEditorDetachable
+            [String("Notifications_ResourceEditorDetachable")] NotifyResourceEditorDetachable,
+            [String("Notifications_ShowDevReleaseDownload")] NotifyShowDevReleaseDownload
         }
 
         [Category("Notifications")]
@@ -216,6 +217,23 @@ namespace QtVsTools.Core.Options
         {
             get => QtOptionsPageSettings.Instance.GetValue(() => NotifyResourceEditorDetachable);
             set => QtOptionsPageSettings.Instance.SetValue(() => NotifyResourceEditorDetachable, value);
+        }
+
+        [Category("Notifications")]
+        [DisplayName("Development release download")]
+        [Description("Show a notification to allow users to download the available development release.")]
+        [TypeConverter(typeof(EnableDisableConverter))]
+        public bool NotifyShowDevReleaseDownloadOption
+        {
+            get => NotifyShowDevReleaseDownload;
+            set => NotifyShowDevReleaseDownload = value;
+        }
+
+        [Settings(Notifications.NotifyShowDevReleaseDownload, true)]
+        public static bool NotifyShowDevReleaseDownload
+        {
+            get => QtOptionsPageSettings.Instance.GetValue(() => NotifyShowDevReleaseDownload);
+            set => QtOptionsPageSettings.Instance.SetValue(() => NotifyShowDevReleaseDownload, value);
         }
     }
 }
