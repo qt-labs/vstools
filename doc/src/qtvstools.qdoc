@@ -16,9 +16,9 @@
     \div {class="main-navigation"}
     \table borderless 100%
         \row
-            \li \inlineimage installation.png
-            \li \inlineimage getting-started.png
-            \li \inlineimage tutorials.png
+            \li \inlineimage {installation.png} {Installation icon}
+            \li \inlineimage {getting-started.png} {Getting started icon}
+            \li \inlineimage {tutorials.png} {Tutorials icon}
         \row
             \li \b {INSTALLATION}
 
@@ -57,9 +57,9 @@
     \div {class="link-list"}
     \table 100%
         \row
-            \li \inlineimage demo-32x32.png
-            \li \inlineimage build-32x32.png
-            \li \inlineimage settings-32x32.png
+            \li \inlineimage {demo-32x32.png} {Demo icon}
+            \li \inlineimage {build-32x32.png} {Build icon}
+            \li \inlineimage {settings-32x32.png} {Settings icon}
         \row
             \li Work with code
                 \list
@@ -337,7 +337,7 @@
         \li Go to \uicontrol Extensions > \uicontrol {Manage Extensions} >
             \uicontrol Online.
         \li Search for \uicontrol {Qt Visual Studio Tools}.
-            \image qtvstools-manage-extensions.webp {Manage Extensions dialog}
+            \image {qtvstools-manage-extensions.webp} {Manage Extensions dialog}
         \li Select \uicontrol Download.
         \li Restart Microsoft Visual Studio to have the changes take effect.
     \endlist
@@ -350,7 +350,7 @@
         \li Go to \uicontrol Extensions > \uicontrol {Qt VS Tools} >
             \uicontrol Options > \uicontrol Qt > \uicontrol General >
             \uicontrol {Notifications}.
-            \image qtvstools-options-qt-general-notifications.webp {Notifications in Qt General Options}
+            \image {qtvstools-options-qt-general-notifications.webp} {Notifications in Qt General Options}
         \li In \uicontrol {New version installed}, select \uicontrol Enable.
     \endlist
 
@@ -364,12 +364,12 @@
     \list 1
         \li Go to \uicontrol Extensions > \uicontrol {Qt VS Tools} >
             \uicontrol Options > \uicontrol Qt > \uicontrol General >
-            \uicontrol {Development releases}.
-            \image qtvstools-options-qt-general-dev-releases.webp {Development releases in Qt General Options}
-        \li Select options:
+            \uicontrol {Notifications}, and then select \uicontrol {Enable} to
+            show notifications that let you turn searching for new releases on
+            or off.
+        \li In \uicontrol {Development releases}, select options:
+            \image {qtvstools-options-qt-general-dev-releases.webp} {Development releases in Qt General Options}
             \list
-                \li In \uicontrol {Notification}, show or hide notifications that
-                    let you turn searching for new releases on or off.
                 \li In \uicontrol {Search automatically}, turn searching for new
                     releases on or off.
                 \li In \uicontrol {Search timeout}, set the time in seconds to
@@ -411,13 +411,13 @@
             \uicontrol Next.
         \li Set up the \uicontrol Debug build configuration and select the
             modules to include in the project:
-            \image qtvstools-widgets-app-modules.webp {Selecting Qt modules in Qt Widgets Application Wizard}
+            \image {qtvstools-widgets-app-modules.webp} {Selecting Qt modules in Qt Widgets Application Wizard}
             The modules that are typically needed in widget application projects
             are selected by default.
         \li Select \uicontrol {Enable PCH Support} to use a precompiled header
             file.
         \li Select \uicontrol Next to continue to the class creation page:
-            \image qtvstools-widgets-app-class.webp {Creating a class in Qt Widgets Application Wizard}
+            \image {qtvstools-widgets-app-class.webp} {Creating a class in Qt Widgets Application Wizard}
         \li In \uicontrol {Base class}, enter \uicontrol QWidget as
             the base class type.
         \li Select \uicontrol {Lower case filenames} to
@@ -437,7 +437,7 @@
     Use \QD to design the application's main window, which has
     some widgets placed in layouts:
 
-    \image qtvstools-addressbook-mainwindow.webp AddressBook's main dialog
+    \image {qtvstools-addressbook-mainwindow.webp} {AddressBook's main dialog}
 
     By default, \QD opens in Visual Studio. To open it as a stand-alone
     application, select \uicontrol Detach.
@@ -527,7 +527,7 @@
         \li To acknowledge the \uicontrol Welcome dialog, select
             \uicontrol Next.
         \li In \uicontrol Name, enter \e AddDialog.
-            \image qtvstools-qt-widget-class-wizard.webp {Creating a class in Qt Widgets Class Wizard}
+            \image {qtvstools-qt-widget-class-wizard.webp} {Creating a class in Qt Widgets Class Wizard}
         \li In \uicontrol {Base class}, enter \uicontrol QDialog as
             the base class type.
         \li Select the \uicontrol {Multiple inheritance} radio button.
@@ -539,7 +539,7 @@
 
     \section2 Design the dialog
 
-    \image qtvstools-addressbook-adddialog.png Add Address Dialog
+    \image {qtvstools-addressbook-adddialog.png} {Add Address Dialog}
 
     To design the dialog:
 
@@ -716,7 +716,7 @@
         \li To set up debug and release build configurations, click in
             \uicontrol {Qt Modules}, and select the \uicontrol {Qt Quick} and
             \uicontrol {Qt Quick Controls} modules to include in the project:
-            \image qtvstools-qtquick-app-modules.webp {Selecting Qt modules in Qt Quick Application Wizard}
+            \image {qtvstools-qtquick-app-modules.webp} {Selecting Qt modules in Qt Quick Application Wizard}
         \li Select \uicontrol Finish to create the project.
     \endlist
 
@@ -749,7 +749,7 @@
 
     When you run the application, you should now see this:
 
-    \image qtvstools-quick-addressbook-mainwindow.png QuickAddressBook's main window
+    \image {qtvstools-quick-addressbook-mainwindow.png} {QuickAddressBook's main window}
 
     \section2 Connect the button to an action
 
@@ -775,7 +775,7 @@
 
     \section2 Add a list model
 
-    \image qtvstools-quick-addressbook-entries.png QuickAddressBook entries
+    \image {qtvstools-quick-addressbook-entries.png} {QuickAddressBook entries}
 
     Within the Window, declare an object of the \l ListModel type with the
     \c id \e addressList for storing the contact data. A list model defines
@@ -841,7 +841,7 @@
     specifies that the repeater instantiates the data that the users enter
     in the main window.
 
-    \image qtvstools-quick-addressbook-popup.png QuickAddressBook's popup
+    \image {qtvstools-quick-addressbook-popup.png} {QuickAddressBook's popup}
 
     Use a Qt file wizard in Visual Studio to create a custom type
     that defines the popup.
@@ -1047,7 +1047,7 @@
     \c onClicked signal handler and selecting \uicontrol {Debug} >
     \uicontrol {Toggle Breakpoint} (or pressing \key F9).
 
-    \image qtvstools-quick-addressbook-breakpoint.webp {Setting a breakpoint}
+    \image {qtvstools-quick-addressbook-breakpoint.webp} {Setting a breakpoint}
 
     The red circle indicates that a breakpoint is now set on that line.
 
@@ -1064,7 +1064,7 @@
     position as a call stack trace. View and change the values of
     local variables.
 
-    \image qtvstools-quick-addressbook-breakpoint-hit.webp {Viewing a variable}
+    \image {qtvstools-quick-addressbook-breakpoint-hit.webp} {Viewing a variable}
 
     \section1 Step through code
 
@@ -1072,7 +1072,7 @@
     into the code in the stack. The \e {NewAddressPopup.qml} file opens in the
     code editor at the function that creates a new address book entry.
 
-    \image qtvstools-quick-addressbook-step-into.webp {Stepping into code}
+    \image {qtvstools-quick-addressbook-step-into.webp} {Stepping into code}
 
     \section1 Watch variable values
 
@@ -1081,7 +1081,7 @@
     on the location of the breakpoint. To watch a particular variable or
     expression, set a watch in the \uicontrol {Watch 1} view.
 
-    \image qtvstools-quick-addressbook-watch.webp {Watching a variable}
+    \image {qtvstools-quick-addressbook-watch.webp} {Watching a variable}
 
     Step through the code to see how the information changes in the view.
 
@@ -1123,7 +1123,7 @@
     To create Qt projects, go to \uicontrol File > \uicontrol New >
     \uicontrol Project, and search for Qt.
 
-    \image qtvstools-projects.webp {Qt project wizard templates}
+    \image {qtvstools-projects.webp} {Qt project wizard templates}
 
     You can create following types of projects.
 
@@ -1187,7 +1187,7 @@
     Go to \uicontrol Project > \uicontrol {Add New Item} >
     \uicontrol Installed > \uicontrol {Visual C++} > \uicontrol Qt.
 
-    \image qtvstools-add-new-item.webp {Add New Item dialog}
+    \image {qtvstools-add-new-item.webp} {Add New Item dialog}
 
     \table
     \header
@@ -1268,11 +1268,11 @@
 
     A message on the info bar indicates that the conversion is complete.
 
-    \image qtvstools-pro-file-conversion-message.webp {Project format conversion complete message}
+    \image {qtvstools-pro-file-conversion-message.webp} {Project format conversion complete message}
 
     To see the changes that Qt VS Tools made, select \uicontrol {View report}.
 
-    \image qtvstools-pro-file-conversion-report.webp {Project format conversion report}
+    \image {qtvstools-pro-file-conversion-report.webp} {Project format conversion report}
 
     \section1 Hide the message
 
@@ -1282,7 +1282,7 @@
         \li Go to \uicontrol Extensions > \uicontrol {Qt VS Tools} >
             \uicontrol Options > \uicontrol Qt > \uicontrol General >
             \uicontrol {Notifications}.
-            \image qtvstools-options-qt-general-notifications.webp {Notifications in Qt General Options}
+            \image {qtvstools-options-qt-general-notifications.webp} {Notifications in Qt General Options}
         \li In \uicontrol {CMake conversion confirmation}, select
             \uicontrol Disable.
     \endlist
@@ -1306,7 +1306,7 @@
     MSBuild or CMake to build them. The wizards create the necessary files for
     you.
 
-    \image qtvstools-wizard-cmake.webp {Selecting CMake in the application wizard}
+    \image {qtvstools-wizard-cmake.webp} {Selecting CMake in the application wizard}
 
     Load .pro files to Visual Studio to continue developing existing Qt
     application projects that you configured to use qmake.
@@ -1328,7 +1328,7 @@
             set of property definitions.
     \endlist
 
-    \image qtvstools-msbuild-configurations.webp {Diagram showing Visual Studio Project and MSBuild}
+    \image {qtvstools-msbuild-configurations.webp} {Diagram showing Visual Studio Project and MSBuild}
 
     \section2 Properties
 
@@ -1357,7 +1357,7 @@
     Qt-specific targets that describe how to use the appropriate Qt tools to
     process files such as moc headers.
 
-    \image qtvstools-qt-project-settings.webp {Qt Project Settings}
+    \image {qtvstools-qt-project-settings.webp} {Qt Project Settings}
 
     Qt settings are fully-fledged project properties, which ensures that:
 
@@ -1386,7 +1386,7 @@
     Qt 6.8.0. You have to add at least one Qt version that was built for MSVC to
     be able to create Qt projects.
 
-    \image qtvstools-qt-versions.webp {Qt Versions}
+    \image {qtvstools-qt-versions.webp} {Qt Versions}
 
     \section1 Detect installed Qt versions
 
@@ -1421,7 +1421,7 @@
         \li Go to \uicontrol Extensions > \uicontrol {Qt VS Tools} >
             \uicontrol Options > \uicontrol Qt > \uicontrol General >
             \uicontrol {Notifications}.
-            \image qtvstools-options-qt-general-notifications.webp {Notifications in Qt General Options}
+            \image {qtvstools-options-qt-general-notifications.webp} {Notifications in Qt General Options}
         \li In \uicontrol {Update Qt installation}, select \uicontrol Disable.
     \endlist
 
@@ -1461,7 +1461,7 @@
             go to \uicontrol Properties in the context menu.
         \li Select \uicontrol {Configuration Properties} >
             \uicontrol {Qt Project Settings}.
-            \image qtvstools-qt-project-settings.webp {Qt Project Settings dialog}
+            \image {qtvstools-qt-project-settings.webp} {Qt Project Settings dialog}
         \li In \uicontrol {Qt Installation}, select the Qt version.
     \endlist
 
@@ -1516,7 +1516,7 @@
         \li Go to \uicontrol Properties in the context menu of the project.
     \endlist
 
-    \image qtvstools-qt-project-settings.webp {Qt Project Settings}
+    \image {qtvstools-qt-project-settings.webp} {Qt Project Settings}
 
     To set options for handling a specific file, go to \uicontrol Properties in
     the context menu of the file. The dialog lists only tools relevant for the
@@ -1545,7 +1545,7 @@
     To set the path to the Qt/MSBuild files, go to \uicontrol Extensions >
     \uicontrol {Qt VS Tools} > \uicontrol Options > \uicontrol {Qt/MSBuild}.
 
-    \image qtvstools-options-qt-general-qt-msbuild.webp {Qt/MSBuild in Qt General Options}
+    \image {qtvstools-options-qt-general-qt-msbuild.webp} {Qt/MSBuild in Qt General Options}
 
     This corresponds to setting the value of the \c QTMSBUILDS environment
     variable.
@@ -1571,12 +1571,12 @@
             set additional command line options.
         \li In \uicontrol {Additional Options}, enter the following options:
             \c {/std:c++17 /Zc:__cplusplus /permissive-}
-            \image qtvstools-convert-project-format.webp {Additional command line options}
+            \image {qtvstools-convert-project-format.webp} {Additional command line options}
         \li Go to \uicontrol Extensions > \uicontrol {Qt VS Tools} >
             \uicontrol {Qt Versions}.
         \li Select the Qt version that you initially created the project for, and
             then select \uicontrol Default.
-            \image qtvstools-qt-versions.webp {Qt Versions}
+            \image {qtvstools-qt-versions.webp} {Qt Versions}
     \endlist
 
     \sa {Add Qt versions}, {Convert solutions to latest Qt/MSBuild format},
@@ -1595,7 +1595,7 @@
     \list 1
         \li Open the solution.
         \li Select \uicontrol Update.
-            \image qtvstools-open-solution-update.webp {Opening a solution with old project format}
+            \image {qtvstools-open-solution-update.webp} {Opening a solution with old project format}
         \li If you don't see the message, right-click the solution and go to
             \uicontrol Qt > \uicontrol {Convert custom build steps to Qt/MSBuild}
             in the context menu.
@@ -1607,7 +1607,7 @@
     \uicontrol {Legacy Project Filter} on the \uicontrol {Solution Explorer}
     toolbar to filter the projects that have the old format.
 
-    \image qtvstools-legacy-project-filter.webp {Legacy Project Filter button}
+    \image {qtvstools-legacy-project-filter.webp} {Legacy Project Filter button}
 
     \sa {Build solutions that have Qt/MSBuild format 2}, {Building}
 */
@@ -1644,7 +1644,7 @@
     \list 1
         \li Go to \uicontrol Extensions > \uicontrol {Qt VS Tools} >
             \uicontrol {Qt Versions}.
-            \image qtvstools-qt-versions.webp {Qt Versions}
+            \image {qtvstools-qt-versions.webp} {Qt Versions}
         \li Select \uicontrol Add.
         \li In \uicontrol Name, enter a name for the Qt version. If you add the
             location of Qt first, this field is filled automatically.
@@ -1692,7 +1692,7 @@
     \uicontrol {Add New Item} > \uicontrol Installed > \uicontrol {Visual C++} >
     \uicontrol Qt > \uicontrol {Qt Widgets Form File}.
 
-    \image qtvstools-qt-widget-class-wizard.webp {Qt Widgets Class Wizard}
+    \image {qtvstools-qt-widget-class-wizard.webp} {Qt Widgets Class Wizard}
 
     Typically, you need to wrap the code generated for the form file into a
     QWidget subclass to add signals or slots to it. Therefore, Qt VS Tools
@@ -1718,18 +1718,20 @@
 
     \section1 Detach \QD
 
-    By default, \QD opens in Visual Studio. To open it as a stand-alone
-    application, select \uicontrol Detach.
-
     To run \QD in a separate window by default:
 
     \list 1
         \li Go to \uicontrol Extensions > \uicontrol {Qt VS Tools} >
             \uicontrol Options > \uicontrol Qt > \uicontrol General >
             \uicontrol {\QD}.
-            \image qtvstools-options-qt-general-qd.webp {Qt Designer in Qt General Options}
+            \image {qtvstools-options-qt-general-qd.webp} {Qt Designer in Qt General Options}
         \li Set \uicontrol {Run in detached window} to \uicontrol True.
     \endlist
+
+    To be notified when \QD is detachable, select \uicontrol {Notifications},
+    and then set \uicontrol {Designer window detachable} to \uicontrol {Enabled}.
+
+    \image {qtvstools-options-qt-general-notifications.webp} {Notifications in Qt General Options}
 
     \sa {Create UI form files}, {Set tool theme}, {\QD Manual}
 */
@@ -1749,7 +1751,7 @@
         \li Go to \uicontrol Extensions > \uicontrol {Qt VS Tools} >
             \uicontrol Options > \uicontrol Qt > \uicontrol General >
             \uicontrol {Style}.
-            \image qtvstools-options-qt-general-style.webp {Style in Qt General Options}
+            \image {qtvstools-options-qt-general-style.webp} {Style in Qt General Options}
         \li In \uicontrol {Color theme}, select the theme to use in the Qt tools.
             The \uicontrol Consistent option uses the Visual Studio color theme.
         \li In \uicontrol {Path to stylesheet}, select a style sheet for the Qt
@@ -1777,12 +1779,12 @@
         \li Go to \uicontrol Project > \uicontrol {Add New Item} >
             \uicontrol Installed > \uicontrol {Visual C++} > \uicontrol Qt.
         \li Select \uicontrol {Qt Resource File}.
-            \image qtvstools-new-project-item-qt-resource-file.webp {Add New Item dialog}
+            \image {qtvstools-new-project-item-qt-resource-file.webp} {Add New Item dialog}
         \li In \uicontrol Name, enter a name for the resource file.
         \li In \uicontrol Location, specify a location for the file.
         \li Select \uicontrol Add to create a \c .qrc file and to open it in the
             \uicontrol {Qt Resource Editor}.
-            \image qtvstools-qrc-editor.png {Qt Resource Editor}
+            \image {qtvstools-qrc-editor.png} {Qt Resource Editor}
         \li To add resources to the file, select \uicontrol Add >
             \uicontrol {Add Files}.
         \li In \uicontrol Prefix, you can change the prefix.
@@ -1808,7 +1810,7 @@
     To start Qt Resource Editor, double-click a \c .qrc file in the Solution
     Explorer.
 
-    \image qtvstools-qrc-editor.png {Qt Resource Editor}
+    \image {qtvstools-qrc-editor.png} {Qt Resource Editor}
 
     \section1 Detach Qt Resource Editor
 
@@ -1820,9 +1822,15 @@
     \list 1
         \li Go to \uicontrol Extensions > \uicontrol {Qt VS Tools} >
             \uicontrol Options > \uicontrol {Qt Resource Editor}.
-            \image qtvstools-options-qt-general-qrc-editor.webp {Qt Resource Editor in Qt General Options}
+            \image {qtvstools-options-qt-general-qrc-editor.webp} {Qt Resource Editor in Qt General Options}
         \li Set \uicontrol {Run in detached window} to \uicontrol True.
     \endlist
+
+    To be notified when Qt Resource Editor is detachable, select
+    \uicontrol {Notifications}, and then set
+    \uicontrol {Qt Resource Editor window detachable} to \uicontrol {Enabled}.
+
+    \image {qtvstools-options-qt-general-notifications.webp} {Notifications in Qt General Options}
 
     \sa {Manage resources}, {Set tool theme}, {The Qt Resource System}
 */
@@ -1846,7 +1854,7 @@
         \li In \uicontrol {Select a Language}, select a language from the list
             of supported languages. Use \uicontrol Search to filter for a specific
             language.
-            \image qtvstools-qt-translation-file-wizard.png
+            \image {qtvstools-qt-translation-file-wizard.png} {Adding a translation file to a project}
         \li In \uicontrol {Save as}, enter a filename for the translation file.
         \li Go to \uicontrol Finish to create the file and have it listed in
             \uicontrol {Translation Files} in Visual Studio's
@@ -1888,7 +1896,7 @@
             \uicontrol {Qt Translation} > \uicontrol {General}.
         \li In \uicontrol {Run Translation Tool During Build}, select the tools
             to run.
-            \image qtvstools-project-properties-qt-translation.webp {Qt Translation properties}
+            \image {qtvstools-project-properties-qt-translation.webp} {Qt Translation properties}
     \endlist
 
     \note The \uicontrol {Qt Translation} properties are shown only if the
@@ -1904,7 +1912,7 @@
             context menu.
         \li Select \uicontrol {Configuration Properties} >
             \uicontrol {Qt Translation} > \uicontrol {lupdate}.
-            \image qtvstools-project-properties-lupdate.webp {lupdate properties}
+            \image {qtvstools-project-properties-lupdate.webp} {lupdate properties}
         \li Select a property to see its description.
     \endlist
 
@@ -1921,7 +1929,7 @@
             context menu.
         \li Select \uicontrol {Configuration Properties} >
             \uicontrol {Qt Translation} > \uicontrol {lrelease}.
-            \image qtvstools-project-properties-lrelease.webp {lrelease properties}
+            \image {qtvstools-project-properties-lrelease.webp} {lrelease properties}
         \li Select a property to see its description.
     \endlist
 
@@ -1948,18 +1956,20 @@
 
     \section1 Detach \QL
 
-    By default, \QL opens in Visual Studio. To open it as a stand-alone
-    application, select \uicontrol Detach.
-
     To run \QL in a separate window by default:
 
     \list 1
         \li Go to \uicontrol Extensions > \uicontrol {Qt VS Tools} >
             \uicontrol Options > \uicontrol Qt > \uicontrol General >
             \uicontrol {\QL}.
-            \image qtvstools-options-qt-general-ql.webp {Qt Linguist in Qt General Options}
+            \image {qtvstools-options-qt-general-ql.webp} {Qt Linguist in Qt General Options}
         \li Set \uicontrol {Run in detached window} to \uicontrol True.
     \endlist
+
+    To be notified when \QL is detachable, select \uicontrol {Notifications},
+    and then set \uicontrol {Linguist window detachable} to \uicontrol {Enabled}.
+
+    \image {qtvstools-options-qt-general-notifications.webp} {Notifications in Qt General Options}
 
     \sa {Create Qt translation files}, {Set tool theme},
     {Internationalization with Qt}, {\QL Manual}
@@ -1982,7 +1992,7 @@
         \li Go to \uicontrol Extensions > \uicontrol {Qt VS Tools} >
             \uicontrol Options > \uicontrol Qt > \uicontrol General >
             \uicontrol Help.
-            \image qtvstools-options-qt-general-help.webp {Help in Qt General Options}
+            \image {qtvstools-options-qt-general-help.webp} {Help in Qt General Options}
         \li Set \uicontrol {Try Qt documentation when F1 is pressed} to
             \uicontrol False.
     \endlist
@@ -2000,7 +2010,7 @@
     \list 1
         \li Go to \uicontrol Tools > \uicontrol Options >
             \uicontrol Environment > \uicontrol Keyboard.
-            \image qtvstools-options-environment-keyboard.webp {Keyboard options}
+            \image {qtvstools-options-environment-keyboard.webp} {Keyboard in Environment options}
         \li In \uicontrol {Show commands containing}, enter \e {Help.F1Help}.
         \li Select \uicontrol {Press shortcut keys} and press your
             preferred keys to add them to the field.
@@ -2046,7 +2056,7 @@
         \li Go to \uicontrol Extensions > \uicontrol {Qt VS Tools} >
             \uicontrol Options > \uicontrol Qt > \uicontrol General >
             \uicontrol IntelliSense.
-            \image qtvstools-options-qt-general-intellisense.webp {IntelliSense Qt General Options}
+            \image {qtvstools-options-qt-general-intellisense.webp} {IntelliSense in Qt General Options}
         \li Select options:
             \list
                 \li \uicontrol {Auto project tracking} tracks changes and
@@ -2092,14 +2102,28 @@
         \li Go to \uicontrol Extensions > \uicontrol {Qt VS Tools} >
             \uicontrol Options > \uicontrol Qt > \uicontrol General >
             \uicontrol {QML Language Server}.
-            \image qtvstools-options-qt-general-qmlls.webp {QML Language Server section in Qt General Options}
+            \image {qtvstools-options-qt-general-qmlls.webp} {QML Language Server in Qt General Options}
         \li In \uicontrol Enable, select \uicontrol Enable to turn on the
             QML Language Server.
         \li In \uicontrol Log, select \uicontrol Enable to write LSP messages to
             a log file in a temporary folder.
         \li In \uicontrol {Log size}, set the maximum size of the log file in KB.
-        \li In \uicontrol {Qt version}, select an installed Qt version that
-            supports the QML Language Server.
+        \li In \uicontrol {QML Language Server path}, select the path to the
+            QML Language Server version you want to use. Leave the field empty
+            to use the default version that Qt VS Tools provides. However, if you
+            develop with a Qt version earlier than 6.5.0, Qt VS Tools tries to
+            start QML Language Server for that version, and if it is not
+            available, the default version.
+    \endlist
+
+    To receive notifications for QML Language Server updates:
+
+    \list 1
+        \li Go to \uicontrol Extensions > \uicontrol {Qt VS Tools} >
+            \uicontrol Options > \uicontrol Qt > \uicontrol General >
+            \uicontrol {Notifications}.
+            \image {qtvstools-options-qt-general-notifications.webp} {Notifications in Qt General Options}
+        \li In \uicontrol {QML Language Server update}, select \uicontrol Enable.
     \endlist
 
     \sa {Update IntelliSense info}
@@ -2189,7 +2213,7 @@
         \li Go to \uicontrol Extensions > \uicontrol {Qt VS Tools} >
             \uicontrol Options > \uicontrol Qt > \uicontrol General >
             \uicontrol {Natvis}.
-            \image qtvstools-options-qt-general-natvis.webp {Natvis in Qt General Options}
+            \image {qtvstools-options-qt-general-natvis.webp} {Natvis in Qt General Options}
         \li Set \uicontrol {Embed .natvis file into PDB} to \uicontrol Enable.
     \endlist
 
@@ -2232,7 +2256,7 @@
     connects to the QML debugging infrastructure of that application. You can see
     this in the \uicontrol {Processes} window of the Visual Studio debugger.
 
-    \image qtvstools-quick-addressbook-step-into.webp {Viewing processes}
+    \image {qtvstools-quick-addressbook-step-into.webp} {Viewing processes}
 
     The \uicontrol {Processes} window
     lists two processes: a native process and a QML process. The native process
@@ -2287,7 +2311,7 @@
         \li Select \uicontrol {Configuration Properties} >
             \uicontrol {Qt Project Settings}.
         \li In \uicontrol {Enable QML Debugging}, select \uicontrol {Yes}.
-            \image qtvstools-quick-addressbook-enable-qml-debugging.webp {Enabling QML debugging for a project}
+            \image {qtvstools-quick-addressbook-enable-qml-debugging.webp} {Enabling QML debugging for a project}
         \li Select \uicontrol {OK} to save the project settings.
         \li Go to \uicontrol {Build} > \uicontrol {Rebuild Solution} to rebuild
         the project.
@@ -2301,7 +2325,7 @@
         \li Go to \uicontrol Extensions > \uicontrol {Qt VS Tools} >
             \uicontrol Options > \uicontrol Qt > \uicontrol General >
             \uicontrol {QML Debugging}.
-            \image qtvstools-options-qt-general-qml-debugging.webp {QML Debugging in Qt General Options}
+            \image {qtvstools-options-qt-general-qml-debugging.webp} {QML Debugging in Qt General Options}
         \li Set \uicontrol {Process debug events} to \uicontrol False.
     \endlist
 
@@ -2338,7 +2362,7 @@
     launch the application using \c gdbserver and then configure GDB to connect
     to the device and start a remote debugging session.
 
-    \image qtvstools-remote-debugging.webp {Debugging applications running on Linux devices}
+    \image {qtvstools-remote-debugging.webp} {Debugging applications running on Linux devices}
 
     For this to work, the GDB installed in the WSL must support the target
     device architecture. A simple way to achieve this is to install
@@ -2354,7 +2378,7 @@
         \li Select a project in the \uicontrol {Solution Explorer}.
         \li Go to \uicontrol Project > \uicontrol Properties >
             \uicontrol {Configuration Properties} > \uicontrol Debugging.
-            \image qtvstools-project-properties-debugging.webp {Debugging properties}
+            \image {qtvstools-project-properties-debugging.webp} {Debugging properties}
         \li In \uicontrol {Debugger to launch}, select \uicontrol {GDB Debugger}.
         \li In \uicontrol {Additional Debugger Commands}, add the following
             commands:
@@ -2445,11 +2469,11 @@
             \uicontrol Next.
         \li Set up the \uicontrol Debug build configuration and select the
             modules to include in the project:
-            \image qtvstools-wizard-test.webp {Selecting Qt modules in Qt Test Application Wizard}
+            \image {qtvstools-wizard-test.webp} {Selecting Qt modules in Qt Test Application Wizard}
             The modules that are typically needed in test application projects
             are selected by default.
         \li Select \uicontrol Next to continue to the class creation page:
-            \image qtvstools-wizard-test-finish.webp {Creating a class in Qt Test Application Wizard}
+            \image {qtvstools-wizard-test-finish.webp} {Creating a class in Qt Test Application Wizard}
         \li Select \uicontrol {Lower case filenames} to
             only use lower case characters in the names of the generated files.
         \li Select \uicontrol {Add .runsettings file to project} to
@@ -2530,7 +2554,7 @@ QTEST_MAIN(QtTest)
     \uicontrol Refresh on the Test Explorer toolbar to manually trigger test
     discovery.
 
-    \image ute.webp {Unit Test Explorer}
+    \image {ute.webp} {Unit Test Explorer}
 
     \section1 Run and analyze tests with Unit Test Explorer
 
@@ -2545,7 +2569,7 @@ QTEST_MAIN(QtTest)
     filtering and grouping options in the Test Explorer to organize and manage
     your test results effectively.
 
-    \image ute-finish.webp {Test results in Unit Test Explorer}
+    \image {ute-finish.webp} {Test results in Unit Test Explorer}
 
     Usually, Qt tests require a project-local or solution-wide.runsettings file
     for configuring various testing parameters and environments.
@@ -2566,7 +2590,7 @@ QTEST_MAIN(QtTest)
     To specify global settings for the entire solution, go to \uicontrol Tools >
     \uicontrol Options > \uicontrol Qt > \uicontrol {Test Adapter}.
 
-    \image ute-settings.webp {Test Adapter settings}
+    \image {ute-settings.webp} {Test Adapter in Qt Options}
 
     If there is no project-specific or solution-wide .runsettings file, the
     values of global settings are used as default values.
@@ -2780,7 +2804,7 @@ QTEST_MAIN(QtTest)
     Qt VS Tools shows messages in the \uicontrol Output pane when you start it
     and build applications, for example.
 
-    \image qtvstools-output.webp {Qt VS Tools messages in the Output pane}
+    \image {qtvstools-output.webp} {Qt VS Tools messages in the Output pane}
 
     To stop the Qt VS Tools output from being activated and hiding the output
     from Visual Studio:
@@ -2789,7 +2813,7 @@ QTEST_MAIN(QtTest)
         \li Go to \uicontrol Extensions > \uicontrol {Qt VS Tools} >
             \uicontrol Options > \uicontrol Qt > \uicontrol General >
             \uicontrol {Notifications}.
-            \image qtvstools-options-qt-general-notifications.webp {Notifications in Qt General Options}
+            \image {qtvstools-options-qt-general-notifications.webp} {Notifications in Qt General Options}
         \li In \uicontrol {Auto activate console pane}, select \uicontrol Disable.
     \endlist
 */
