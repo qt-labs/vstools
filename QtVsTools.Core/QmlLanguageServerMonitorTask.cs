@@ -136,6 +136,8 @@ namespace QtVsTools.Core
                         await VsShell.UiThreadAsync(
                             () => Notifications.NotifyQmlLanguageServerUpdateInstalled.Show());
                     }
+
+                    await StatusBar.SetTextAsync("Updated QML Language Server...");
                 } finally {
                     await StatusBar.ResetProgressAsync();
                     await StatusBar.ClearAsync();
