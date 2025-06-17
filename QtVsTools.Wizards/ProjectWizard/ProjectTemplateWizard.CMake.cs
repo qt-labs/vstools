@@ -193,8 +193,7 @@ add_subdirectory(""{subDir}"")
                 if (item.TargetFileName != null) {
                     if (ParameterValues.TryGetValue(item.TargetFileName, out var value))
                         fileName = value;
-                }
-                else {
+                } else {
                     fileName = item.TemplateFileName;
                 }
                 if (fileName != null)

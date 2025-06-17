@@ -165,7 +165,7 @@ namespace QtVsTools.Wizards.ProjectWizard
 
         private void SetupDefaultConfigsAndConfigTable((string Name, VersionInformation VersionInfo) version)
         {
-            if (version.VersionInfo is not {} versionInfo)
+            if (version.VersionInfo is not { } versionInfo)
                 return;
 
             DefaultModules = QtModules.Instance.GetAvailableModules(versionInfo.Major)
@@ -337,8 +337,8 @@ namespace QtVsTools.Wizards.ProjectWizard
                 comboBoxQtVersion.Text = defaultVersion.Name;
                 break;
             case QT_VERSION_BROWSE:
-                if (BrowseForAndGetQtVersion() is {} qtVersion) {
-                    if (VersionInformation.GetOrAddByPath(qtVersion) is {} versionInfo) {
+                if (BrowseForAndGetQtVersion() is { } qtVersion) {
+                    if (VersionInformation.GetOrAddByPath(qtVersion) is { } versionInfo) {
                         config.QtVersion = versionInfo;
                         config.QtVersionName = qtVersion;
                         config.QtVersionPath = config.QtVersion.QtDir;
@@ -405,7 +405,7 @@ namespace QtVsTools.Wizards.ProjectWizard
 
         void Target_TextChanged(object sender, TextChangedEventArgs e)
         {
-            if (sender is ComboBox {IsEnabled: true} comboBoxTarget
+            if (sender is ComboBox { IsEnabled: true } comboBoxTarget
                 && GetBinding(comboBoxTarget) is Config config
                 && config.Target != comboBoxTarget.Text) {
                 config.Target = comboBoxTarget.Text;
@@ -427,7 +427,7 @@ namespace QtVsTools.Wizards.ProjectWizard
 
         void Platform_TextChanged(object sender, TextChangedEventArgs e)
         {
-            if (sender is ComboBox {IsEnabled: true} comboBoxPlatform
+            if (sender is ComboBox { IsEnabled: true } comboBoxPlatform
                 && GetBinding(comboBoxPlatform) is Config config
                 && config.Platform != comboBoxPlatform.Text) {
                 config.Platform = comboBoxPlatform.Text;
@@ -503,7 +503,7 @@ namespace QtVsTools.Wizards.ProjectWizard
             var stack = new Stack<FrameworkElement>(new[] { control });
             while (stack.Any()) {
                 control = stack.Pop();
-                if (control?.Name == name && control is {} result)
+                if (control?.Name == name && control is { } result)
                     return result;
                 for (int i = 0; i < VisualTreeHelper.GetChildrenCount(control); ++i) {
                     if (VisualTreeHelper.GetChild(control, i) is FrameworkElement child)
@@ -528,7 +528,7 @@ namespace QtVsTools.Wizards.ProjectWizard
         private void ErrorMsg_OnMouseDown(object sender, MouseButtonEventArgs e)
         {
             var qmakePath = BrowseForAndGetQtVersion();
-            if (VersionInformation.GetOrAddByPath(qmakePath) is not {} versionInfo)
+            if (VersionInformation.GetOrAddByPath(qmakePath) is not { } versionInfo)
                 return;
 
             var qtVersionDir = Path.GetDirectoryName(qmakePath);

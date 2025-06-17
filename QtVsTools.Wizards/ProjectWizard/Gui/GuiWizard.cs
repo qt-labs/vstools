@@ -160,7 +160,7 @@ namespace QtVsTools.Wizards.ProjectWizard
             Parameter[NewGuiProject.UiClassName] = "";
             Parameter[NewGuiProject.Member] = "ui";
 
-            Parameter[Meta.Asterisk] ="";
+            Parameter[Meta.Asterisk] = "";
             Parameter[Meta.Operator] = ".";
             Parameter[Meta.Semicolon] = ";";
             Parameter[Meta.New] = "";
@@ -221,7 +221,7 @@ namespace QtVsTools.Wizards.ProjectWizard
                         File.SetAttributes(projectIcon,
                             File.GetAttributes(projectIcon) & ~FileAttributes.ReadOnly);
                         iconExists = true;
-                    }  catch (Exception /*ex*/) {
+                    } catch (Exception /*ex*/) {
                         // Silently ignore any error, the project is working
                         // without icon too.
                     }
@@ -272,7 +272,7 @@ namespace QtVsTools.Wizards.ProjectWizard
                 break;
             }
 
-            string ns = "",  nsBegin = "", nsEnd = "";
+            string ns = "", nsBegin = "", nsEnd = "";
             for (var i = 0; i < array.Length - 1; ++i) {
                 ns += array[i] + "::";
                 nsBegin += "namespace " + array[i] + " {\r\n";

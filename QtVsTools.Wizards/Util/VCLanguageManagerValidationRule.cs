@@ -18,7 +18,7 @@ namespace QtVsTools.Wizards.Util
 
             ValidatesOnTargetUpdated = true;
 
-            if (VsServiceProvider.GetService<DTE>() is {} dte)
+            if (VsServiceProvider.GetService<DTE>() is { } dte)
                 Vclm = dte.GetObject("VCLanguageManager") as VCLanguageManager;
         }
 

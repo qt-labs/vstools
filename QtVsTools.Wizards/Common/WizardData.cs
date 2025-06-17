@@ -46,7 +46,7 @@ namespace QtVsTools.Wizards.Common
             CMake = 1
         }
 
-        public ProjectModels ProjectModel { get; set;}
+        public ProjectModels ProjectModel { get; set; }
 
         public IEnumerable<IWizardConfiguration> Configs { get; set; }
     }

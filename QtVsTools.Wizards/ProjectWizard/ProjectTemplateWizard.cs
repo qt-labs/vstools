@@ -240,8 +240,7 @@ namespace QtVsTools.Wizards.ProjectWizard
                 CleanupVcxProject();
                 OpenCMakeProject();
                 properties.Add("ProjectModel", "CMake");
-            }
-            else {
+            } else {
                 properties.Add("ProjectModel", "MsBuild");
             }
 
@@ -275,7 +274,7 @@ namespace QtVsTools.Wizards.ProjectWizard
             Dte = automationObject as DTE;
             ParameterValues = parameterValues;
 
-            if (customParams?[0] is {} templatePath)
+            if (customParams?[0] is { } templatePath)
                 ParameterValues["$templatepath$"] = templatePath.ToString();
 
             Debug.Assert(WizardWindow != null);
@@ -400,7 +399,7 @@ namespace QtVsTools.Wizards.ProjectWizard
             // Globals
             //
             xml = new StringBuilder();
-            Parameter[NewProject.ProjectGuid] =  $"{{{Guid.NewGuid().ToString().ToUpper()}}}";
+            Parameter[NewProject.ProjectGuid] = $"{{{Guid.NewGuid().ToString().ToUpper()}}}";
             Parameter[NewProject.Keyword] = MsBuildProjectFormat.QtVsVersionTag;
 
             ///////////////////////////////////////////////////////////////////////////////////////

@@ -23,7 +23,7 @@ namespace QtVsTools.Wizards.Util
             if (value is not string @string)
                 return new ValidationResult(false, @"Invalid file name.");
 
-            if (GetSelectedDteProject() is not {} project)
+            if (GetSelectedDteProject() is not { } project)
                 return ValidationResult.ValidResult;
 
             var files = HelperFunctions.GetProjectFiles(project, Filter);
@@ -42,7 +42,7 @@ namespace QtVsTools.Wizards.Util
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            if (VsServiceProvider.GetService<SDTE, DTE>() is not {} dte)
+            if (VsServiceProvider.GetService<SDTE, DTE>() is not { } dte)
                 return null;
 
             try {

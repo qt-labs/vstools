@@ -104,7 +104,7 @@ namespace QtVsTools.Wizards.ItemWizard
             Parameter[NewWidgetsItem.UiClassName] = "";
             Parameter[NewWidgetsItem.Member] = "ui";
 
-            Parameter[Meta.Asterisk] ="";
+            Parameter[Meta.Asterisk] = "";
             Parameter[Meta.Operator] = ".";
             Parameter[Meta.Semicolon] = ";";
             Parameter[Meta.New] = "";

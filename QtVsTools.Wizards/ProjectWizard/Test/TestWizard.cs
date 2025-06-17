@@ -151,7 +151,7 @@ namespace QtVsTools.Wizards.ProjectWizard
             ThreadHelper.ThrowIfNotOnUIThread();
 
             try {
-                if (MsBuildProject.GetOrAdd(dteProject.Object as VCProject) is {} project) {
+                if (MsBuildProject.GetOrAdd(dteProject.Object as VCProject) is { } project) {
                     QtMoc.SetMocItemType(
                         project.GetFilesFromProject(Parameter[NewClass.SourceFileName]).First()
                     );

@@ -126,7 +126,7 @@ namespace QtVsTools.Wizards.ProjectWizard
         protected override void OnProjectGenerated(EnvDTE.Project dteProject)
         {
             Microsoft.VisualStudio.Shell.ThreadHelper.ThrowIfNotOnUIThread();
-            if (MsBuildProject.GetOrAdd(dteProject.Object as VCProject) is {} project)
+            if (MsBuildProject.GetOrAdd(dteProject.Object as VCProject) is { } project)
                 project.MarkAsQtPlugin();
         }
     }

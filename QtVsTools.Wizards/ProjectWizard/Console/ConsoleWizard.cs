@@ -9,7 +9,7 @@ namespace QtVsTools.Wizards.ProjectWizard
     using Common;
     using QtVsTools.Common;
 
-     public class ConsoleWizard : ProjectTemplateWizard
+    public class ConsoleWizard : ProjectTemplateWizard
     {
         protected override Options TemplateType => Options.Application | Options.ConsoleSystem;
 
