@@ -10,7 +10,6 @@ using System.Xml.Linq;
 
 namespace QtVsTools.Core.MsBuild
 {
-    using static HelperFunctions;
     using static Common.Utils;
 
     public partial class MsBuildProjectReaderWriter

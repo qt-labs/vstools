@@ -9,9 +9,8 @@ using System.Threading;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Threading;
 using Microsoft.Win32;
-
-using Tasks = System.Threading.Tasks;
 using Interop = Microsoft.VisualStudio.Shell.Interop;
+using Tasks = System.Threading.Tasks;
 
 namespace QtVsTools.VisualStudio
 {
