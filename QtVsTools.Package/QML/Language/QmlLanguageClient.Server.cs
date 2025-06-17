@@ -12,9 +12,8 @@ using Microsoft.VisualStudio.LanguageServer.Client;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Threading;
 using Newtonsoft.Json.Linq;
-
-using Tasks = System.Threading.Tasks;
 using Task = System.Threading.Tasks.Task;
+using Tasks = System.Threading.Tasks;
 
 namespace QtVsTools.Package.QML.Language
 {

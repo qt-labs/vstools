@@ -7,8 +7,6 @@ using StreamJsonRpc;
 
 namespace QtVsTools.Package.QML.Language
 {
-    using Lsp;
-
     public partial class QmlLanguageClient : ILanguageClientCustomMessage2
     {
         internal JsonRpc JsonRpc { get; set; }

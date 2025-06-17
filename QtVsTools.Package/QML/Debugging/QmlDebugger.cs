@@ -10,10 +10,8 @@ namespace QtVsTools.Qml.Debug
     using Common;
     using SyntaxAnalysis;
     using V4;
-
-    using RegExprParser = SyntaxAnalysis.RegExpr.Parser;
-
     using static SyntaxAnalysis.RegExpr;
+    using RegExprParser = SyntaxAnalysis.RegExpr.Parser;
 
     struct FrameInfo
     {

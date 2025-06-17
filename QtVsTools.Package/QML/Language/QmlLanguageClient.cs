@@ -5,12 +5,11 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Threading;
-using Microsoft.VisualStudio.Threading;
 using Microsoft.VisualStudio.LanguageServer.Client;
+using Microsoft.VisualStudio.Threading;
 using Microsoft.VisualStudio.Utilities;
-
-using Tasks = System.Threading.Tasks;
 using Task = System.Threading.Tasks.Task;
+using Tasks = System.Threading.Tasks;
 
 namespace QtVsTools.Package.QML.Language
 {
