@@ -33,9 +33,10 @@ namespace QtVsTools.VisualStudio
         {
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
 
+            Self.IsFrozen(out var isFrozen);
             Self.FreezeOutput(0);
             Self.SetText(text);
-            Self.FreezeOutput(1);
+            Self.FreezeOutput(isFrozen);
         }
 
         public static string GetText()
@@ -61,10 +62,11 @@ namespace QtVsTools.VisualStudio
         {
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
 
+            Self.IsFrozen(out var isFrozen);
             Self.FreezeOutput(0);
             var status = Self.Clear();
             Debug.Assert(status == VSConstants.S_OK);
-            Self.FreezeOutput(1);
+            Self.FreezeOutput(isFrozen);
         }
 
         public static void Progress(string text, int totalSteps, int currentStep = 0)
