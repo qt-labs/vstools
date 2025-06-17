@@ -6,8 +6,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
-using System.Windows.Controls;
 using EnvDTE;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.VCProjectEngine;
@@ -17,7 +15,6 @@ namespace QtVsTools.Wizards.ItemWizard
     using Common;
     using Core;
     using ProjectWizard;
-    using QtVsTools.Common;
     using Util;
     using VisualStudio;
 

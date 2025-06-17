@@ -3,9 +3,9 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using EnvDTE;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.VCProjectEngine;
-using EnvDTE;
 
 namespace QtVsTools.Wizards.Util
 {
