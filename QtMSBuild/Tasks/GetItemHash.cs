@@ -16,10 +16,10 @@
 
 #region Using
 using System;
-using System.Linq;
-using System.Text;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
+using System.Text;
 #endregion
 
 namespace QtVsTools.QtMsBuild.Tasks
