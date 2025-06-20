@@ -8,8 +8,8 @@ using System.Text;
 
 namespace QtVsTools.SyntaxAnalysis
 {
-    using static CharClassSet;
     using static CharClass.CharSetExprBuilder;
+    using static CharClassSet;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
     ///
