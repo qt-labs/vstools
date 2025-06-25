@@ -17,8 +17,23 @@
 */
 
 /*!
+\externalpage https://doc.qt.io/qt-6/qtquick-debugging.html#starting-applications
+\title Qt Quick: Starting Applications
+*/
+
+/*!
 \externalpage https://doc.qt.io/qt-6/qtest-overview.html
 \title Qt Test Overview
+*/
+
+/*!
+\externalpage https://doc.qt.io/qtcreator/creator-qml-performance-monitor.html
+\title \QC: Profiling QML applications
+*/
+
+/*!
+\externalpage https://doc.qt.io/qtcreator/creator-how-to-profile-qml.html
+\title \QC: Profile QML applications
 */
 
 /*!

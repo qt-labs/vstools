@@ -112,6 +112,7 @@
                 \li \l {Hide output}
                 \li \l {Load Qt projects}
                 \li \l {Manage resources}
+                \li \l {Profile Qt Quick applications}
                 \li \l {Select Qt versions for a project}
                 \li \l {Set tool theme}
                 \li \l {Start \QD}
@@ -251,6 +252,7 @@
 
     \list
         \li \l {Configure Qt tests using a .runsettings file}
+        \li \l {Profile Qt Quick applications}
     \endlist
 
     \section1 Localize
@@ -2816,4 +2818,59 @@ QTEST_MAIN(QtTest)
             \image {qtvstools-options-qt-general-notifications.webp} {Notifications in Qt General Options}
         \li In \uicontrol {Auto activate console pane}, select \uicontrol Disable.
     \endlist
+*/
+
+/*!
+    \page qtvstools-how-to-profile-qt-quick-apps.html
+    \ingroup qtvstools-how-to
+
+    \title Profile Qt Quick applications
+
+    You can use the QML Profiler integrated into \QC to profile a Qt Quick
+    application that you run from Visual Studio. With QML Profiler, you
+    can find causes for typical performance problems in your applications,
+    such as slowness and unresponsive, stuttering user interfaces.
+
+    One typical cause for such performance problems is executing too much
+    JavaScript in too few frames. All JavaScript must return before the GUI
+    thread can proceed, and frames are delayed or dropped if the GUI thread
+    is not ready. Another typical cause is creating or updating invisible
+    items, which takes time in the GUI thread.
+
+    To profile Qt Quick applications:
+
+    \list 1
+        \li In Visual Studio, open a Qt Quick application project.
+        \li In \uicontrol {Solution Explorer}, right-click the project and
+            select \uicontrol Properties in the context menu.
+        \li Select \uicontrol {Configuration Properties} >
+            \uicontrol {Qt Project Settings}.
+        \li In \uicontrol {Enable QML Debugging}, select \uicontrol {Yes}.
+            \image {qtvstools-quick-addressbook-enable-qml-debugging.webp} {Enabling QML debugging for a project}
+        \li Select \uicontrol {Debugging}.
+        \li In \uicontrol {Command arguments}, enter:
+            \c {-qmljsdebugger=port:<number>,block}
+            \image {qtvstools-options-qml-profiling.webp} {Setting command line arguments for profiling}
+            For more information, see \l {Qt Quick: Starting Applications}.
+            \note The command arguments conflict with the ones set in
+            \uicontrol {Environment} by default, so debugging won't work until
+            you remove them.
+        \li Select \uicontrol {OK}.
+        \li Go to \uicontrol Build, and then select \uicontrol {Build Solution}
+            to build the application.
+        \li Go to \uicontrol Debug, and then select
+            \uicontrol {Start without Debugging} (or press \key {Ctrl+F5})
+            to run the application.
+        \li In \QC, go to \uicontrol {Analyze}, and then select
+            \uicontrol {QML Profiler (Attach to Waiting Application)}.
+            \image {qtcreator-start-qml-profiler.webp} {Qt Creator Start QML Profiler dialog}
+        \li In \uicontrol {Port}, set the same port number as in the command
+            arguments.
+        \li Select \uicontrol {OK} to start profiling.
+        \li If profiling does not start immediately in \uicontrol {QML Profiler},
+            select \uicontrol {Enable Profiling} to start collecting data.
+    \endlist
+
+    \sa {Enable QML debugging}, {\QC: Profile QML applications},
+    {\QC: Profiling QML applications}
 */
