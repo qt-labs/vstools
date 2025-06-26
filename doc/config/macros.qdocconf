@@ -1,5 +1,6 @@
 macro.gui               = "\\b"
 macro.key               = "\\b"
-macro.QD                = "Qt Designer"
+macro.QC                = "Qt Creator"
+macro.QD                = "Qt Widgets Designer"
 macro.QL                = "Qt Linguist"
 macro.QOI               = "Qt Online Installer"
