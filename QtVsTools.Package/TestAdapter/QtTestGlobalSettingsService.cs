@@ -45,7 +45,7 @@ namespace QtVsTools.Package.TestAdapter
     {
         public QtTestGlobalSettingsContainer()
             : base(QTA.Resources.GlobalSettingsName)
-        {}
+        { }
 
         public override XmlElement ToXml()
         {

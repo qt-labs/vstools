@@ -19,7 +19,7 @@ namespace QtVsTools.Package.Editors
 
         public QtResourceEditor()
             : base(new QtResourceFileSniffer())
-        {}
+        { }
 
         private Guid? guid;
         public override Guid Guid => guid ??= new Guid(GuidString);

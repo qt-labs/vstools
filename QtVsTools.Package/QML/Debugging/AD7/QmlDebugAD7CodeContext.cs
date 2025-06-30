@@ -28,8 +28,8 @@ namespace QtVsTools.Qml.Debug.AD7
         public enum Language { QML, JavaScript, Other }
         public Language FileType => Path.GetExtension(FilePath) switch
         {
-            {} path when string.Equals(path, ".qml", IgnoreCase) => Language.QML,
-            {} path when string.Equals(path, ".js", IgnoreCase) => Language.JavaScript,
+            { } path when string.Equals(path, ".qml", IgnoreCase) => Language.QML,
+            { } path when string.Equals(path, ".js", IgnoreCase) => Language.JavaScript,
             _ => Language.Other
         };
 

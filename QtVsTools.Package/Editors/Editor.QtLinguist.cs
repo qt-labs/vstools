@@ -18,7 +18,7 @@ namespace QtVsTools.Package.Editors
 
         public QtLinguist()
             : base(new QtLinguistFileSniffer())
-        {}
+        { }
 
         private Guid? guid;
         public override Guid Guid => guid ??= new Guid(GuidString);

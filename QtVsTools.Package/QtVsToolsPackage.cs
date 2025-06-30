@@ -137,13 +137,13 @@ namespace QtVsTools
                 await JoinableTaskFactory.SwitchToMainThreadAsync();
                 UiTimer = ConcurrentStopwatch.StartNew();
 
-                if (packages?.GetPackageInfo(ref legacyPackageId) is { Name: LegacyPackageName } )
+                if (packages?.GetPackageInfo(ref legacyPackageId) is { Name: LegacyPackageName })
                     throw new InvalidOperationException("Legacy extension detected.");
 
                 if ((Dte = await VsServiceProvider.GetServiceAsync<DTE>()) == null)
                     throw new InvalidOperationException("Unable to get service: DTE");
 
-                if (await VsServiceProvider.GetServiceAsync<IVsAppCommandLine>() is {} cmd) {
+                if (await VsServiceProvider.GetServiceAsync<IVsAppCommandLine>() is { } cmd) {
                     var result = cmd.GetOption("rootSuffix", out var exists, out var suffix);
                     if (result == VSConstants.S_OK && exists > 0)
                         Resources.RegistrySuffix = @"\" + suffix;
@@ -156,7 +156,7 @@ namespace QtVsTools
                     Registry.CurrentUser.DeleteSubKeyTree(Resources.RegistryPath, false);
                 }
 
-                if (await VsServiceProvider.GetServiceAsync<IVsDebugger>() is {} service) {
+                if (await VsServiceProvider.GetServiceAsync<IVsDebugger>() is { } service) {
                     debuggerEventsHandler = new DebuggerEvents(Dte);
                     service.AdviseDebuggerEvents(debuggerEventsHandler, out debuggerEventsCookie);
                 }
@@ -303,7 +303,7 @@ namespace QtVsTools
                 //
                 Task.Run(() =>
                 {
-                    if (QtVersionManager.GetInstallPath("$(DefaultQtVersion)") is not {} path)
+                    if (QtVersionManager.GetInstallPath("$(DefaultQtVersion)") is not { } path)
                         return;
                     if (new[] { "SSH:", "WSL:" }.Any(path.StartsWith))
                         return;
@@ -393,7 +393,7 @@ namespace QtVsTools
             Messages.ActivateMessagePane();
 
 
-            if (await GetServiceAsync<SIdleTaskManager, IIdleTaskManager>() is {} service) {
+            if (await GetServiceAsync<SIdleTaskManager, IIdleTaskManager>() is { } service) {
                 service.Add(new DevReleaseMonitorTask());
                 service.Add(new QmlLanguageServerMonitorTask());
             }
@@ -439,7 +439,7 @@ namespace QtVsTools
                         PercentComplete = 0
                     })
                     as ITaskHandler2;
-            status?.RegisterTask(new (() => throw new InvalidOperationException()));
+            status?.RegisterTask(new(() => throw new InvalidOperationException()));
             status?.Progress.Report(new TaskProgressData
             {
                 ProgressText = $"{versions.Length} version(s)",

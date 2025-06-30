@@ -19,7 +19,7 @@ namespace QtVsTools.Package.MsBuild
     {
         [ImportingConstructor]
         protected QtVersionProvider(UnconfiguredProject project)
-        {}
+        { }
 
         public async Task<IDynamicEnumValuesGenerator> GetProviderAsync(IList<NameValuePair> opts)
         {

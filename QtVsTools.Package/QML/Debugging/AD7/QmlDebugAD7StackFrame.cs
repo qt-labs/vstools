@@ -119,7 +119,7 @@ namespace QtVsTools.Qml.Debug.AD7
                 .SelectMany(x => x.Value
                     .Select(y => y.Value.GetInfo(dwFields)));
             ppEnum = PropertyEnum.Create(props);
-            pcelt = (uint) props.Count();
+            pcelt = (uint)props.Count();
 
             return VSConstants.S_OK;
         }

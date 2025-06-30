@@ -108,7 +108,7 @@ namespace QtVsTools.Package.CMake
             if (commandGroupGuid != CommandTable.Guid || cmdId != CommandTable.AddNewQtCMakeItem)
                 return false;
 
-            if (selection.FirstOrDefault()?.Workspace is not {} workspace)
+            if (selection.FirstOrDefault()?.Workspace is not { } workspace)
                 return false;
 
             if (CMakeProject.ActiveProject is not { Status: CMakeProject.QtStatus.True })

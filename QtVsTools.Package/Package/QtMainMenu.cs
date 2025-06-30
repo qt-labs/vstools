@@ -191,7 +191,7 @@ namespace QtVsTools
             case QtMenus.Package.ImportPriFile:
             case QtMenus.Package.QtProjectSettings:
                 command.Visible = command.Enabled
-                    = HelperFunctions.GetSelectedQtProject(dte) is {};
+                    = HelperFunctions.GetSelectedQtProject(dte) is { };
                 break;
             case QtMenus.Package.ConvertToQtMsBuild:
                 command.Visible = command.Enabled = false;

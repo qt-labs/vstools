@@ -53,7 +53,7 @@ namespace QtVsTools.Qml.Debug
             Instance.debugger = VsServiceProvider.GetService<IVsDebugger>();
             Instance.debugger4 = VsServiceProvider.GetService<IVsDebugger, IVsDebugger4>();
 
-            if (Instance is { debugger: {}, debugger4: {} })
+            if (Instance is { debugger: { }, debugger4: { } })
                 Instance.debugger.AdviseDebugEventCallback(Instance);
         }
 
@@ -292,7 +292,7 @@ namespace QtVsTools.Qml.Debug
                     return new();
                 solutionDirs.Add(CMake.RootPath);
             } else {
-                if (HelperFunctions.ProjectsInSolution(Package.Dte) is not {} projects)
+                if (HelperFunctions.ProjectsInSolution(Package.Dte) is not { } projects)
                     return new();
                 foreach (var project in projects) {
                     solutionDirs.Add(project.ProjectDirectory);
@@ -377,7 +377,7 @@ namespace QtVsTools.Qml.Debug
                 return NextHook?.OnLaunchDebugTargets(targetCount, targets, results) ?? S_OK;
 
             var envString = string.Join("\r\n", targets[0].bstrEnv.Split('\0'));
-            if (ParseEnvironment(envString) is not { Count: > 0} env)
+            if (ParseEnvironment(envString) is not { Count: > 0 } env)
                 return NextHook?.OnLaunchDebugTargets(targetCount, targets, results) ?? S_OK;
 
             if (env.ContainsKey("PATH") && env.ContainsKey("QTDIR")) {

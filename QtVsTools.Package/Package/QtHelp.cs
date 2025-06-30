@@ -129,7 +129,7 @@ namespace QtVsTools
                     return false; // suppress single character, operators etc...
 
                 var qtVersion = "$(DefaultQtVersion)";
-                if (HelperFunctions.GetSelectedQtProject(dte) is {} project)
+                if (HelperFunctions.GetSelectedQtProject(dte) is { } project)
                     qtVersion = project.QtVersion;
 
                 var info = VersionInformation.GetOrAddByName(qtVersion);

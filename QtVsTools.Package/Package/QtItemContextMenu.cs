@@ -98,7 +98,7 @@ namespace QtVsTools
                 return;
 
             var dte = QtVsToolsPackage.Instance.Dte;
-            if (HelperFunctions.GetSelectedQtProject(dte) is not {} qtProject)
+            if (HelperFunctions.GetSelectedQtProject(dte) is not { } qtProject)
                 return;
 
             foreach (EnvDTE.SelectedItem si in QtVsToolsPackage.Instance.Dte.SelectedItems) {

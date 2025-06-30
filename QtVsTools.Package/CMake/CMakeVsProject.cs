@@ -82,7 +82,7 @@ namespace QtVsTools.Package.CMake
             if (!vsTemplate.IsValid)
                 throw new NotSupportedException(".vstemplate file was not a Qt template.");
 
-            if (VsServiceProvider.GetService<EnvDTE.DTE, EnvDTE.DTE>() is not {} dte)
+            if (VsServiceProvider.GetService<EnvDTE.DTE, EnvDTE.DTE>() is not { } dte)
                 return VSConstants.E_FAIL;
 
             var targetPath = SelectedNode switch
@@ -97,7 +97,7 @@ namespace QtVsTools.Package.CMake
 
             try {
                 var templatePath = Path.GetDirectoryName(filesToOpen[0]);
-                if (string.IsNullOrEmpty(targetPath)|| string.IsNullOrEmpty(templatePath))
+                if (string.IsNullOrEmpty(targetPath) || string.IsNullOrEmpty(templatePath))
                     return VSConstants.E_FAIL;
 
                 var projectItems = vsTemplate.ProjectItems.ToList();

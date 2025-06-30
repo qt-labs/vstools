@@ -109,7 +109,7 @@ namespace QtVsTools
                 }
                 break;
             case QtMenus.Package.ProjectRefreshIntelliSense:
-                if (HelperFunctions.GetSelectedQtProject(dte) is not {} project)
+                if (HelperFunctions.GetSelectedQtProject(dte) is not { } project)
                     break;
                 project.Refresh();
                 break;
@@ -132,11 +132,11 @@ namespace QtVsTools
             case QtMenus.Package.ImportPriFileProject:
             case QtMenus.Package.QtProjectSettingsProject:
             case QtMenus.Package.ProjectRefreshIntelliSense:
-                command.Visible = command.Enabled = MsBuildProject.GetOrAdd(vcProject) is {};
+                command.Visible = command.Enabled = MsBuildProject.GetOrAdd(vcProject) is { };
                 break;
             case QtMenus.Package.lUpdateOnProject:
             case QtMenus.Package.lReleaseOnProject:
-                if (MsBuildProject.GetOrAdd(vcProject) is not {} project)
+                if (MsBuildProject.GetOrAdd(vcProject) is not { } project)
                     break;
                 command.Visible = true;
                 command.Enabled = Translation.ToolsAvailable(project);

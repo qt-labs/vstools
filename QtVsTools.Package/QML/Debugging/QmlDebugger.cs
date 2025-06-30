@@ -214,7 +214,7 @@ namespace QtVsTools.Qml.Debug
 
             var reqBacktrace = Message.Create<BacktraceRequest>(driver);
             var resBacktrace = reqBacktrace.Send();
-            if (resBacktrace is {Success: true}) {
+            if (resBacktrace is { Success: true }) {
 
                 foreach (var frameRef in resBacktrace.Body.Frames) {
                     var reqFrame = Message.Create<FrameRequest>(driver);

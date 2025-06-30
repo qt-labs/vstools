@@ -50,7 +50,7 @@ namespace QtVsTools.Qml.Debug.V4
                 return false;
 
             if (obj is JsObjectRef that)
-                return ((JsRef<JsObjectRef>) that).Ref.HasValue;
+                return ((JsRef<JsObjectRef>)that).Ref.HasValue;
             return null;
         }
 

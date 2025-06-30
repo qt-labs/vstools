@@ -82,7 +82,7 @@ namespace QtVsTools
                 f1HelpEvents.BeforeExecute += F1HelpEvents_BeforeExecute;
 
             foreach (var vcProject in HelperFunctions.ProjectsInSolution(dte)) {
-                if (MsBuildProject.GetOrAdd(vcProject) is {} project)
+                if (MsBuildProject.GetOrAdd(vcProject) is { } project)
                     InitializeMsBuildProjectProject(project);
             }
         }
@@ -131,7 +131,7 @@ namespace QtVsTools
             var versionFile = Path.Combine(PackageInstallPath, "lastversion.txt");
             if (File.Exists(versionFile)) {
                 var lastVersion = File.ReadAllText(versionFile);
-                newVersion = lastVersion!= Version.PRODUCT_VERSION;
+                newVersion = lastVersion != Version.PRODUCT_VERSION;
             }
             if (newVersion)
                 File.WriteAllText(versionFile, Version.PRODUCT_VERSION);
@@ -205,7 +205,7 @@ namespace QtVsTools
             if (document.ProjectItem?.ContainingProject?.Object is not VCProject vcProject)
                 return;
 
-            if (MsBuildProject.GetOrAdd(vcProject) is not {} qtPro)
+            if (MsBuildProject.GetOrAdd(vcProject) is not { } qtPro)
                 return;
 
             if (qtPro.VcProject.Files is not IVCCollection files)
@@ -240,7 +240,7 @@ namespace QtVsTools
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            if (HelperFunctions.GetSelectedQtProject(dte) is not {} qtPro)
+            if (HelperFunctions.GetSelectedQtProject(dte) is not { } qtPro)
                 return;
 
             if (qtPro.VcProject.Files is not IVCCollection projectFiles)
@@ -300,7 +300,7 @@ namespace QtVsTools
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            if (HelperFunctions.GetSelectedQtProject(dte) is not {} project)
+            if (HelperFunctions.GetSelectedQtProject(dte) is not { } project)
                 return;
             project.RemoveGeneratedFiles(projectItem.Name);
         }
@@ -311,7 +311,7 @@ namespace QtVsTools
 
             if (string.IsNullOrEmpty(oldName))
                 return;
-            if (HelperFunctions.GetSelectedQtProject(dte) is not {} project)
+            if (HelperFunctions.GetSelectedQtProject(dte) is not { } project)
                 return;
 
             project.RemoveGeneratedFiles(oldName);
@@ -342,7 +342,7 @@ namespace QtVsTools
             ThreadHelper.ThrowIfNotOnUIThread();
 
             foreach (var vcProject in HelperFunctions.ProjectsInSolution(dte)) {
-                if (MsBuildProject.GetOrAdd(vcProject) is {} project)
+                if (MsBuildProject.GetOrAdd(vcProject) is { } project)
                     InitializeMsBuildProjectProject(project);
             }
         }
@@ -385,7 +385,7 @@ namespace QtVsTools
             if (item is not VCConfiguration vcConfiguration)
                 return;
 
-            if (MsBuildProject.GetOrAdd(vcConfiguration.project as VCProject) is not {} project)
+            if (MsBuildProject.GetOrAdd(vcConfiguration.project as VCProject) is not { } project)
                 return;
 
             if (!propertyName.StartsWith("Qt") || propertyName == "QtTouchProperty")

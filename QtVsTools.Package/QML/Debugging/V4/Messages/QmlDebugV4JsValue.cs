@@ -148,7 +148,7 @@ namespace QtVsTools.Qml.Debug.V4
     [DataContract]
     class JsNumberSymbolic : JsPrimitive
     {
-        private static readonly string[] SymbolicValues = {"NaN", "Infinity", "+Infinity", "-Infinity"};
+        private static readonly string[] SymbolicValues = { "NaN", "Infinity", "+Infinity", "-Infinity" };
 
         //  {"handle":<handle>,"type":"null"}
         public JsNumberSymbolic()

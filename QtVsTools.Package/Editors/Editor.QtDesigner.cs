@@ -36,7 +36,7 @@ namespace QtVsTools.Package.Editors
 
         public QtDesigner()
             : base(new QtDesignerFileSniffer())
-        {}
+        { }
 
         private Guid? guid;
         public override Guid Guid => guid ??= new Guid(GuidString);
@@ -133,7 +133,7 @@ namespace QtVsTools.Package.Editors
             if (MsBuildProject.GetOrAdd(vcProject) is not { IsTracked: true } project)
                 return;
 
-            if (Monitors.GetOrAdd(process.Id, _ => new DesignerMonitor(process, project)) is {} m)
+            if (Monitors.GetOrAdd(process.Id, _ => new DesignerMonitor(process, project)) is { } m)
                 m.Watch(document.FullName);
         }
 

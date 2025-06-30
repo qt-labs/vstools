@@ -347,7 +347,7 @@ namespace QtVsTools.Qml.Classification
 
         public IEnumerable<ITagSpan<T>> GetTags(NormalizedSnapshotSpanCollection spans)
         {
-            if (currentTagList is not {Ready: true})
+            if (currentTagList is not { Ready: true })
                 yield break;
 
             var firstTag = currentTagList.Values.FirstOrDefault();

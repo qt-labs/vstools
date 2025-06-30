@@ -80,7 +80,7 @@ namespace QtVsTools
                 return;
             }
 
-            if (project.VcProject.ActiveConfiguration is not {} activeConfiguration) {
+            if (project.VcProject.ActiveConfiguration is not { } activeConfiguration) {
                 Messages.Print("translation: Error accessing build interface");
                 return;
             }

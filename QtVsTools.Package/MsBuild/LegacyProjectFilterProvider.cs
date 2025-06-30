@@ -50,11 +50,11 @@ namespace QtVsTools.Package.MsBuild
 
             private static bool ShouldIncludeInFilter(IVsHierarchyItem item)
             {
-                if (item?.HierarchyIdentity is not {} identity)
+                if (item?.HierarchyIdentity is not { } identity)
                     return false;
                 if (!HierarchyUtilities.IsProject(identity))
                     return false;
-                if (VsShell.GetProject(identity.NestedHierarchy) is not {} vcProject)
+                if (VsShell.GetProject(identity.NestedHierarchy) is not { } vcProject)
                     return false;
                 return MsBuildProjectFormat.GetVersion(vcProject) is
                     >= MsBuildProjectFormat.Version.V1 and < MsBuildProjectFormat.Version.Latest;
