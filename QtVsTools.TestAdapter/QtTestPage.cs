@@ -285,7 +285,7 @@ namespace QtVsTools.TestAdapter
         #endregion // Testing Options
 
         public override void LoadSettingsFromStorage()
-        {}
+        { }
 
         public override void SaveSettingsToStorage()
         {

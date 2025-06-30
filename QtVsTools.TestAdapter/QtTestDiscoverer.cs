@@ -222,7 +222,7 @@ namespace QtVsTools.TestAdapter
                 SymbolName = symbolName
             };
             foreach (var sourceInfo in sourceInfos) {
-                if (sourceInfo.SymbolName is not {} name || !name.Contains(symbolName))
+                if (sourceInfo.SymbolName is not { } name || !name.Contains(symbolName))
                     continue;
                 outInfo = sourceInfo;
                 return true;

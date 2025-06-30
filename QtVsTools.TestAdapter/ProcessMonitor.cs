@@ -59,7 +59,7 @@ namespace QtVsTools.TestAdapter
                 WorkingDirectory = workingDirectory ?? ""
             };
 
-            if (VersionInformation.GetOrAddByName(settings.QtInstall) is not {LibExecs: {} bin}) {
+            if (VersionInformation.GetOrAddByName(settings.QtInstall) is not { LibExecs: { } bin }) {
                 log.SendMessage($"Could not find Qt version '{settings.QtInstall}'. "
                     + "Not added to path.", TestMessageLevel.Error);
                 return startInfo;
