@@ -128,7 +128,7 @@ namespace QtVsTools.Core
                         }
                     );
 
-                    await Utils.WriteAllTextAsync(QmlLanguageServerManager. ReleaseJsonPath,
+                    await Utils.WriteAllTextAsync(QmlLanguageServerManager.ReleaseJsonPath,
                         JsonConvert.SerializeObject(new { asset.TagName, asset.Body },
                             JsonSerializer.Settings));
 

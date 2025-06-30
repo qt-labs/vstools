@@ -142,7 +142,7 @@ namespace QtVsTools.Core
                 var key = Registry.CurrentUser.OpenSubKey(Resources.VersionsRegistryPath, false);
                 if (key != null) {
                     var versions = GetVersions();
-                    if (versions is {Length: > 0})
+                    if (versions is { Length: > 0 })
                         defaultVersion = versions[versions.Length - 1];
                     if (defaultVersion != null)
                         SaveDefaultVersion(defaultVersion);
@@ -220,7 +220,7 @@ namespace QtVsTools.Core
         {
             try {
                 if (Registry.CurrentUser.OpenSubKey(Resources.ObsoleteRegistryPath, true)
-                    is not {} key)
+                    is not { } key)
                     return;
 
                 const string valueName = "Copied";

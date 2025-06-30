@@ -80,7 +80,8 @@ namespace QtVsTools.Core
             if (await IsExecutableAsync(QmlLanguageServerExePath, token)) {
                 return new CheckResult
                 {
-                    Message = $"Already Up-to-date, tag = {asset.TagName}", ShouldInstall = false
+                    Message = $"Already Up-to-date, tag = {asset.TagName}",
+                    ShouldInstall = false
                 };
             }
 

@@ -119,7 +119,7 @@ namespace QtVsTools.Core.Common
         {
             using var sha256 = SHA256.Create();
             using var dataRaw = new MemoryStream();
-            using var dataUtf8 = new StreamWriter(dataRaw, Encoding.UTF8) { AutoFlush= true };
+            using var dataUtf8 = new StreamWriter(dataRaw, Encoding.UTF8) { AutoFlush = true };
             dataRaw.Write(data, index, count switch { < 0 => data.Length, _ => count });
             dataUtf8.Write(text);
             dataRaw.Seek(0, SeekOrigin.Begin);

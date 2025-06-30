@@ -41,7 +41,7 @@ namespace QtVsTools.Core.MsBuild
         {
             if (sender is not CheckBox checkBox)
                 return;
-            if (GetCheckBoxModule(checkBox) is {} module)
+            if (GetCheckBoxModule(checkBox) is { } module)
                 module.CheckBox = checkBox;
         }
 
@@ -49,7 +49,7 @@ namespace QtVsTools.Core.MsBuild
         {
             if (sender is not CheckBox check)
                 return;
-            if (GetCheckBoxModule(check) is {} module)
+            if (GetCheckBoxModule(check) is { } module)
                 module.IsSelected = check.IsChecked == true;
         }
 
@@ -57,7 +57,7 @@ namespace QtVsTools.Core.MsBuild
         {
             if (e.Key is not Key.Enter and not Key.Space)
                 return;
-            if (PopupListBox.SelectedItem is Module {IsEnabled: true} module)
+            if (PopupListBox.SelectedItem is Module { IsEnabled: true } module)
                 module.CheckBox.IsChecked = module.CheckBox.IsChecked != true;
         }
 

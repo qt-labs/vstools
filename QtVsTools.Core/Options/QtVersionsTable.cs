@@ -259,7 +259,7 @@ namespace QtVsTools.Core.Options
         private void OnImportQtInstallation_Click(object sender, RoutedEventArgs e)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
-            if (VsServiceProvider.GetService<SVsUIShell, IVsUIShell>() is not {} iVsUiShell)
+            if (VsServiceProvider.GetService<SVsUIShell, IVsUIShell>() is not { } iVsUiShell)
                 return;
 
             var selectedPath = "";
@@ -358,7 +358,7 @@ namespace QtVsTools.Core.Options
             }
 
             if (updateDefault
-                && QtVersions.FirstOrDefault(v => v.Host == BuildHost.Windows) is {} version) {
+                && QtVersions.FirstOrDefault(v => v.Host == BuildHost.Windows) is { } version) {
                 version.IsDefault = true;
                 version.State |= State.DefaultModified;
             }
@@ -490,7 +490,7 @@ namespace QtVsTools.Core.Options
                 var shell = new Shell();
                 var folder = shell.NameSpace(Path.GetDirectoryName(shortcutPath));
                 var item = folder.ParseName(Path.GetFileName(shortcutPath));
-                if (item is {GetLink: ShellLinkObject link})
+                if (item is { GetLink: ShellLinkObject link })
                     return Path.GetDirectoryName(link.Path);
             } catch (Exception ex) {
                 ex.Log();
@@ -556,7 +556,7 @@ namespace QtVsTools.Core.Options
                 var versionName = $"{Path.GetFileName(qtVersionDir)}"
                   + $"_{Path.GetFileName(compilerDir)}".Replace(" ", "_");
 
-                if (VersionInformation.GetOrAddByPath(compilerDir) is not {} versionInfo) {
+                if (VersionInformation.GetOrAddByPath(compilerDir) is not { } versionInfo) {
                     Messages.Print($"Skip Qt version: {versionName}, "
                       + $"path: '{compilerDir}', failed to load version information.");
                     continue;
@@ -590,7 +590,7 @@ namespace QtVsTools.Core.Options
             if (!versions.Any())
                 return;
 
-            if (versions.FirstOrDefault() is {} version) {
+            if (versions.FirstOrDefault() is { } version) {
                 version.IsDefault = DataGrid.Items.Count <= 0;
                 version.State |= version.IsDefault ? State.DefaultModified : State.Unknown;
             }

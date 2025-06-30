@@ -340,16 +340,16 @@ namespace QtVsTools.Core
 
             VCProject project = null;
             // Grab the first active project.
-            if (GetSelectedProject(dteObject) is {} active)
+            if (GetSelectedProject(dteObject) is { } active)
                 project = active;
 
             // Grab the first project out of the list of projects. If there are
             // several projects than there is no way to know which one to select.
-            if (projectList.Count == 1 && projectList[0] is {} first)
+            if (projectList.Count == 1 && projectList[0] is { } first)
                 project = first;
 
             // Last try, get the project from an active document.
-            if (dteObject?.ActiveDocument?.ProjectItem?.ContainingProject is {} containing)
+            if (dteObject?.ActiveDocument?.ProjectItem?.ContainingProject is { } containing)
                 project = containing.Object as VCProject;
 
             return MsBuildProject.GetOrAdd(project);
@@ -422,7 +422,7 @@ namespace QtVsTools.Core
                 return;
 
             // Is this a Visual C++ project?
-            if (prj is { ConfigurationManager: {}, Kind: ProjectTypes.CPlusPlus })
+            if (prj is { ConfigurationManager: { }, Kind: ProjectTypes.CPlusPlus })
                 projects.Add(prj.Object as VCProject);
             else // In this case, prj is a solution folder
                 AddSubProjects(prj.ProjectItems, ref projects);

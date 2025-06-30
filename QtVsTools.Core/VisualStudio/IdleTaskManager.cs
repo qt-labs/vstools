@@ -23,7 +23,7 @@ namespace QtVsTools.VisualStudio
     /// scheduling and executing tasks during Visual Studio idle time. </remarks>
     [Guid("F41B71AE-6FDD-4CE9-A8BC-C513416B5A34")]
     public interface SIdleTaskManager
-    {}
+    { }
 
     /// <summary>
     /// Interface defining a manager for scheduling and managing tasks to be run during Visual

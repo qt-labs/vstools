@@ -295,7 +295,7 @@ namespace QtVsTools.Core.MsBuild
             if (string.IsNullOrEmpty(text) || ProjectFormatVersion == null)
                 return Version.Unknown;
             try {
-                return (Version) ProjectFormatVersion.Parse(text)
+                return (Version)ProjectFormatVersion.Parse(text)
                     .GetValues<int>("VERSION")
                     .First();
             } catch {
@@ -568,7 +568,7 @@ namespace QtVsTools.Core.MsBuild
         private static string GetDirectory(string type)
         {
             try {
-                if (Registry.CurrentUser.OpenSubKey(Resources.SettingsRegistryPath) is {} key) {
+                if (Registry.CurrentUser.OpenSubKey(Resources.SettingsRegistryPath) is { } key) {
                     if (key.GetValue(type, null) is string path)
                         return NormalizeRelativeFilePath(path);
                 }
@@ -702,7 +702,7 @@ namespace QtVsTools.Core.MsBuild
                 foreach (var cbt in cbtGroup) {
                     var enabledProperties = cbt.Elements().Where(x =>
                         x.Parent != null
-                        && cbtPropertyNames.Contains(x.Name.LocalName) 
+                        && cbtPropertyNames.Contains(x.Name.LocalName)
                         && x.Parent.Elements(ns + "ExcludedFromBuild")
                             .All(y => (string)x.Attribute("Condition") != (string)y.Attribute("Condition")));
                     foreach (var property in enabledProperties) {

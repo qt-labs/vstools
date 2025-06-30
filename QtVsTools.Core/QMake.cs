@@ -21,7 +21,7 @@ namespace QtVsTools.Core
 
         public QMake(string qtDir)
             : base(qtDir)
-        {}
+        { }
 
         protected override string ToolArgs
         {

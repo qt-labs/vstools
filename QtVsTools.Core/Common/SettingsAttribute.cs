@@ -20,7 +20,7 @@ namespace QtVsTools.Core.Common
             DefaultValue = defaultValue;
             if (key.GetType().BaseType != typeof(Enum))
                 throw new ArgumentException("The provided argument must be an Enum type.");
-            Key = ((Enum) key).Cast<string>();
+            Key = ((Enum)key).Cast<string>();
         }
 
         public string Key { get; }

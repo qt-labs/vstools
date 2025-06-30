@@ -248,7 +248,7 @@ namespace QtVsTools.Core.MsBuild
             XElement cell;
 
             row.Add(new XElement("TableCell",
-                new XAttribute("BorderThickness","0, 0, 0.5, 0"),
+                new XAttribute("BorderThickness", "0, 0, 0.5, 0"),
                 new XAttribute("BorderBrush", "Gray"),
                 cell = XElement.Parse($@"
                     <Paragraph FontFamily=""{DefaultMonospacedFont}"" Margin=""4, 0""/>")));

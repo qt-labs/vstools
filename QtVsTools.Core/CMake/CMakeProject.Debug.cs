@@ -83,7 +83,7 @@ namespace QtVsTools.Core.CMake
             var launchConfig = Config.AllProjectFileConfigurations.FirstOrDefault(
                 x => x.LaunchSettings["name"] is "QML Application" or "Qt Application"
             );
-            if (launchConfig is {}) {
+            if (launchConfig is { }) {
                 await Config.SetCurrentProject(launchConfig,
                     launchConfig.LaunchSettings["name"] as string);
             }

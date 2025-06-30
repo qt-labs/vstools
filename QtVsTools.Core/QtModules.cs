@@ -36,7 +36,7 @@ namespace QtVsTools.Core
             qt6Modules = FillModules("qt6modules.xml", "6");
         }
 
-        private static IReadOnlyCollection<QtModule>FillModules(string modulesFile, string major)
+        private static IReadOnlyCollection<QtModule> FillModules(string modulesFile, string major)
         {
             var list = new List<QtModule>();
             var modulesFilePath = Path.Combine(Utils.PackageInstallPath, modulesFile);

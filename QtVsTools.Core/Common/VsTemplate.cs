@@ -39,7 +39,7 @@ namespace QtVsTools
             var xmlDoc = XDocument.Parse(File.ReadAllText(templatePath, Encoding.UTF8));
 
             var ns = xmlDoc.Root?.GetDefaultNamespace();
-            if (xmlDoc.Descendants(ns + "VSTemplate").FirstOrDefault() is not {} templateElement)
+            if (xmlDoc.Descendants(ns + "VSTemplate").FirstOrDefault() is not { } templateElement)
                 return;
 
             Version = new Version(templateElement.Attribute("Version")?.Value ?? "").Major;
@@ -75,7 +75,7 @@ namespace QtVsTools
             if (Type == "Item")
                 IsValid &= TemplateGroupIds.Contains("QtVsTools");
 
-            if (templateElement.Element(ns + "WizardExtension") is not {} wizardExtensionElement)
+            if (templateElement.Element(ns + "WizardExtension") is not { } wizardExtensionElement)
                 return;
 
             FullClassName = wizardExtensionElement.Element(ns + "FullClassName")?.Value;

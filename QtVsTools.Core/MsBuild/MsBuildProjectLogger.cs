@@ -96,6 +96,6 @@ namespace QtVsTools.Core.MsBuild
         }
 
         public void Shutdown()
-        {}
+        { }
     }
 }

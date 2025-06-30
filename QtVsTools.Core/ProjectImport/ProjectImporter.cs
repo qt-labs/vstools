@@ -101,14 +101,14 @@ namespace QtVsTools.Core
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            if (!Setup(dte) || HelperFunctions.GetSelectedQtProject(dte) is not {} project)
+            if (!Setup(dte) || HelperFunctions.GetSelectedQtProject(dte) is not { } project)
                 return;
 
             const string notQt = "Cannot find qmake. Make sure you have specified installed the "
                 + "project's Qt version.";
             const string wrongVersion = "The project's Qt version is no longer supported. To "
                 + "import the .pri file, please use Qt 5.0 or later for your project.";
-            if (GetQtInstallPath(project.QtVersion, notQt, wrongVersion) is not {} qtDir)
+            if (GetQtInstallPath(project.QtVersion, notQt, wrongVersion) is not { } qtDir)
                 return;
 
             var priFile = OpenFileDialog("Import from .pri File",
@@ -159,7 +159,7 @@ namespace QtVsTools.Core
                     _dteObject.Solution.Open(vcInfo.FullName);
                     if (qtVersion is not null) {
                         foreach (var vcProject in HelperFunctions.ProjectsInSolution(_dteObject)) {
-                            if (MsBuildProject.GetOrAdd(vcProject) is not {} project)
+                            if (MsBuildProject.GetOrAdd(vcProject) is not { } project)
                                 continue;
                             QtVersionManager.SaveProjectQtVersion(project, qtVersion);
                             ApplyPostImportSteps(project);
@@ -211,7 +211,7 @@ namespace QtVsTools.Core
                     Messages.Print("Project already in Solution");
                 }
 
-                if (MsBuildProject.GetOrAdd(vcPro) is not {} project)
+                if (MsBuildProject.GetOrAdd(vcPro) is not { } project)
                     return;
 
                 if (qtVersion is not null)
@@ -457,7 +457,7 @@ namespace QtVsTools.Core
                     continue;
                 }
 
-                if (BestMatch(path, pathFilterTable) is not {} filter)
+                if (BestMatch(path, pathFilterTable) is not { } filter)
                     continue;
                 var filterDir = filterPathTable[filter];
                 var name = path;
@@ -830,7 +830,7 @@ namespace QtVsTools.Core
 
         private static void SetupConfiguration(VCConfiguration config, VersionInformation viNew)
         {
-            if (CompilerToolWrapper.Create(config) is {} compiler) {
+            if (CompilerToolWrapper.Create(config) is { } compiler) {
                 var defines = new HashSet<string>(compiler.PreprocessorDefinitions);
                 defines.UnionWith(viNew.GetQMakeConfEntry("DEFINES").Split(' ', '\t'));
                 compiler.SetPreprocessorDefinitions(string.Join(",", defines));
@@ -942,7 +942,7 @@ namespace QtVsTools.Core
 
         private static string GetQtInstallPath(string qtVersion, string noQt, string wrongVersion)
         {
-            if (VersionInformation.GetOrAddByName(qtVersion) is {} vi) {
+            if (VersionInformation.GetOrAddByName(qtVersion) is { } vi) {
                 if (vi.Major >= 5)
                     return vi.InstallPrefix;
                 Messages.DisplayErrorMessage(wrongVersion);

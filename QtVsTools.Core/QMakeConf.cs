@@ -48,7 +48,7 @@ namespace QtVsTools.Core
             if (!File.Exists(fileName))
                 return;
             using var streamReader = new StreamReader(fileName);
-            while (streamReader.ReadLine() is {} line) {
+            while (streamReader.ReadLine() is { } line) {
                 line = line.Trim();
                 var commentStartIndex = line.IndexOf('#');
                 if (commentStartIndex >= 0)

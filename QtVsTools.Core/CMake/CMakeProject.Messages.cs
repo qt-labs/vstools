@@ -18,7 +18,7 @@ namespace QtVsTools.Core.CMake
         {
             protected override ImageMoniker Icon => KnownMonikers.StatusWarning;
 
-            protected override TextSpan[] Text => new []
+            protected override TextSpan[] Text => new[]
             {
                 new TextSpan { Bold = true, Text = "Qt Visual Studio Tools" },
                 new TextSpacer(2), EmDash, new TextSpacer(2),
@@ -63,7 +63,7 @@ namespace QtVsTools.Core.CMake
 
             protected override ImageMoniker Icon => KnownMonikers.StatusAlert;
 
-            protected override TextSpan[] Text => new []
+            protected override TextSpan[] Text => new[]
             {
                 new TextSpan { Bold = true, Text = "Qt Visual Studio Tools" },
                 new TextSpacer(2), EmDash, new TextSpacer(2),

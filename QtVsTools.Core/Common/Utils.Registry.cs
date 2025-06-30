@@ -15,7 +15,7 @@ namespace QtVsTools.Core.Common
 
             // Copy values
             foreach (var valueName in sourceKey?.GetValueNames() ?? Array.Empty<string>()) {
-                if (sourceKey?.GetValue(valueName) is {} value)
+                if (sourceKey?.GetValue(valueName) is { } value)
                     destinationKey?.SetValue(valueName, value);
             }
 

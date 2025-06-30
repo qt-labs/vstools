@@ -92,7 +92,7 @@ namespace QtVsTools.Core.Options
         public enum DevelopmentReleases
         {
             [String("SearchDevRelease")] SearchDevRelease,
-            [String("SearchDevReleaseTimeout")]  SearchDevReleaseTimeout
+            [String("SearchDevReleaseTimeout")] SearchDevReleaseTimeout
         }
 
         public enum Timeout : uint { Disabled = 0 }

@@ -168,7 +168,7 @@ namespace QtVsTools.Core.MsBuild
             }
             Commit("Removing Qt module macros from resource compiler properties");
 
-            if (VersionInformation.GetOrAddByName(qtInstallValue) is {} qtVersion) {
+            if (VersionInformation.GetOrAddByName(qtInstallValue) is { } qtVersion) {
                 moduleNames = QtModules.Instance.GetAvailableModules(qtVersion.Major)
                     // remove proVarQT values not provided by the used Qt version
                     .SelectMany(x => x.proVarQT?.Split(' ') ?? Array.Empty<string>())

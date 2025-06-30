@@ -199,8 +199,8 @@ namespace QtVsTools.Json
 
             bool IJsonData.IsEmpty()
             {
-                return Stream is not {CanRead: true, Length: not 0}
-                    && XmlStream is not {CanRead: true, Length: not 0};
+                return Stream is not { CanRead: true, Length: not 0 }
+                    && XmlStream is not { CanRead: true, Length: not 0 };
             }
 
             protected override void DisposeManaged()

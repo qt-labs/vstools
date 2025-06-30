@@ -263,7 +263,7 @@ namespace QtVsTools.Core.MsBuild
                             if (res.ResultCode != TargetResultCode.Failure)
                                 continue;
                             resInfo.AppendFormat("### Target '{0}' FAIL\r\n", tr.Key);
-                            if (res.Items is {Length: > 0}) {
+                            if (res.Items is { Length: > 0 }) {
                                 resInfo.AppendFormat(
                                     "Items: {0}\r\n", string.Join(", ", res.Items
                                         .Select(it => it.ItemSpec)));

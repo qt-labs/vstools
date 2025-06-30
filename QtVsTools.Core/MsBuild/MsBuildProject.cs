@@ -153,7 +153,7 @@ namespace QtVsTools.Core.MsBuild
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            return VcProject.ActiveConfiguration is {} activeConfiguration
+            return VcProject.ActiveConfiguration is { } activeConfiguration
                 ? activeConfiguration.GetEvaluatedPropertyValue(propertyName)
                 : null;
         }

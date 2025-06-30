@@ -59,7 +59,7 @@ namespace QtVsTools.Core
         public static async Task<OutputWindowPane> CreateAsync(string name, Guid guid)
         {
             if (string.IsNullOrEmpty(name))
-                throw new ArgumentNullException($"{ nameof(name) } cannot be null");
+                throw new ArgumentNullException($"{nameof(name)} cannot be null");
 
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
             try {
@@ -107,7 +107,7 @@ namespace QtVsTools.Core
         {
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
             if (Pane == null)
-                throw new InvalidOperationException($"{ nameof(Pane) } cannot be null");
+                throw new InvalidOperationException($"{nameof(Pane)} cannot be null");
             Pane.Activate();
         }
 
@@ -115,7 +115,7 @@ namespace QtVsTools.Core
         {
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
             if (Pane == null)
-                throw new InvalidOperationException($"{ nameof(Pane) } cannot be null");
+                throw new InvalidOperationException($"{nameof(Pane)} cannot be null");
             Pane.Hide();
         }
 
@@ -123,7 +123,7 @@ namespace QtVsTools.Core
         {
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
             if (Pane == null)
-                throw new InvalidOperationException($"{ nameof(Pane) } cannot be null");
+                throw new InvalidOperationException($"{nameof(Pane)} cannot be null");
             Pane.Clear();
         }
 

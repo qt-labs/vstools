@@ -22,11 +22,11 @@ namespace QtVsTools.Core
         public static bool IsInFilter(this VCFile vcFile, VCFilter filter)
         {
             var item = vcFile as VCProjectItem;
-            while (item is {Parent: not null, Kind: not "VCProject"}) {
+            while (item is { Parent: not null, Kind: not "VCProject" }) {
                 item = item.Parent as VCProjectItem;
                 if (item?.Kind != "VCFilter")
                     continue;
-                if (item is not VCFilter {UniqueIdentifier: {} uniqueIdentifier})
+                if (item is not VCFilter { UniqueIdentifier: { } uniqueIdentifier })
                     continue;
                 if (string.Equals(uniqueIdentifier, filter?.UniqueIdentifier, Utils.IgnoreCase))
                     return true;
@@ -81,7 +81,7 @@ namespace QtVsTools.Core
                 var fullPath = vcFile.FullPath;
 
                 // Only try to move the file if we can find the right filter.
-                if (vcProject.FilterFromGuid(fakeFilter) is {} newFilter) {
+                if (vcProject.FilterFromGuid(fakeFilter) is { } newFilter) {
                     filter.RemoveFile(vcFile);
                     if (newFilter.CanAddFile(fullPath))
                         newFilter.AddFile(fullPath);

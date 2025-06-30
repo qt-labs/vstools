@@ -51,7 +51,7 @@ namespace QtVsTools.Core.MsBuild
 
             var configurationNames = Enumerable.Empty<string>();
             if (string.IsNullOrEmpty(configurationName)) {
-                if (UnconfiguredProject.Services.ProjectConfigurationsService is {} service) {
+                if (UnconfiguredProject.Services.ProjectConfigurationsService is { } service) {
                     configurationNames = (await service.GetKnownProjectConfigurationsAsync())
                         .Select(configuration => configuration.Name);
                 }

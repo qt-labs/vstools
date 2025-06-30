@@ -36,7 +36,7 @@ namespace QtVsTools.Core
 
         public QtPaths(string qtDir)
             : base(qtDir)
-        {}
+        { }
 
         protected override string ToolArgs
         {

@@ -64,7 +64,7 @@ namespace QtVsTools.VisualStudio
                                                    IVsSearchCallback callback);
 
         public virtual void ClearSearch()
-        {}
+        { }
 
         public virtual void ProvideSearchSettings(IVsUIDataSource settings)
         {

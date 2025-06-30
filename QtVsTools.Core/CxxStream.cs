@@ -48,7 +48,7 @@ namespace QtVsTools.Core
             try {
                 var cxxSr = new CxxStream(content.Split(new[] { "\n", "\r\n" },
                     StringSplitOptions.RemoveEmptyEntries));
-                while (!found && cxxSr.ReadLine(suppressStrings) is {} strLine) {
+                while (!found && cxxSr.ReadLine(suppressStrings) is { } strLine) {
                     if (searchStrings.Any(str => strLine.IndexOf(str, comparisonType) != -1))
                         found = true;
                 }
