@@ -1,3 +1,12 @@
+Qt Visual Studio Tools version 3.4.1:
+
+The Qt Visual Studio Tools version 3.4.1 contains a bug fix for QTVSADDINBUG-1319.
+
+Changes
+-------
+ - Fixed QTVSADDINBUG-1319: Qt Visual Studio Tools freezes the status bar
+
+
 Qt Visual Studio Tools version 3.4.0:
 
 This update to the Qt VS Tools extension introduces telemetry support, enabled by default.
