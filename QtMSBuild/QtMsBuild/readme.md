@@ -12,4 +12,4 @@ Special build rules called Qt/MSBuild let you run Qt build tools and set build o
 Note that Qt VS Tools already contains the latest Qt/MSBuild, hence this is only necessary if you need a specific version of Qt/MSBuild.
 
 ### Support
-If you experience any problems, please open an issue at [https://bugreports.qt.io/projects/QTVSADDINBUG]().
+If you experience any problems, please open an issue at [https://qt-project.atlassian.net/jira/software/c/projects/QTVSADDINBUG/issues]().

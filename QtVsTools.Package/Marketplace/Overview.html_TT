@@ -170,7 +170,7 @@ For more information on how to contribute to the Qt Visual Tools via Qt Labs, pl
 <ul>
     <li>
         <a title="Qt Bug Tracker"
-           href="https://bugreports.qt.io/browse/QTVSADDINBUG">Qt Bug Tracker</a>
+           href="https://qt-project.atlassian.net/jira/software/c/projects/QTVSADDINBUG/issues/">Qt Bug Tracker</a>
     </li>
     <li>
         <a title="GitHub Issue Tracker"
