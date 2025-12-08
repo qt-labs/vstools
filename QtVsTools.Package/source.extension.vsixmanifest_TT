@@ -25,7 +25,7 @@
                 "Microsoft.VisualStudio.Community",
                 "Microsoft.VisualStudio.Enterprise"
             };
-            VersionRange = "[17.4, 18.0)";
+            VersionRange = "[17.12, 18.0)";
             switch (VS_TARGET_ARCH) {
               case "x64":
                 VS_TARGET_ARCH = "amd64";

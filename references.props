@@ -22,11 +22,7 @@
     <Version_Microsoft_Build Condition="'$(VisualStudioVersion)'=='16.0'"
       >16.11.0</Version_Microsoft_Build>
     <Version_Microsoft_Build Condition="'$(VisualStudioVersion)'=='17.0'"
-      >17.8.3</Version_Microsoft_Build>
-    <Version_Microsoft_Build Condition="$([MSBuild]::VersionGreaterThanOrEquals($(MSBuildVersion),'17.9'))"
-      >17.9.5</Version_Microsoft_Build>
-    <Version_Microsoft_Build Condition="$([MSBuild]::VersionGreaterThanOrEquals($(MSBuildVersion),'17.11'))"
-      >17.11.4</Version_Microsoft_Build>
+      >17.12.50</Version_Microsoft_Build>
   </PropertyGroup>
 
   <!-- Microsoft.VisualStudio.Composition -->
@@ -36,7 +32,7 @@
     <Version_Microsoft_VisualStudio_Composition Condition="'$(VisualStudioVersion)'=='16.0'"
       >16.9.20</Version_Microsoft_VisualStudio_Composition>
     <Version_Microsoft_VisualStudio_Composition Condition="'$(VisualStudioVersion)'=='17.0'"
-      >17.7.40</Version_Microsoft_VisualStudio_Composition>
+      >17.12.20</Version_Microsoft_VisualStudio_Composition>
   </PropertyGroup>
 
   <!-- Microsoft.VisualStudio.LanguageServer.Client -->
@@ -46,7 +42,7 @@
     <Version_Microsoft_VisualStudio_LanguageServer_Client Condition="'$(VisualStudioVersion)'=='16.0'"
       >16.10.1220</Version_Microsoft_VisualStudio_LanguageServer_Client>
     <Version_Microsoft_VisualStudio_LanguageServer_Client Condition="'$(VisualStudioVersion)'=='17.0'"
-      >17.8.36</Version_Microsoft_VisualStudio_LanguageServer_Client>
+      >17.12.48</Version_Microsoft_VisualStudio_LanguageServer_Client>
   </PropertyGroup>
 
   <!-- Microsoft.VisualStudio.ProjectSystem -->
@@ -56,7 +52,7 @@
     <Version_Microsoft_VisualStudio_ProjectSystem Condition="'$(VisualStudioVersion)'=='16.0'"
       >16.2.133-pre</Version_Microsoft_VisualStudio_ProjectSystem>
     <Version_Microsoft_VisualStudio_ProjectSystem Condition="'$(VisualStudioVersion)'=='17.0'"
-      >17.2.402-pre</Version_Microsoft_VisualStudio_ProjectSystem>
+      >17.9.380</Version_Microsoft_VisualStudio_ProjectSystem>
   </PropertyGroup>
 
   <!-- Microsoft.VisualStudio.SDK -->
@@ -66,7 +62,7 @@
     <Version_Microsoft_VisualStudio_SDK Condition="'$(VisualStudioVersion)'=='16.0'"
       >16.10.31321.278</Version_Microsoft_VisualStudio_SDK>
     <Version_Microsoft_VisualStudio_SDK Condition="'$(VisualStudioVersion)'=='17.0'"
-      >17.8.37222</Version_Microsoft_VisualStudio_SDK>
+      >17.12.40392</Version_Microsoft_VisualStudio_SDK>
   </PropertyGroup>
 
   <!-- Microsoft.VisualStudio.Shell.15.0 -->
@@ -76,7 +72,7 @@
     <Version_Microsoft_VisualStudio_Shell_15 Condition="'$(VisualStudioVersion)'=='16.0'"
       >16.10.31321.278</Version_Microsoft_VisualStudio_Shell_15>
     <Version_Microsoft_VisualStudio_Shell_15 Condition="'$(VisualStudioVersion)'=='17.0'"
-      >17.8.37221</Version_Microsoft_VisualStudio_Shell_15>
+      >17.12.40392</Version_Microsoft_VisualStudio_Shell_15>
   </PropertyGroup>
 
   <!-- Microsoft.VisualStudio.TemplateWizardInterface -->
@@ -86,8 +82,6 @@
     <Version_Microsoft_VisualStudio_TemplateWizardInterface Condition="'$(VisualStudioVersion)'=='16.0'"
       >16.10.31320.204</Version_Microsoft_VisualStudio_TemplateWizardInterface>
     <Version_Microsoft_VisualStudio_TemplateWizardInterface Condition="'$(VisualStudioVersion)'=='17.0'"
-      >17.5.33428.366</Version_Microsoft_VisualStudio_TemplateWizardInterface>
-    <Version_Microsoft_VisualStudio_TemplateWizardInterface Condition="$([MSBuild]::VersionGreaterThanOrEquals($(MSBuildVersion),'17.10'))"
       >17.10.40170</Version_Microsoft_VisualStudio_TemplateWizardInterface>
   </PropertyGroup>
 
@@ -95,15 +89,20 @@
   <PropertyGroup>
     <Name_Microsoft_VisualStudio_Workspace
       >Microsoft.VisualStudio.Workspace</Name_Microsoft_VisualStudio_Workspace>
-    <Version_Microsoft_VisualStudio_Workspace>16.3.43</Version_Microsoft_VisualStudio_Workspace>
+    <Version_Microsoft_VisualStudio_Workspace Condition="'$(VisualStudioVersion)'=='16.0'"
+      >16.3.43</Version_Microsoft_VisualStudio_Workspace>
+    <Version_Microsoft_VisualStudio_Workspace Condition="'$(VisualStudioVersion)'=='17.0'"
+      >17.12.19</Version_Microsoft_VisualStudio_Workspace>
   </PropertyGroup>
 
   <!-- Microsoft.VisualStudio.Workspace.VSIntegration -->
   <PropertyGroup>
     <Name_Microsoft_VisualStudio_Workspace_VSIntegration
       >Microsoft.VisualStudio.Workspace.VSIntegration</Name_Microsoft_VisualStudio_Workspace_VSIntegration>
-    <Version_Microsoft_VisualStudio_Workspace_VSIntegration
+    <Version_Microsoft_VisualStudio_Workspace_VSIntegration Condition="'$(VisualStudioVersion)'=='16.0'"
       >16.3.43</Version_Microsoft_VisualStudio_Workspace_VSIntegration>
+    <Version_Microsoft_VisualStudio_Workspace_VSIntegration Condition="'$(VisualStudioVersion)'=='17.0'"
+      >17.12.19</Version_Microsoft_VisualStudio_Workspace_VSIntegration>
   </PropertyGroup>
 
   <!-- Microsoft.VSSDK.BuildTools -->
@@ -155,7 +154,7 @@
     <Version_Newtonsoft_Json Condition="'$(VisualStudioVersion)'=='16.0'"
       >12.0.3</Version_Newtonsoft_Json>
     <Version_Newtonsoft_Json Condition="'$(VisualStudioVersion)'=='17.0'"
-      >13.0.3</Version_Newtonsoft_Json>
+      >13.0.4</Version_Newtonsoft_Json>
   </PropertyGroup>
 
   <!-- Stub.System.Data.SQLite.Core.NetFramework -->
@@ -171,7 +170,7 @@
     <Name_System_Management
       >System.Management</Name_System_Management>
     <Version_System_Management
-      >9.0.1</Version_System_Management>
+      >10.0</Version_System_Management>
   </PropertyGroup>
 
   <!-- DiffPlex -->
@@ -207,7 +206,7 @@
     <Version_Microsoft_VisualStudio_SDK_Analyzers Condition="'$(VisualStudioVersion)'=='16.0'"
       >16.10.10</Version_Microsoft_VisualStudio_SDK_Analyzers>
     <Version_Microsoft_VisualStudio_SDK_Analyzers Condition="'$(VisualStudioVersion)'=='17.0'"
-      >17.7.47</Version_Microsoft_VisualStudio_SDK_Analyzers>
+      >17.7.79</Version_Microsoft_VisualStudio_SDK_Analyzers>
   </PropertyGroup>
 
   <!-- Microsoft.VisualStudio.Threading.Analyzers -->
@@ -227,7 +226,7 @@
     <Version_Microsoft_VisualStudio_Debugger_Interop_10_0 Condition="'$(VisualStudioVersion)'=='16.0'"
       >16.10.31320.204</Version_Microsoft_VisualStudio_Debugger_Interop_10_0>
     <Version_Microsoft_VisualStudio_Debugger_Interop_10_0 Condition="'$(VisualStudioVersion)'=='17.0'"
-      >17.5.33428.388</Version_Microsoft_VisualStudio_Debugger_Interop_10_0>
+      >17.12.40391</Version_Microsoft_VisualStudio_Debugger_Interop_10_0>
   </PropertyGroup>
 
   <!-- Microsoft.ApplicationInsights -->
@@ -265,14 +264,6 @@
       >Microsoft.VisualStudio.RpcContracts</Name_Microsoft_VisualStudio_RpcContracts>
     <Version_Microsoft_VisualStudio_RpcContracts Condition="'$(VisualStudioVersion)'=='16.0'"
       >16.10.23</Version_Microsoft_VisualStudio_RpcContracts>
-  </PropertyGroup>
-
-  <!--
-  /////////////////////////////////////////////////////////////////////////////////////////////////
-  // Suppress version mismatch warnings coming from Microsoft.VisualStudio.LanguageServer.Client
-  // -->
-  <PropertyGroup Condition="$(MSBuildVersion.StartsWith('17.8'))">
-    <NoWarn>$(NoWarn);NU1603</NoWarn>
   </PropertyGroup>
 
   <!--
