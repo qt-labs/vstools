@@ -13,6 +13,13 @@ ECHO.
 %##########################%
 %##% %BOLD%Finding tests...%RESET%
 
+REM Note:
+REM - If VSTOOLS_TEST_FILTER is undefined or empty -> run ALL Test_*.dll
+REM - If VSTOOLS_TEST_FILTER is set -> only DLLs containing "%VSTOOLS_TEST_FILTER%.dll"
+REM   Example:
+REM       set VSTOOLS_TEST_FILTER=Test_QtVsTools.Core
+
+DEL %TEMP%\vstools_all.args > NUL 2>&1
 DEL %TEMP%\vstools.args > NUL 2>&1
 
 IF %VERBOSE% %##% DIR /S /B /A:D Tests\Test_*
@@ -20,11 +27,27 @@ FOR /F %ALL% %%c IN (`DIR /S /B /A:D Tests\Test_*`) DO (
 IF %VERBOSE% %##% testProject: %%c
     IF %VERBOSE% %##% WHERE /R %%c\bin\%BUILD_CONFIGURATION% Test_*.dll
     IF %VERBOSE% WHERE /R %%c\bin\%BUILD_CONFIGURATION% Test_*.dll
-    WHERE /R %%c\bin\%BUILD_CONFIGURATION% Test_*.dll >> %TEMP%\vstools.args 2> NUL
+
+    REM Always collect ALL test DLLs first
+    WHERE /R %%c\bin\%BUILD_CONFIGURATION% Test_*.dll >> %TEMP%\vstools_all.args 2> NUL
 )
 
+REM ----------------------------------------------------------------------------
+REM Apply filter: if not defined -> use all DLLs, else only matching DLLs
+REM ----------------------------------------------------------------------------
+
+IF DEFINED VSTOOLS_TEST_FILTER GOTO :HaveFilter
+
+COPY /Y %TEMP%\vstools_all.args %TEMP%\vstools.args > NUL
+GOTO :AfterFilter
+
+:HaveFilter
+FINDSTR /I /C:"%VSTOOLS_TEST_FILTER%.dll" %TEMP%\vstools_all.args > %TEMP%\vstools.args 2> NUL
+
+:AfterFilter
 IF %VERBOSE% %##% FINDSTR /C:dll %TEMP%\vstools.args
 IF %VERBOSE% FINDSTR /C:dll %TEMP%\vstools.args
+
 FINDSTR /C:dll %TEMP%\vstools.args > NUL 2>&1 ^
 && (
     FOR /F %%c in ('TYPE %TEMP%\vstools.args') DO %##%   * %%~nc
@@ -35,14 +58,14 @@ FINDSTR /C:dll %TEMP%\vstools.args > NUL 2>&1 ^
     %##########################%
     IF NOT %VERBOSE% ECHO %DARK_GRAY%
     IF %VERBOSE% (
-        %##% vstest.console /logger:console;verbosity=detailed @%TEMP%\vstools.args
-        vstest.console /logger:console;verbosity=detailed @%TEMP%\vstools.args ^
+        %##% dotnet test --logger "console;verbosity=normal" @%TEMP%\vstools.args
+        dotnet test --logger "console;verbosity=normal" @%TEMP%\vstools.args ^
         || (
             ECHO %RESET%
             GOTO :error
         )
     ) ELSE (
-        vstest.console @%TEMP%\vstools.args ^
+        dotnet test --logger "console;verbosity=normal" @%TEMP%\vstools.args ^
         || (
             ECHO %RESET%
             GOTO :error

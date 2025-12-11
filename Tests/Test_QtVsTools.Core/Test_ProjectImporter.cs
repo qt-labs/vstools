@@ -43,11 +43,11 @@ namespace QtVsTools.Test.Core
         [DataRow("VcLib", DisplayName = "Test VcLib TemplateType")]
         public void TestTemplateTypeEnumeration(string expectedEnumName)
         {
-            Assert.IsTrue(templateTypeNames.Contains(expectedEnumName),
+            Assert.Contains(expectedEnumName, templateTypeNames,
                 $"Enum value {expectedEnumName} is not covered.");
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(new[] { "TEMPLATE = app" }, "App", DisplayName = "Standard App Template")]
         [DataRow(new[] { "TEMPLATE = lib" }, "Lib", DisplayName = "Standard Lib Template")]
         [DataRow(new[] { "TEMPLATE = subdirs" }, "SubDirs",
@@ -71,5 +71,4 @@ namespace QtVsTools.Test.Core
             Assert.AreEqual(expectedEnumValue, result, $"Expected: {expectedEnumValue}, Got: {result}");
         }
     }
-
 }

@@ -14,7 +14,7 @@ namespace QtVsTools.Test.RegExpr
     [TestClass]
     public class Test_Matches
     {
-        Parser propertyParser;
+        private Parser propertyParser;
 
         [TestInitialize]
         public void GenerateParser()
@@ -42,16 +42,16 @@ namespace QtVsTools.Test.RegExpr
         [TestMethod]
         public void MultipleMatches()
         {
-            string propertiesText = @"
+            var propertiesText = @"
 VSCMD_ARG_app_plat=Desktop
 VSCMD_ARG_HOST_ARCH=x64
 VSCMD_ARG_TGT_ARCH=x64
 VSCMD_VER=16.11.17";
 
-            IEnumerable<Property> properties = propertyParser
+            var properties = propertyParser
                 .Parse(propertiesText)
                 .GetValues<Property>("property");
-            Assert.IsTrue(properties.Count() == 4);
+            Assert.HasCount(4, properties);
         }
     }
 }

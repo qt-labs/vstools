@@ -55,11 +55,12 @@ namespace QtVsTools.Test.QtMsBuild.Tasks
                     $@"{vcTargetsPath}\Microsoft.Build.CPPTasks.Common.dll",
                     "Microsoft.Build.CPPTasks.CLCommandLine",
                     "Sources",
-                    out ITaskItem[] result,
+                    out var result,
                     "CommandLines",
                     "CommandLine"));
-            Assert.IsTrue(result is {Length: 1});
-            Assert.IsTrue(result[0].GetMetadata("CommandLine").Contains("/Zc:rvalueCast-"));
+            Assert.IsNotNull(result);
+            Assert.HasCount(1, result);
+            Assert.Contains("/Zc:rvalueCast-", result[0].GetMetadata("CommandLine"));
         }
     }
 }

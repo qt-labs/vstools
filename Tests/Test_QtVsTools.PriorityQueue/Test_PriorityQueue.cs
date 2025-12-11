@@ -3,7 +3,6 @@
 
 using System;
 using System.IO;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -13,6 +12,8 @@ namespace QtVsTools.Test.PriorityQueue
     [TestClass]
     public class Test_PriorityQueue
     {
+        public TestContext TestContext { get; set; }
+
         [TestMethod]
         public void TestEnqueueWithPriority()
         {
@@ -21,18 +22,17 @@ namespace QtVsTools.Test.PriorityQueue
             q.Enqueue("a", 13);
             q.Enqueue("d", 47);
             q.Enqueue("b", 28);
-            Assert.IsTrue(string.Join("", q) == "abcd");
+            Assert.AreEqual("abcd", string.Join("", q));
         }
 
         [TestMethod]
-        [ExpectedException(typeof(InvalidOperationException))]
         public void TestEnqueueWithSamePriority()
         {
             var q = new PriorityQueue<string, int>();
             q.Enqueue("a", 1);
             q.Enqueue("a", 1);
-            Assert.IsTrue(string.Join("", q) == "a");
-            q.Enqueue("b", 1);
+            Assert.AreEqual("a", string.Join("", q));
+            Assert.ThrowsExactly<InvalidOperationException>(() => q.Enqueue("b", 1));
         }
 
         [TestMethod]
@@ -45,7 +45,7 @@ namespace QtVsTools.Test.PriorityQueue
             Assert.IsTrue(q.Contains("a"));
             Assert.IsTrue(q.Contains("b"));
             Assert.IsTrue(q.Contains("c"));
-            Assert.IsTrue(string.Join("", q) == "abc");
+            Assert.AreEqual("abc", string.Join("", q));
         }
 
         [TestMethod]
@@ -57,19 +57,19 @@ namespace QtVsTools.Test.PriorityQueue
             q.Enqueue("a");
             q.Enqueue("c");
             q.Enqueue("b");
-            Assert.IsTrue(string.Join("", q) == "acb");
+            Assert.AreEqual("acb", string.Join("", q));
         }
 
         [TestMethod]
         public void TestTryPeek()
         {
             var q = new PunisherQueue<string>();
-            Assert.IsTrue(!q.TryPeek(out _));
+            Assert.IsFalse(q.TryPeek(out _));
             q.Enqueue("a");
             q.Enqueue("b");
             q.Enqueue("c");
-            Assert.IsTrue(q.TryPeek(out string s) && s == "a");
-            Assert.IsTrue(string.Join("", q) == "abc");
+            Assert.IsTrue(q.TryPeek(out var s) && s == "a");
+            Assert.AreEqual("abc", string.Join("", q));
         }
 
         [TestMethod]
@@ -79,28 +79,27 @@ namespace QtVsTools.Test.PriorityQueue
             q.Enqueue("a");
             q.Enqueue("b");
             q.Enqueue("c");
-            Assert.IsTrue(q.Peek() == "a");
-            Assert.IsTrue(string.Join("", q) == "abc");
+            Assert.AreEqual("a", q.Peek());
+            Assert.AreEqual("abc", string.Join("", q));
         }
 
         [TestMethod]
-        [ExpectedException(typeof(InvalidOperationException))]
         public void TestPeekEmpty()
         {
             var q = new PunisherQueue<string>();
-            q.Peek();
+            Assert.ThrowsExactly<InvalidOperationException>(() => q.Peek());
         }
 
         [TestMethod]
         public void TestTryDequeue()
         {
             var q = new PunisherQueue<string>();
-            Assert.IsTrue(!q.TryDequeue(out _));
+            Assert.IsFalse(q.TryDequeue(out _));
             q.Enqueue("a");
             q.Enqueue("b");
             q.Enqueue("c");
-            Assert.IsTrue(q.TryDequeue(out string s) && s == "a");
-            Assert.IsTrue(string.Join("", q) == "bc");
+            Assert.IsTrue(q.TryDequeue(out var s) && s == "a");
+            Assert.AreEqual("bc", string.Join("", q));
         }
 
         [TestMethod]
@@ -110,16 +109,15 @@ namespace QtVsTools.Test.PriorityQueue
             q.Enqueue("a");
             q.Enqueue("b");
             q.Enqueue("c");
-            Assert.IsTrue(q.Dequeue() == "a");
-            Assert.IsTrue(string.Join("", q) == "bc");
+            Assert.AreEqual("a", q.Dequeue());
+            Assert.AreEqual("bc", string.Join("", q));
         }
 
         [TestMethod]
-        [ExpectedException(typeof(InvalidOperationException))]
         public void TestDequeueEmpty()
         {
             var q = new PunisherQueue<string>();
-            q.Dequeue();
+            Assert.ThrowsExactly<InvalidOperationException>(() => q.Dequeue());
         }
 
         [TestMethod]
@@ -133,23 +131,23 @@ namespace QtVsTools.Test.PriorityQueue
             q.Enqueue("x");
             q.Enqueue("y");
             q.Enqueue("z");
-            Assert.IsTrue(string.Join("", q) == "xyz");
+            Assert.AreEqual("xyz", string.Join("", q));
         }
 
         [TestMethod]
         public void TestConcurrency()
         {
             var q = new PunisherQueue<string>();
-            int n = 0;
+            var n = 0;
             _ = Task.Run(() =>
             {
-                for (int i = 0; i < 10000; ++i) {
+                for (var i = 0; i < 10000; ++i) {
                     q.Enqueue(Path.GetRandomFileName());
                     ++n;
                     Thread.Yield();
                 }
-            });
-            for (int i = 0; i < 10000; ++i) {
+            }, TestContext.CancellationToken);
+            for (var i = 0; i < 10000; ++i) {
                 if (!q.TryDequeue(out _))
                     --i;
                 --n;
@@ -157,7 +155,7 @@ namespace QtVsTools.Test.PriorityQueue
             }
             if (n == 0)
                 Assert.Inconclusive();
-            Assert.IsTrue(q.Count() == 0);
+            Assert.HasCount(0, q);
         }
 
         [TestMethod]
@@ -165,19 +163,13 @@ namespace QtVsTools.Test.PriorityQueue
         {
             var q = new PunisherQueue<string>(item =>
             {
-                switch (item) {
-                case "a":
-                case "x":
-                    return "ax";
-                case "b":
-                case "y":
-                    return "by";
-                case "c":
-                case "z":
-                    return "cz";
-                default:
-                    return item;
-                }
+                return item switch
+                {
+                    "a" or "x" => "ax",
+                    "b" or "y" => "by",
+                    "c" or "z" => "cz",
+                    _ => item
+                };
             });
             q.Enqueue("a");
             q.Enqueue("b");
@@ -185,7 +177,7 @@ namespace QtVsTools.Test.PriorityQueue
             q.Enqueue("x");
             q.Enqueue("z");
             q.Enqueue("w");
-            Assert.IsTrue(string.Join("", q) == "bxzw");
+            Assert.AreEqual("bxzw", string.Join("", q));
         }
 
         [TestMethod]
@@ -196,7 +188,7 @@ namespace QtVsTools.Test.PriorityQueue
             q.Enqueue("b");
             q.Enqueue("c");
             q.Remove("b");
-            Assert.IsTrue(string.Join("", q) == "ac");
+            Assert.AreEqual("ac", string.Join("", q));
         }
     }
 }

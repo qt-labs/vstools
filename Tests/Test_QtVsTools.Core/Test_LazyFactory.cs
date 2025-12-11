@@ -14,9 +14,11 @@ namespace QtVsTools.Test.Core
     [TestClass]
     public class Test_LazyFactory
     {
-        class LazyClass
+        public TestContext TestContext { get; set; }
+
+        private class LazyClass
         {
-            LazyFactory Lazy { get; } = new();
+            private LazyFactory Lazy { get; } = new();
             public ConcurrentBag<int> InitThread { get; } = new();
             public string LazyProperty => Lazy.Get(() =>
                 LazyProperty, () =>
@@ -33,20 +35,20 @@ namespace QtVsTools.Test.Core
             var task = Task.Run(async () =>
             {
                 var tasks = new Task[3000];
-                for (int i = 0; i < tasks.Length; i++) {
+                for (var i = 0; i < tasks.Length; i++) {
                     var n = i;
                     tasks[i] = Task.Run(() =>
                     {
                         var lazyValue = lazyObject.LazyProperty;
                         Debug.WriteLine($"Lazy value #{n} is {lazyValue}");
-                    });
+                    }, TestContext.CancellationToken);
                 }
                 await Task.WhenAll(tasks);
-            });
+            }, TestContext.CancellationToken);
             while (!task.IsCompleted)
                 Thread.Sleep(100);
 
-            Assert.IsTrue(lazyObject.InitThread.Count ==  1);
+            Assert.HasCount(1, lazyObject.InitThread);
         }
     }
 }

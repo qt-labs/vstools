@@ -70,7 +70,7 @@ namespace QtVsTools.Test.Core
                 checkResult = await QmlLanguageServerManager
                     .CheckForInstallationUpdateAsync(asset, cts.Token);
                 Assert.IsNotNull(checkResult);
-                Assert.IsTrue(checkResult.Message.Contains("Already Up-to-date"),
+                Assert.Contains("Already Up-to-date", checkResult.Message,
                     "checkResult.Message.Contains('Already Up-to-date')");
             }
         }

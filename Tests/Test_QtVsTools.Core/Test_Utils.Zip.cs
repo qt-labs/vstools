@@ -54,7 +54,8 @@ namespace QtVsTools.Test.Core
             var targetDirectory = Path.Combine(testDirectory, "output");
 
             CreateTestArchive(archivePath);
-            await Utils.ExtractArchiveAsync(archivePath, targetDirectory, default);
+            await Utils.ExtractArchiveAsync(archivePath, targetDirectory,
+                TestContext.CancellationToken);
 
             Assert.IsTrue(File.Exists(Path.Combine(targetDirectory, "item1.txt")));
             Assert.IsTrue(File.Exists(Path.Combine(targetDirectory, "subdir", "item2.txt")));
@@ -70,14 +71,14 @@ namespace QtVsTools.Test.Core
             CreateTestArchive(archivePath);
 
             long totalEntries = 0, reportedEntries = 0;
-            await Utils.ExtractArchiveAsync(archivePath, targetDirectory, default,
-                async progress =>
+            await Utils.ExtractArchiveAsync(archivePath, targetDirectory,
+                TestContext.CancellationToken, async progress =>
                 {
                     await Task.Run(() =>
                     {
                         reportedEntries = progress.CurrentEntry;
                         totalEntries = progress.TotalEntries;
-                    });
+                    }, TestContext.CancellationToken);
                 });
 
             Assert.AreEqual(3, totalEntries, "Unexpected total entry count.");
@@ -85,7 +86,6 @@ namespace QtVsTools.Test.Core
         }
 
         [TestMethod]
-        [ExpectedException(typeof(OperationCanceledException))]
         public async Task Test_ThrowWhenCanceledAsync()
         {
             var archivePath = Path.Combine(testDirectory, "test.zip");
@@ -95,22 +95,27 @@ namespace QtVsTools.Test.Core
             using var cts = new System.Threading.CancellationTokenSource();
             cts.Cancel(); // immediately cancel the token
 
-            await Utils.ExtractArchiveAsync(archivePath, targetDirectory, cts.Token);
+            await Assert.ThrowsExactlyAsync<OperationCanceledException>(async () =>
+            {
+                await Utils.ExtractArchiveAsync(archivePath, targetDirectory, cts.Token);
+            });
         }
 
         [TestMethod]
-        [ExpectedException(typeof(InvalidDataException))]
         public async Task Test_ThrowOnInvalidFileAsync()
         {
             var invalidFilePath = Path.Combine(testDirectory, "random.txt");
             var targetDirectory = Path.Combine(testDirectory, "output");
 
             File.WriteAllText(invalidFilePath, "This is just a random text file.");
-            await Utils.ExtractArchiveAsync(invalidFilePath, targetDirectory, default);
+            await Assert.ThrowsExactlyAsync<InvalidDataException>(async () =>
+            {
+                await Utils.ExtractArchiveAsync(invalidFilePath, targetDirectory,
+                    TestContext.CancellationToken);
+            });
         }
 
         [TestMethod]
-        [ExpectedException(typeof(InvalidDataException))]
         public async Task Test_ThrowOnCorruptedArchiveAsync()
         {
             var archivePath = Path.Combine(testDirectory, "test.zip");
@@ -121,7 +126,11 @@ namespace QtVsTools.Test.Core
                 stream.SetLength(stream.Length - 10); // truncate, remove the last 10 bytes
             }
 
-            await Utils.ExtractArchiveAsync(archivePath, targetDirectory, default);
+            await Assert.ThrowsExactlyAsync<InvalidDataException>(async () =>
+            {
+                await Utils.ExtractArchiveAsync(archivePath, targetDirectory,
+                    TestContext.CancellationToken);
+            });
         }
     }
 }

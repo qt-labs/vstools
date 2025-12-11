@@ -51,8 +51,8 @@ namespace QtVsTools.Test.Core
             var processedTasks = ArrangeIdleTasksList("processedIdleTasks", idleTaskManager);;
 
             // Assert
-            Assert.AreEqual(0, idleTasks.Count);
-            Assert.AreEqual(0, processedTasks.Count);
+            Assert.IsEmpty(idleTasks);
+            Assert.IsEmpty(processedTasks);
         }
 
         [TestMethod]
@@ -60,27 +60,28 @@ namespace QtVsTools.Test.Core
         {
             // Arrange
             var mockTask = new Mock<IIdleTask>();
-            var idleTaskManager = await ArrangeIdleTaskManagerAsync();
+            var idleTaskManager = await ArrangeIdleTaskManagerAsync(TestContext.CancellationToken);
             var idleTasks = ArrangeIdleTasksList("activeIdleTasks", idleTaskManager);
             var processedTasks = ArrangeIdleTasksList("processedIdleTasks", idleTaskManager);;
 
             // Act and Assert
             idleTaskManager.Add(mockTask.Object);
-            Assert.AreEqual(1, idleTasks.Count);
-            Assert.AreEqual(0, processedTasks.Count);
+            Assert.HasCount(1, idleTasks);
+            Assert.HasCount(0, processedTasks);
 
             idleTaskManager.Remove(mockTask.Object);
-            Assert.AreEqual(0, idleTasks.Count);
-            Assert.AreEqual(0, processedTasks.Count);
+            Assert.HasCount(0, idleTasks);
+            Assert.HasCount(0, processedTasks);
         }
 
         [TestMethod]
         public async Task Test_RunTaskAsync()
         {
-            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+            await ThreadHelper.JoinableTaskFactory
+                .SwitchToMainThreadAsync(TestContext.CancellationToken);
 
             // Arrange
-            var idleTaskManager = await ArrangeIdleTaskManagerAsync();
+            var idleTaskManager = await ArrangeIdleTaskManagerAsync(TestContext.CancellationToken);
             var idleTasks = ArrangeIdleTasksList("activeIdleTasks", idleTaskManager);
             var processedTasks = ArrangeIdleTasksList("processedIdleTasks", idleTaskManager);;
 
@@ -89,24 +90,25 @@ namespace QtVsTools.Test.Core
 
             // Act and Assert
             idleTaskManager.Add(mockTask.Object);
-            Assert.AreEqual(1, idleTasks.Count);
+            Assert.HasCount(1, idleTasks);
 
             idleTaskManager.OnEnterIdle((uint)_VSLONGIDLEREASON.LIR_NOUSERINPUT);
 
             // Assert
             mockTask.Verify(t => t.RunAsync(It.IsAny<CancellationToken>()), Times.Once);
-            Assert.AreEqual(1, processedTasks.Count);
+            Assert.HasCount(1, processedTasks);
         }
 
         [TestMethod]
         public async Task Test_RunTwoTasksAndRemoveCurrentlyRunningTaskAsync()
         {
-            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+            await ThreadHelper.JoinableTaskFactory
+                .SwitchToMainThreadAsync(TestContext.CancellationToken);
 
             // Arrange
             var mockTask1 = new Mock<IIdleTask>();
             var mockTask2 = new Mock<IIdleTask>();
-            var idleTaskManager = await ArrangeIdleTaskManagerAsync();
+            var idleTaskManager = await ArrangeIdleTaskManagerAsync(TestContext.CancellationToken);
 
             // Simulate a long-running task
             var tcs = new TaskCompletionSource<bool>();
@@ -120,7 +122,7 @@ namespace QtVsTools.Test.Core
             idleTaskManager.OnEnterIdle((uint)_VSLONGIDLEREASON.LIR_NOUSERINPUT);
 
             // Give some time for the task to start running
-            await Task.Delay(100);
+            await Task.Delay(100, TestContext.CancellationToken);
 
             // Remove the currently running task
             idleTaskManager.Remove(mockTask1.Object);
@@ -136,12 +138,13 @@ namespace QtVsTools.Test.Core
         [TestMethod]
         public async Task Test_RemoveTaskNotCurrentlyRunningAsync()
         {
-            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+            await ThreadHelper.JoinableTaskFactory
+                .SwitchToMainThreadAsync(TestContext.CancellationToken);
 
             // Arrange
             var mockTask1 = new Mock<IIdleTask>();
             var mockTask2 = new Mock<IIdleTask>();
-            var idleTaskManager = await ArrangeIdleTaskManagerAsync();
+            var idleTaskManager = await ArrangeIdleTaskManagerAsync(TestContext.CancellationToken);
 
             mockTask1.Setup(t => t.RunAsync(It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
             mockTask2.Setup(t => t.RunAsync(It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
@@ -161,12 +164,13 @@ namespace QtVsTools.Test.Core
         [TestMethod]
         public async Task Test_RemoveTaskBeforeItStartsAsync()
         {
-            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+            await ThreadHelper.JoinableTaskFactory
+                .SwitchToMainThreadAsync(TestContext.CancellationToken);
 
             // Arrange
             var mockTask1 = new Mock<IIdleTask>();
             var mockTask2 = new Mock<IIdleTask>();
-            var idleTaskManager = await ArrangeIdleTaskManagerAsync();
+            var idleTaskManager = await ArrangeIdleTaskManagerAsync(TestContext.CancellationToken);
 
             mockTask1.Setup(t => t.RunAsync(It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
             mockTask2.Setup(t => t.RunAsync(It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
@@ -187,12 +191,13 @@ namespace QtVsTools.Test.Core
         [TestMethod]
         public async Task Test_RemoveAllTasksAsync()
         {
-            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+            await ThreadHelper.JoinableTaskFactory
+                .SwitchToMainThreadAsync(TestContext.CancellationToken);
 
             // Arrange
             var mockTask1 = new Mock<IIdleTask>();
             var mockTask2 = new Mock<IIdleTask>();
-            var idleTaskManager = await ArrangeIdleTaskManagerAsync();
+            var idleTaskManager = await ArrangeIdleTaskManagerAsync(TestContext.CancellationToken);
 
             mockTask1.Setup(t => t.RunAsync(It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
             mockTask2.Setup(t => t.RunAsync(It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
@@ -214,12 +219,13 @@ namespace QtVsTools.Test.Core
         [TestMethod]
         public async Task Test_RemoveTaskWhileAnotherTaskIsRunningAsync()
         {
-            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+            await ThreadHelper.JoinableTaskFactory
+                .SwitchToMainThreadAsync(TestContext.CancellationToken);
 
             // Arrange
             var mockTask1 = new Mock<IIdleTask>();
             var mockTask2 = new Mock<IIdleTask>();
-            var idleTaskManager = await ArrangeIdleTaskManagerAsync();
+            var idleTaskManager = await ArrangeIdleTaskManagerAsync(TestContext.CancellationToken);
 
             // Simulate a long-running task
             var tcs = new TaskCompletionSource<bool>();
@@ -233,7 +239,7 @@ namespace QtVsTools.Test.Core
             idleTaskManager.OnEnterIdle((uint)_VSLONGIDLEREASON.LIR_NOUSERINPUT);
 
             // Give some time for the task to start running
-            await Task.Delay(100);
+            await Task.Delay(100, TestContext.CancellationToken);
 
             // Remove the second task while the first task is running
             idleTaskManager.Remove(mockTask2.Object);
@@ -249,33 +255,35 @@ namespace QtVsTools.Test.Core
         [TestMethod]
         public async Task Test_RemoveTaskThatDoesNotExistAsync()
         {
-            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+            await ThreadHelper.JoinableTaskFactory
+                .SwitchToMainThreadAsync(TestContext.CancellationToken);
 
             // Arrange
             var mockTask = new Mock<IIdleTask>();
-            var idleTaskManager = await ArrangeIdleTaskManagerAsync();
+            var idleTaskManager = await ArrangeIdleTaskManagerAsync(TestContext.CancellationToken);
 
             // Act
             idleTaskManager.Remove(mockTask.Object); // Attempt to remove a task that does not exist
 
             // Assert
             var idleTasks = ArrangeIdleTasksList("activeIdleTasks", idleTaskManager);
-            Assert.AreEqual(0, idleTasks.Count);
+            Assert.HasCount(0, idleTasks);
             var processedTasks = ArrangeIdleTasksList("processedIdleTasks", idleTaskManager);;
-            Assert.AreEqual(0, processedTasks.Count);
+            Assert.HasCount(0, processedTasks);
         }
 
         [TestMethod]
         public async Task Test_RemoveCurrentlyRunningTaskAndEnsureNextTaskIndexAsync()
         {
-            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+            await ThreadHelper.JoinableTaskFactory
+                .SwitchToMainThreadAsync(TestContext.CancellationToken);
 
             // Arrange
             var mockTask1 = new Mock<IIdleTask>();
             var mockTask2 = new Mock<IIdleTask>();
             var mockTask3 = new Mock<IIdleTask>();
             var mockTask4 = new Mock<IIdleTask>();
-            var idleTaskManager = await ArrangeIdleTaskManagerAsync();
+            var idleTaskManager = await ArrangeIdleTaskManagerAsync(TestContext.CancellationToken);
 
             // Simulate a long-running task
             var tcs = new TaskCompletionSource<bool>();
@@ -293,7 +301,7 @@ namespace QtVsTools.Test.Core
             idleTaskManager.OnEnterIdle((uint)_VSLONGIDLEREASON.LIR_NOUSERINPUT);
 
             // Give some time for the task to start running
-            await Task.Delay(100);
+            await Task.Delay(100, TestContext.CancellationToken);
 
             // Remove the currently running task (task 2)
             idleTaskManager.Remove(mockTask2.Object);
@@ -309,22 +317,23 @@ namespace QtVsTools.Test.Core
 
             // Verify
             var idleTasks = ArrangeIdleTasksList("activeIdleTasks", idleTaskManager);
-            Assert.AreEqual(0, idleTasks.Count);
+            Assert.HasCount(0, idleTasks);
             var processedTasks = ArrangeIdleTasksList("processedIdleTasks", idleTaskManager);;
-            Assert.AreEqual(3, processedTasks.Count);
+            Assert.HasCount(3, processedTasks);
         }
 
         [TestMethod]
         public async Task Test_RunningTasksWithOnExitIdleAsync()
         {
-            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+            await ThreadHelper.JoinableTaskFactory
+                .SwitchToMainThreadAsync(TestContext.CancellationToken);
 
             // Arrange
             var mockTask1 = new Mock<IIdleTask>();
             var mockTask2 = new Mock<IIdleTask>();
             var mockTask3 = new Mock<IIdleTask>();
             var mockTask4 = new Mock<IIdleTask>();
-            var idleTaskManager = await ArrangeIdleTaskManagerAsync();
+            var idleTaskManager = await ArrangeIdleTaskManagerAsync(TestContext.CancellationToken);
 
             // Simulate a long-running task
             var tcs = new TaskCompletionSource<bool>();
@@ -342,7 +351,7 @@ namespace QtVsTools.Test.Core
             idleTaskManager.OnEnterIdle((uint)_VSLONGIDLEREASON.LIR_NOUSERINPUT);
 
             // Give some time for the task to start running
-            await Task.Delay(100);
+            await Task.Delay(100, TestContext.CancellationToken);
 
             //  Act, simulate leaving idle state
             idleTaskManager.OnExitIdle();
@@ -358,12 +367,12 @@ namespace QtVsTools.Test.Core
 
             // Verify
             var idleTasks = ArrangeIdleTasksList("activeIdleTasks", idleTaskManager);
-            Assert.AreEqual(3, idleTasks.Count);
+            Assert.HasCount(3, idleTasks);
             var processedTasks = ArrangeIdleTasksList("processedIdleTasks", idleTaskManager);;
-            Assert.AreEqual(1, processedTasks.Count);
+            Assert.HasCount(1, processedTasks);
         }
 
-        private static async Task<IdleTaskManager> ArrangeIdleTaskManagerAsync()
+        private static async Task<IdleTaskManager> ArrangeIdleTaskManagerAsync(CancellationToken t)
         {
             var mockLongIdleManager = new Mock<IVsLongIdleManager>();
             var mockAsyncServiceProvider = new Mock<IAsyncServiceProvider>();
@@ -371,8 +380,7 @@ namespace QtVsTools.Test.Core
                 .ReturnsAsync(mockLongIdleManager.Object);
 
             var idleTaskManager = new IdleTaskManager(ThreadHelper.JoinableTaskContext);
-            await idleTaskManager.InitializeAsync(mockAsyncServiceProvider.Object,
-                CancellationToken.None);
+            await idleTaskManager.InitializeAsync(mockAsyncServiceProvider.Object, t);
             return idleTaskManager;
         }
 

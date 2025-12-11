@@ -37,8 +37,8 @@ namespace QtVsTools.Test.QtMsBuild.Build
             Assert.IsTrue(MsBuild.Run(build));
 
             var items = build.Result.ResultsByTarget[targetName].Items;
-            Assert.IsTrue(items.Length == 1);
-            Assert.IsTrue(Path.GetFileName(items[0].ItemSpec) == "foo.qml");
+            Assert.HasCount(1, items);
+            Assert.AreEqual("foo.qml", Path.GetFileName(items[0].ItemSpec));
         }
 
         [TestMethod]
@@ -68,12 +68,12 @@ nimport Baz");
             var build = MsBuild.Prepare(project, targetName);
             Assert.IsTrue(MsBuild.Run(build));
 
-            var resultFile = File.ReadAllText(project.ExpandString("$(QtQmlStaticImportFile)"));
+            var resultFile = File.ReadAllText(project.ExpandString("$(QtQmlStaticImportFile)") ?? "");
             var expectedFile = $@"import Foo;
 import Bar;
 QmlObject {{ }}
 ";
-            Assert.IsTrue(resultFile == expectedFile);
+            Assert.AreEqual(expectedFile, resultFile);
         }
 
         [TestMethod]
@@ -125,7 +125,7 @@ Item { Component.onCompleted: Qt.exit(42) }
                 proc.Kill();
                 Assert.Fail();
             }
-            Assert.IsTrue(proc.ExitCode == 42);
+            Assert.AreEqual(42, proc.ExitCode);
         }
     }
 }

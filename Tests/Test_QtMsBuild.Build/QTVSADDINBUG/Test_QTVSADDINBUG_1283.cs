@@ -4,8 +4,6 @@
 /* https://bugreports.qt.io/browse/QTVSADDINBUG-1283 */
 
 using System.IO;
-using System.Linq;
-using Microsoft.Build.Construction;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace QtVsTools.Test.QtMsBuild.Build
@@ -36,9 +34,9 @@ public Q_SLOTS:
             Assert.IsTrue(MsBuild.Run(build));
 
             var genSrcMoc = File.ReadAllText(Path.Combine(temp.ProjectDir,
-                build.Project.ExpandString("$(IntDir)"), @"qt\moc\moc_QtProjectV304.cpp"));
-            Assert.IsTrue(genSrcMoc.Contains("func1()"));
-            Assert.IsTrue(genSrcMoc.Contains("func2()"));
+                build.Project.ExpandString("$(IntDir)") ?? "", @"qt\moc\moc_QtProjectV304.cpp"));
+            Assert.Contains("func1()", genSrcMoc);
+            Assert.Contains("func2()", genSrcMoc);
         }
     }
 }

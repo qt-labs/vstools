@@ -14,6 +14,8 @@ namespace QtVsTools.Test.Core
     [TestClass]
     public partial class Test_Utils
     {
+        public TestContext TestContext { get; set; }
+
         private double NanosecondsPerTick => Math.Pow(10.0, 9.0) / Stopwatch.Frequency;
 
         [TestMethod]
@@ -32,7 +34,7 @@ namespace QtVsTools.Test.Core
                 var time = Stopwatch.StartNew();
                 var index = haystack.LastIndexOfArray(needle);
                 time.Stop();
-                Assert.IsTrue(index == text.LastIndexOf(what));
+                Assert.AreEqual(text.LastIndexOf(what, StringComparison.Ordinal), index);
                 return time.ElapsedTicks;
             });
 
@@ -54,34 +56,35 @@ namespace QtVsTools.Test.Core
         [TestMethod]
         public void Test_LogFile()
         {
-            Assert.ThrowsException<ArgumentException>(() => new LogFile("<foo>", 0, 0));
-            Assert.ThrowsException<ArgumentOutOfRangeException>(() => new LogFile("foo", 0, 20));
-            Assert.ThrowsException<ArgumentOutOfRangeException>(() => new LogFile("foo", 10, 0));
-            Assert.ThrowsException<ArgumentOutOfRangeException>(() => new LogFile("foo", 10, 20));
+            Assert.ThrowsExactly<ArgumentException>(() => new LogFile("<foo>", 0, 0));
+            Assert.ThrowsExactly<ArgumentOutOfRangeException>(() => new LogFile("foo", 0, 20));
+            Assert.ThrowsExactly<ArgumentOutOfRangeException>(() => new LogFile("foo", 10, 0));
+            Assert.ThrowsExactly<ArgumentOutOfRangeException>(() => new LogFile("foo", 10, 20));
 
-            string logFilePath = @$"{Path.GetTempPath()}\logtest.txt";
+            var logFilePath = @$"{Path.GetTempPath()}\logtest.txt";
             if (File.Exists(logFilePath))
                 File.WriteAllBytes(logFilePath, Array.Empty<byte>());
 
-            var sTx = "[";
-            var eTx = "]\r\n";
-            Func<int, string> logTx = (int i) => $"{sTx}Log entry #{i}{eTx}";
+            const string sTx = "[";
+            const string eTx = "]\r\n";
+            static string LogTx(int i) => $"{sTx}Log entry #{i}{eTx}";
+
             var log = new LogFile(logFilePath, 50, 40, sTx);
 
-            log.Write(logTx(1));
-            Assert.AreEqual(logTx(1), File.ReadAllText(logFilePath));
+            log.Write(LogTx(1));
+            Assert.AreEqual(LogTx(1), File.ReadAllText(logFilePath));
 
-            log.Write(logTx(2));
-            Assert.AreEqual(logTx(1) + logTx(2), File.ReadAllText(logFilePath));
+            log.Write(LogTx(2));
+            Assert.AreEqual(LogTx(1) + LogTx(2), File.ReadAllText(logFilePath));
 
-            log.Write(logTx(3));
-            Assert.AreEqual(logTx(1) + logTx(2) + logTx(3), File.ReadAllText(logFilePath));
+            log.Write(LogTx(3));
+            Assert.AreEqual(LogTx(1) + LogTx(2) + LogTx(3), File.ReadAllText(logFilePath));
 
-            log.Write(logTx(4));
-            Assert.AreEqual(logTx(3) + logTx(4), File.ReadAllText(logFilePath));
+            log.Write(LogTx(4));
+            Assert.AreEqual(LogTx(3) + LogTx(4), File.ReadAllText(logFilePath));
 
-            log.Write(logTx(5));
-            Assert.AreEqual(logTx(3) + logTx(4) + logTx(5), File.ReadAllText(logFilePath));
+            log.Write(LogTx(5));
+            Assert.AreEqual(LogTx(3) + LogTx(4) + LogTx(5), File.ReadAllText(logFilePath));
         }
     }
 }

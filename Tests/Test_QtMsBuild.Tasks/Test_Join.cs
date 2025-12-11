@@ -14,7 +14,7 @@ namespace QtVsTools.Test.QtMsBuild.Tasks
     [TestClass]
     public class Test_Join
     {
-        readonly ITaskItem[] LeftItems = new TaskItem[]
+        private readonly ITaskItem[] leftItems = new TaskItem[]
         {
                 new("A", new Dictionary<string, string> {
                     { "X", "foo" },
@@ -29,7 +29,8 @@ namespace QtVsTools.Test.QtMsBuild.Tasks
                     { "Y", "3.14159" }
                 })
         };
-        readonly ITaskItem[] RightItems = new TaskItem[]
+
+        private readonly ITaskItem[] rightItems = new TaskItem[]
         {
                 new("A", new Dictionary<string, string> {
                     { "Z", "foo" },
@@ -66,20 +67,21 @@ namespace QtVsTools.Test.QtMsBuild.Tasks
 
             var criteria = new[] { "Y" };
             Assert.IsTrue(
-                Join.Execute(LeftItems, RightItems, out ITaskItem[] result, criteria));
-            Assert.IsTrue(result is {Length: 3});
+                Join.Execute(leftItems, rightItems, out var result, criteria));
+            Assert.IsNotNull(result);
+            Assert.HasCount(3, result);
 
-            Assert.IsTrue(result[0].GetMetadata("X") == "foo");
-            Assert.IsTrue(result[0].GetMetadata("Y") == "42");
-            Assert.IsTrue(result[0].GetMetadata("Z") == "bar");
+            Assert.AreEqual("foo", result[0].GetMetadata("X"));
+            Assert.AreEqual("42", result[0].GetMetadata("Y"));
+            Assert.AreEqual("bar", result[0].GetMetadata("Z"));
 
-            Assert.IsTrue(result[1].GetMetadata("X") == "sna");
-            Assert.IsTrue(result[1].GetMetadata("Y") == "99");
-            Assert.IsTrue(result[1].GetMetadata("Z") == "foo");
+            Assert.AreEqual("sna", result[1].GetMetadata("X"));
+            Assert.AreEqual("99", result[1].GetMetadata("Y"));
+            Assert.AreEqual("foo", result[1].GetMetadata("Z"));
 
-            Assert.IsTrue(result[2].GetMetadata("X") == "sna");
-            Assert.IsTrue(result[2].GetMetadata("Y") == "99");
-            Assert.IsTrue(result[2].GetMetadata("Z") == "bar");
+            Assert.AreEqual("sna", result[2].GetMetadata("X"));
+            Assert.AreEqual("99", result[2].GetMetadata("Y"));
+            Assert.AreEqual("bar", result[2].GetMetadata("Z"));
         }
 
         [TestMethod]
@@ -99,20 +101,21 @@ namespace QtVsTools.Test.QtMsBuild.Tasks
 
             var criteria = new[] { "ROW_NUMBER" };
             Assert.IsTrue(
-                Join.Execute(LeftItems, RightItems, out ITaskItem[] result, criteria));
-            Assert.IsTrue(result is {Length: 3});
+                Join.Execute(leftItems, rightItems, out var result, criteria));
+            Assert.IsNotNull(result);
+            Assert.HasCount(3, result);
 
-            Assert.IsTrue(result[0].GetMetadata("X") == "foo");
-            Assert.IsTrue(result[0].GetMetadata("Y") == "42");
-            Assert.IsTrue(result[0].GetMetadata("Z") == "foo");
+            Assert.AreEqual("foo", result[0].GetMetadata("X"));
+            Assert.AreEqual("42", result[0].GetMetadata("Y"));
+            Assert.AreEqual("foo", result[0].GetMetadata("Z"));
 
-            Assert.IsTrue(result[1].GetMetadata("X") == "sna");
-            Assert.IsTrue(result[1].GetMetadata("Y") == "99");
-            Assert.IsTrue(result[1].GetMetadata("Z") == "sna");
+            Assert.AreEqual("sna", result[1].GetMetadata("X"));
+            Assert.AreEqual("99", result[1].GetMetadata("Y"));
+            Assert.AreEqual("sna", result[1].GetMetadata("Z"));
 
-            Assert.IsTrue(result[2].GetMetadata("X") == "bar");
-            Assert.IsTrue(result[2].GetMetadata("Y") == "3.14159");
-            Assert.IsTrue(result[2].GetMetadata("Z") == "bar");
+            Assert.AreEqual("bar", result[2].GetMetadata("X"));
+            Assert.AreEqual("3.14159", result[2].GetMetadata("Y"));
+            Assert.AreEqual("bar", result[2].GetMetadata("Z"));
         }
 
         [TestMethod]
@@ -132,8 +135,9 @@ namespace QtVsTools.Test.QtMsBuild.Tasks
 
             var criteria = new[] { "ROW_NUMBER", "Y" };
             Assert.IsTrue(
-                Join.Execute(LeftItems, RightItems, out ITaskItem[] result, criteria));
-            Assert.IsTrue(result is {Length: 0});
+                Join.Execute(leftItems, rightItems, out var result, criteria));
+            Assert.IsNotNull(result);
+            Assert.HasCount(0, result);
         }
 
         [TestMethod]
@@ -151,7 +155,7 @@ namespace QtVsTools.Test.QtMsBuild.Tasks
             //  3 | zzz | 99         3 | bar | 99
             // -------------------  -------------------
 
-            var newLeftItems = LeftItems
+            var newLeftItems = leftItems
                 .Append(new TaskItem("D", new Dictionary<string, string> {
                     { "X", "zzz" },
                     { "Y", "99" }
@@ -160,12 +164,13 @@ namespace QtVsTools.Test.QtMsBuild.Tasks
 
             var criteria = new[] { "ROW_NUMBER", "Y" };
             Assert.IsTrue(
-                Join.Execute(newLeftItems, RightItems, out ITaskItem[] result, criteria));
-            Assert.IsTrue(result is {Length: 1});
+                Join.Execute(newLeftItems, rightItems, out var result, criteria));
+            Assert.IsNotNull(result);
+            Assert.HasCount(1, result);
 
-            Assert.IsTrue(result[0].GetMetadata("X") == "zzz");
-            Assert.IsTrue(result[0].GetMetadata("Y") == "99");
-            Assert.IsTrue(result[0].GetMetadata("Z") == "bar");
+            Assert.AreEqual("zzz", result[0].GetMetadata("X"));
+            Assert.AreEqual("99", result[0].GetMetadata("Y"));
+            Assert.AreEqual("bar", result[0].GetMetadata("Z"));
         }
 
         [TestMethod]
@@ -184,24 +189,25 @@ namespace QtVsTools.Test.QtMsBuild.Tasks
             //                        ---------------------  ----------------------
 
             Assert.IsTrue(
-                Join.Execute(LeftItems, RightItems, out ITaskItem[] result));
-            Assert.IsTrue(result is {Length: 4});
+                Join.Execute(leftItems, rightItems, out var result));
+            Assert.IsNotNull(result);
+            Assert.HasCount(4, result);
 
-            Assert.IsTrue(result[0].GetMetadata("X") == "foo");
-            Assert.IsTrue(result[0].GetMetadata("Y") == "42");
-            Assert.IsTrue(result[0].GetMetadata("Z") == "foo");
+            Assert.AreEqual("foo", result[0].GetMetadata("X"));
+            Assert.AreEqual("42", result[0].GetMetadata("Y"));
+            Assert.AreEqual("foo", result[0].GetMetadata("Z"));
 
-            Assert.IsTrue(result[1].GetMetadata("X") == "foo");
-            Assert.IsTrue(result[1].GetMetadata("Y") == "42");
-            Assert.IsTrue(result[1].GetMetadata("Z") == "bar");
+            Assert.AreEqual("foo", result[1].GetMetadata("X"));
+            Assert.AreEqual("42", result[1].GetMetadata("Y"));
+            Assert.AreEqual("bar", result[1].GetMetadata("Z"));
 
-            Assert.IsTrue(result[2].GetMetadata("X") == "sna");
-            Assert.IsTrue(result[2].GetMetadata("Y") == "99");
-            Assert.IsTrue(result[2].GetMetadata("Z") == "sna");
+            Assert.AreEqual("sna", result[2].GetMetadata("X"));
+            Assert.AreEqual("99", result[2].GetMetadata("Y"));
+            Assert.AreEqual("sna", result[2].GetMetadata("Z"));
 
-            Assert.IsTrue(result[3].GetMetadata("X") == "sna");
-            Assert.IsTrue(result[3].GetMetadata("Y") == "99");
-            Assert.IsTrue(result[3].GetMetadata("Z") == "bar");
+            Assert.AreEqual("sna", result[3].GetMetadata("X"));
+            Assert.AreEqual("99", result[3].GetMetadata("Y"));
+            Assert.AreEqual("bar", result[3].GetMetadata("Z"));
         }
     }
 }

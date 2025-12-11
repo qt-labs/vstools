@@ -11,6 +11,8 @@ namespace QtVsTools.Test.Core
     [TestClass]
     public class Test_ConcurrentTests
     {
+        public TestContext TestContext { get; set; }
+
         [TestMethod]
         public async Task Test_SingleHolderLock_AllowsOnlyOneThread()
         {
@@ -43,14 +45,14 @@ namespace QtVsTools.Test.Core
             // We'll run 3 parallel tasks on the same resource
             const string resourceName = "SingleHolderTest";
 
-            var t1 = Task.Run(() => LockWorkAsync(resourceName));
-            var t2 = Task.Run(() => LockWorkAsync(resourceName));
-            var t3 = Task.Run(() => LockWorkAsync(resourceName));
+            var t1 = Task.Run(() => LockWorkAsync(resourceName), TestContext.CancellationToken);
+            var t2 = Task.Run(() => LockWorkAsync(resourceName), TestContext.CancellationToken);
+            var t3 = Task.Run(() => LockWorkAsync(resourceName), TestContext.CancellationToken);
 
             await Task.WhenAll(t1, t2, t3);
 
             // If single-holder logic is correct, maxConcurrent should never exceed 1.
-            Assert.IsTrue(maxConcurrent <= 1,
+            Assert.IsLessThanOrEqualTo(1, maxConcurrent,
                 "Single-holder lock should never allow more than 1 concurrent holder.");
 
             // Cleanup

@@ -32,12 +32,11 @@ namespace QtVsTools.Test.QtMsBuild.Build
 </Project>".Trim());
 
             var project = MsBuild.Evaluate(temp.ProjectPath);
+            Assert.AreEqual("The sleek gray wolf", project.ExpandString("$(X)"));
             Assert.AreEqual(
-                project.ExpandString("$(X)"), "The sleek gray wolf");
+                "The quick brown fox jumped over the lazy dog.", project.ExpandString("$(Y)"));
             Assert.AreEqual(
-                project.ExpandString("$(Y)"), "The quick brown fox jumped over the lazy dog.");
-            Assert.AreEqual(
-                project.ExpandString("$(Z)"), "The sleek gray wolf jumped over the lazy dog.");
+                "The sleek gray wolf jumped over the lazy dog.", project.ExpandString("$(Z)"));
         }
 
         [TestMethod]

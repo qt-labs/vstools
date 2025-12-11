@@ -156,7 +156,7 @@
     <Name_MSTest_TestAdapter
       >MSTest.TestAdapter</Name_MSTest_TestAdapter>
     <Version_MSTest_TestAdapter
-      >3.7.1</Version_MSTest_TestAdapter>
+      >4.0.2</Version_MSTest_TestAdapter>
   </PropertyGroup>
 
   <!-- MSTest.TestFramework -->
@@ -164,7 +164,7 @@
     <Name_MSTest_TestFramework
       >MSTest.TestFramework</Name_MSTest_TestFramework>
     <Version_MSTest_TestFramework
-      >3.7.1</Version_MSTest_TestFramework>
+      >4.0.2</Version_MSTest_TestFramework>
   </PropertyGroup>
 
   <!-- Newtonsoft.Json -->

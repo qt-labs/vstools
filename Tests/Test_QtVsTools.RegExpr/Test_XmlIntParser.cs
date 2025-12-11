@@ -12,15 +12,15 @@ namespace QtVsTools.Test.RegExpr
     [TestClass]
     public class Test_XmlIntParser
     {
-        public const string IdNum = "NUM";
-        public const string IdExpr = "EXPR";
-        public const string IdExprLPar = "EXPR_LPAR";
-        public const string IdTagValue = "TAG_VALUE";
-        public const string IdTagBegin = "TAG_BEGIN";
-        public const string IdTagName = "TAG_NAME";
-        public const string IdTag = "TAG";
+        private const string IdNum = "NUM";
+        private const string IdExpr = "EXPR";
+        private const string IdExprLPar = "EXPR_LPAR";
+        private const string IdTagValue = "TAG_VALUE";
+        private const string IdTagBegin = "TAG_BEGIN";
+        private const string IdTagName = "TAG_NAME";
+        private const string IdTag = "TAG";
 
-        public static Parser GetParser()
+        private static Parser GetParser()
         {
             // XML chars
             var charLt = Char['<'];
@@ -40,9 +40,9 @@ namespace QtVsTools.Test.RegExpr
             var charOper = CharSet[charAddtOper + charMultOper];
 
             // int operator priorities
-            int priorityInfixAddt = 10;
-            int priorityInfixMult = 20;
-            int priorityPrefixAddt = 30;
+            const int priorityInfixAddt = 10;
+            const int priorityInfixMult = 20;
+            const int priorityPrefixAddt = 30;
 
             // token: number
             var exprNum = new Token(IdNum,
@@ -198,121 +198,114 @@ namespace QtVsTools.Test.RegExpr
             return xmlInt.Render(CharSpace.Repeat());
         }
 
-        readonly Parser Parser = GetParser();
+        private readonly Parser parser = GetParser();
 
         [TestMethod]
         public void TestConst()
         {
-            string testInput = "<x>42</x>";
-            string testOutput = "x=42";
-            Debug.Assert(Parser.Parse(testInput).GetValues<string>(IdTag).First() == testOutput);
+            const string testInput = "<x>42</x>";
+            const string testOutput = "x=42";
+            Debug.Assert(parser.Parse(testInput).GetValues<string>(IdTag).First() == testOutput);
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ParseErrorException))]
         public void TestConstError()
         {
-            string testInput = "<x>foo</x>";
-            Parser.Parse(testInput);
+            var testInput = "<x>foo</x>";
+            Assert.ThrowsExactly<ParseErrorException>(() => parser.Parse(testInput));
         }
 
         [TestMethod]
         public void TestInfix()
         {
-            string testInput = "<x>2 - 1</x>";
-            string testOutput = "x=1";
-            Debug.Assert(Parser.Parse(testInput).GetValues<string>(IdTag).First() == testOutput);
+            const string testInput = "<x>2 - 1</x>";
+            const string testOutput = "x=1";
+            Debug.Assert(parser.Parse(testInput).GetValues<string>(IdTag).First() == testOutput);
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ParseErrorException))]
         public void TestInfixError()
         {
-            string testInput = "<x>2 - </x>";
-            Parser.Parse(testInput);
+            const string testInput = "<x>2 - </x>";
+            Assert.ThrowsExactly<ParseErrorException>(() => parser.Parse(testInput));
         }
 
         [TestMethod]
         public void TestPrefix()
         {
-            string testInput = "<x>-2 + 1</x>";
-            string testOutput = "x=-1";
-            Debug.Assert(Parser.Parse(testInput).GetValues<string>(IdTag).First() == testOutput);
+            const string testInput = "<x>-2 + 1</x>";
+            const string testOutput = "x=-1";
+            Debug.Assert(parser.Parse(testInput).GetValues<string>(IdTag).First() == testOutput);
         }
         [TestMethod]
-        [ExpectedException(typeof(ParseErrorException))]
         public void TestPrefixError()
         {
-            string testInput = "<x>- + 1</x>";
-            Parser.Parse(testInput);
+            var testInput = "<x>- + 1</x>";
+            Assert.ThrowsExactly<ParseErrorException>(() => parser.Parse(testInput));
         }
 
         [TestMethod]
         public void TestPrecedence()
         {
-            string testInput = "<x>2 + 3 * 4</x>";
-            string testOutput = "x=14";
-            Debug.Assert(Parser.Parse(testInput).GetValues<string>(IdTag).First() == testOutput);
+            const string testInput = "<x>2 + 3 * 4</x>";
+            const string testOutput = "x=14";
+            Debug.Assert(parser.Parse(testInput).GetValues<string>(IdTag).First() == testOutput);
         }
 
         [TestMethod]
         public void TestParentheses()
         {
-            string testInput = "<x>(2 + 3) * 4</x>";
-            string testOutput = "x=20";
-            Debug.Assert(Parser.Parse(testInput).GetValues<string>(IdTag).First() == testOutput);
+            const string testInput = "<x>(2 + 3) * 4</x>";
+            const string testOutput = "x=20";
+            Debug.Assert(parser.Parse(testInput).GetValues<string>(IdTag).First() == testOutput);
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ParseErrorException))]
         public void TestParenthesesLeftError()
         {
-            string testInput = "<x>2 + 3) * 4</x>";
-            Parser.Parse(testInput);
+            const string testInput = "<x>2 + 3) * 4</x>";
+            Assert.ThrowsExactly<ParseErrorException>(() => parser.Parse(testInput));
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ParseErrorException))]
         public void TestParenthesesRightError()
         {
-            string testInput = "<x>(2 + 3 * 4</x>";
-            Parser.Parse(testInput);
+            const string testInput = "<x>(2 + 3 * 4</x>";
+            Assert.ThrowsExactly<ParseErrorException>(() => parser.Parse(testInput));
         }
 
         [TestMethod]
         public void TestParenthesesNested()
         {
-            string testInput = "<x>(-((2 + 3) * 4) / 5) * 3</x>";
-            string testOutput = "x=-12";
-            Debug.Assert(Parser.Parse(testInput).GetValues<string>(IdTag).First() == testOutput);
+            const string testInput = "<x>(-((2 + 3) * 4) / 5) * 3</x>";
+            const string testOutput = "x=-12";
+            Debug.Assert(parser.Parse(testInput).GetValues<string>(IdTag).First() == testOutput);
         }
 
         [TestMethod]
         public void TestNestedTags()
         {
-            string testInput = "<a><x>(-((2 + 3) * 4) / 5) * 3</x><y>(2 + 3) * 4</y></a>";
-            string testOutput = "a:{x=-12,y=20}";
-            Debug.Assert(Parser.Parse(testInput).GetValues<string>(IdTag).First() == testOutput);
+            const string testInput = "<a><x>(-((2 + 3) * 4) / 5) * 3</x><y>(2 + 3) * 4</y></a>";
+            const string testOutput = "a:{x=-12,y=20}";
+            Debug.Assert(parser.Parse(testInput).GetValues<string>(IdTag).First() == testOutput);
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ParseErrorException))]
         public void TestNestedTagsError()
         {
-            string testInput = "<a><x>1</x><y>2<z><w>";
-            Parser.Parse(testInput);
+            const string testInput = "<a><x>1</x><y>2<z><w>";
+            Assert.ThrowsExactly<ParseErrorException>(() => parser.Parse(testInput));
         }
 
         [TestMethod]
         public void TestMultiLines()
         {
-            string testInput =
-                "<a>" + "\r\n" +
+            const string testInput = "<a>" + "\r\n" +
                 "  <x>2 + 3 * 4</x>" + "\r\n" +
                 "  <y>(2 + 3) * 4</y>" + "\r\n" +
                 "</a>";
-            string testOutput = "a:{x=14,y=20}";
-            Debug.Assert(Parser.Parse(testInput).GetValues<string>(IdTag).First() == testOutput);
+            const string testOutput = "a:{x=14,y=20}";
+            Debug.Assert(parser.Parse(testInput).GetValues<string>(IdTag).First() == testOutput);
         }
     }
 }
