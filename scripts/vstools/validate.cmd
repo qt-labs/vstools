@@ -9,7 +9,7 @@
 
 IF %VERBOSE% CALL %SCRIPTLIB%\info.cmd "args"
 
-IF NOT EXIST vstools.sln (
+IF NOT EXIST %VSTOOLS_SOLUTION% (
     ECHO %BOLD%%RED%Error: could not find Qt VS Tools solution file.%RESET%
     EXIT /B 1
 )
@@ -42,7 +42,7 @@ IF %BINARYLOG% (
     SET MSBUILD_EXTRAS=%MSBUILD_EXTRAS% -bl
 )
 
-IF NOT EXIST vstools.sln (
+IF NOT EXIST %VSTOOLS_SOLUTION% (
     ECHO %BOLD%%RED%Error: could not find Qt VS Tools solution file.%RESET%
     EXIT /B 1
 )

@@ -9,4 +9,4 @@
 %##########################%
 %##% %BOLD%Starting Visual Studio...%RESET%
 %##########################%
-devenv vstools.sln
+devenv %VSTOOLS_SOLUTION%

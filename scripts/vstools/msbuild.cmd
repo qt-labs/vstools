@@ -13,7 +13,7 @@ IF "%BUILD_PLATFORM%" == "" (
 ECHO.
 %##########################%
 %##% %BOLD%Building...%RESET%
-%##% msbuild: vstools.sln
+%##% msbuild: %VSTOOLS_SOLUTION%
 %##% msbuild: -t:%MSBUILD_TARGETS%
 %##% msbuild: -p:Configuration=%BUILD_CONFIGURATION%
 %##% msbuild: -p:Platform=%BUILD_PLATFORM%
@@ -33,7 +33,7 @@ msbuild ^
     -p:TransformOutOfDateOnly=%TRANSFORM_INCREMENTAL% ^
     -t:%MSBUILD_TARGETS% ^
     %MSBUILD_EXTRAS% ^
-    vstools.sln
+    %VSTOOLS_SOLUTION%
 ECHO %RESET%
 IF %ERRORLEVEL% NEQ 0 (
     CALL %SCRIPTLIB%\error.cmd %ERRORLEVEL% "ERROR building solution"

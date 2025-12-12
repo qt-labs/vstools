@@ -31,7 +31,7 @@ ECHO.
 %##########################%
 %##% %BOLD%Restoring packages...%RESET%
 IF %VERBOSE% (
-    %##%  msbuild: vstools.sln
+    %##%  msbuild: %VSTOOLS_SOLUTION%
     %##%  msbuild: -t:Restore
     %##%  msbuild: -p:Configuration=%BUILD_CONFIGURATION%
     %##%  msbuild: -p:Platform=%BUILD_PLATFORM%
@@ -46,7 +46,7 @@ msbuild ^
     -p:Configuration=%BUILD_CONFIGURATION% ^
     -p:Platform=%BUILD_PLATFORM% ^
     %MSBUILD_EXTRAS% ^
-    vstools.sln
+    %VSTOOLS_SOLUTION%
 ECHO %RESET%
 IF %ERRORLEVEL% NEQ 0 (
     CALL %SCRIPTLIB%\error.cmd %ERRORLEVEL% "ERROR restoring packages!"

@@ -18,6 +18,7 @@ ECHO.
 %##%  -vs2026 ................ Select the latest version of Visual Studio 2026
 %##%  -vs2022 ................ Select the latest version of Visual Studio 2022
 %##%  -vs2019 ................ Select the latest version of Visual Studio 2019
+%##%                           Note: the -test option is ignored for VS 2019
 %##%  -version ^<X^>.^<Y^> ....... Select version X.Y of Visual Studio
 %##%                           Can be specified several times
 %##%
@@ -48,6 +49,8 @@ ECHO.
 %##%                           Only valid with -build or -rebuild
 %##%  -test .................. Run auto-tests after successful build
 %##%                           Only valid with -build or -rebuild
+%##%                           For Visual Studio 2019 this option is ignored
+%##%                           (auto-tests are no longer supported)
 %##%  -deploy ^<DEPLOY_DIR^> ... Deploy installation package to DEPLOY_DIR
 %##%                           Only valid with -build or -rebuild
 %##%  -install ............... Install extension to selected VS version(s)

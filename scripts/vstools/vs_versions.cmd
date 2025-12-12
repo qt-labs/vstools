@@ -108,6 +108,16 @@ IF %ERRORLEVEL% NEQ 0 (
     EXIT /B
 )
 
+REM Decide which solution to use for this VS instance
+REM  - VS 2019: use vstools.2019.sln if it exists
+REM  - newer VS (2022, 2026, ...): use vstools.sln
+IF "%VS%"=="2019" (
+    IF EXIST "vstools.2019.sln" (
+        SET "VSTOOLS_SOLUTION=vstools.2019.sln"
+    )
+)
+IF %VERBOSE% %##% Using solution: %VSTOOLS_SOLUTION%
+
 CALL %SCRIPTLIB%\info.cmd "version"
 
 IF NOT %INIT% IF NOT %REBUILD% IF %START_VS% (
