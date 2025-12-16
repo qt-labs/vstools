@@ -75,7 +75,8 @@ namespace QtVsTools.Core.Options
             [String("QmlLsp_Enable")] Enable,
             [String("QmlLsp_Path")] Path,
             [String("QmlLsp_Log")] Log,
-            [String("QmlLsp_LogSize")] LogSize
+            [String("QmlLsp_LogSize")] LogSize,
+            [String("QmlLsp_SearchUpdates")] SearchUpdates
         }
 
         public enum Style
@@ -378,6 +379,25 @@ namespace QtVsTools.Core.Options
         [Settings(QmlLanguageServer.LogSize, 2500)]
         public static int QmlLanguageServerLogSize
             => QtOptionsPageSettings.Instance.GetValue(() => QmlLanguageServerLogSize);
+
+        [Category("QML Language Server")]
+        [DisplayName("Search for updates")]
+        [Description("If enabled, runs once every 24 hours after Visual Studio has been idle for "
+            + "60 seconds.")]
+        [TypeConverter(typeof(EnableDisableConverter))]
+        public bool QmlLanguageServerSearchUpdatesOption
+        {
+            get => QmlLanguageServerSearchUpdates;
+            set => QmlLanguageServerSearchUpdates = value;
+        }
+
+        [Settings(QmlLanguageServer.SearchUpdates, true)]
+        public static bool QmlLanguageServerSearchUpdates
+        {
+            get => QtOptionsPageSettings.Instance.GetValue(() => QmlLanguageServerSearchUpdates);
+            set => QtOptionsPageSettings.Instance.SetValue(() => QmlLanguageServerSearchUpdates,
+                value);
+        }
 
         public enum EditorColorTheme
         {

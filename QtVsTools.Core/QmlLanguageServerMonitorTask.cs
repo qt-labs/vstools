@@ -83,6 +83,9 @@ namespace QtVsTools.Core
     {
         public async Tasks.Task RunAsync(CancellationToken cancellationToken)
         {
+            if (!QtOptionsPage.QmlLanguageServerSearchUpdates)
+                return;
+
 #pragma warning disable VSTHRD010
             try {
                 var asset = await QmlLanguageServerManager.FetchAssetAsync(cancellationToken);
