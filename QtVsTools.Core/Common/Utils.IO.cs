@@ -3,7 +3,9 @@
 
 using System;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace QtVsTools.Core.Common
 {
@@ -12,10 +14,49 @@ namespace QtVsTools.Core.Common
     public static partial class Utils
     {
         private static LazyFactory Lazy { get; } = new();
+
+        /// <summary>
+        /// Gets the absolute directory path where the currently executing assembly is installed.
+        /// </summary>
         public static string PackageInstallPath => Lazy.Get(() => PackageInstallPath, () =>
         {
             var uri = new Uri(System.Reflection.Assembly.GetExecutingAssembly().EscapedCodeBase);
             return Path.GetDirectoryName(Uri.UnescapeDataString(uri.AbsolutePath)) + @"\";
+        });
+
+        /// <summary>
+        /// Gets the extension architecture of Visual Studio. Defaults to x86 for VS2019 and x64
+        /// for VS2022/VS2026.
+        /// </summary>
+        public static string Architecture => ResolvedArchitecture.Value;
+        private static readonly Lazy<string> ResolvedArchitecture = new(() =>
+        {
+#if VS2019
+            return "x86";
+#elif VS2022 || VS2026
+            var manifestPath = Path.Combine(PackageInstallPath, "extension.vsixmanifest");
+            var doc = XDocument.Load(manifestPath);
+            var arch = doc.Descendants()
+                .FirstOrDefault(e => e.Name.LocalName == "ProductArchitecture")?.Value;
+            return string.Equals(arch, "arm64", IgnoreCase) ? "arm64" : "x64";
+#endif
+        });
+
+        /// <summary>
+        /// /// Gets the combined version and extension architecture of Visual Studio.
+        /// </summary>
+        public static string VersionAndArchitecture => ResolvedVersionAndArchitecture.Value;
+        private static readonly Lazy<string> ResolvedVersionAndArchitecture = new(() =>
+        {
+#if VS2019
+            return $"2019-{Architecture}";
+#elif VS2022 || VS2026
+# if VS2022
+            return $"2024-{Architecture}";
+# elif VS2026
+            return $"2026-{Architecture}";
+# endif
+#endif
         });
 
         public static string Unquote(string path)

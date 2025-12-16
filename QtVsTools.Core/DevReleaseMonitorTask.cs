@@ -7,7 +7,6 @@ using System.Linq;
 using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading;
-using System.Xml.Linq;
 using Microsoft.VisualStudio.Imaging;
 using Microsoft.VisualStudio.Imaging.Interop;
 using Microsoft.VisualStudio.Shell;
@@ -97,26 +96,6 @@ namespace QtVsTools.Core
         private string devVersion;
         private string downloadUri;
 
-        private static readonly Lazy<string> ResolvedPlatform = new(() =>
-        {
-#if VS2019
-    return "2019-x86";
-#elif VS2022 || VS2026
-            var manifestPath = Path.Combine(Utils.PackageInstallPath, "extension.vsixmanifest");
-            var doc = XDocument.Load(manifestPath);
-            var arch = doc.Descendants()
-                .FirstOrDefault(e => e.Name.LocalName == "ProductArchitecture")?.Value;
-            return string.Equals(arch, "arm64", Utils.IgnoreCase)
-# if VS2022
-                ? "2022-arm64" : "2022-x64";
-# elif VS2026
-                ? "2026-arm64" : "2026-x64";
-# endif
-#endif
-        });
-
-        private static string Platform => ResolvedPlatform.Value;
-
         public void Show(string requestUri, string version)
         {
             devVersion = version;
@@ -186,7 +165,7 @@ namespace QtVsTools.Core
         {
             await StatusBar.SetTextAsync($"Downloading Qt VS Tools {devVersion}...");
 
-            var package = $"qt-vsaddin-msvc{Platform}-{devVersion}.vsix";
+            var package = $"qt-vsaddin-msvc{Utils.VersionAndArchitecture}-{devVersion}.vsix";
             var targetPath = Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
                 "Downloads", package);

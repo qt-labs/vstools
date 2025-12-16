@@ -82,6 +82,18 @@
     <Compile Include="Test_Utils.Zip.cs" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="extension.vsixmanifest_TT">
+      <DependsOn>$(SolutionDir)\common.tt</DependsOn>
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>extension.vsixmanifest</LastGenOutput>
+    </None>
+
+    <None Include="extension.vsixmanifest" Condition="Exists('extension.vsixmanifest')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
   <Import Project="$(SolutionDir)\references.props" Condition="Exists('$(SolutionDir)\references.props')" />
   <Import Project="$(SolutionDir)\transform.targets" Condition="Exists('$(SolutionDir)\transform.targets')" />
 

@@ -120,7 +120,8 @@ namespace QtVsTools.Core
             var json = JsonConvert.DeserializeObject<AssetWithTag>(
                 await response.Content.ReadAsStringAsync(), JsonSerializer.Settings);
 
-            var filteredAssets = json.Assets.Where(a => a.Name.StartsWith("qmlls-windows")).ToList();
+            var filteredAssets = json.Assets.Where(a => a.Name
+                .StartsWith($"qmllanguageserver-windows-{Utils.Architecture}")).ToList();
             if (!filteredAssets.Any())
                 throw new Exception("No suitable package found for platform 'windows'.");
 
