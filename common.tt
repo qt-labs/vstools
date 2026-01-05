@@ -59,8 +59,15 @@
             throw new Exception("Unable to obtain 'VisualStudioVersion' parameter.");
     }
 
-    string VS_NAME = VS_VERSION.StartsWith("17.") ? "2022" :
-                        VS_VERSION.StartsWith("16.") ? "2019" : "????";
+    string VS_NAME;
+    if (VS_VERSION.StartsWith("18."))
+        VS_NAME = "2026";
+    else if (VS_VERSION.StartsWith("17."))
+        VS_NAME = "2022";
+    else if (VS_VERSION.StartsWith("16."))
+        VS_NAME = "2019";
+    else
+        throw new Exception($"Cannot set VS_NAME, unknown VS_VERSION: {VS_VERSION}");
 
     string VC_TARGETS_PATH = Host?.ResolveParameterValue("-", "-", "VCTargetsPath");
 
@@ -70,6 +77,7 @@
             FileName = Path.Combine(Environment.GetEnvironmentVariable("ProgramFiles(x86)"),
                 @"Microsoft Visual Studio\Installer\vswhere.exe"),
             Arguments = string.Format(@"-property installationPath -latest -Version [{0})",
+                VS_VERSION.StartsWith("18.") ? "18.0,19.0" :
                 VS_VERSION.StartsWith("17.") ? "17.0,18.0" :
                 VS_VERSION.StartsWith("16.") ? "16.0,17.0" : string.Empty),
             WorkingDirectory = Directory.GetParent(SolutionDir).FullName,
@@ -84,11 +92,14 @@
 
     if (string.IsNullOrEmpty(VC_TARGETS_PATH)) {
         if (Dte != null && !string.IsNullOrEmpty(VS_VERSION)) {
-            Path.Combine(Environment.GetEnvironmentVariable(
-                VS_VERSION.StartsWith("17.") ? "ProgramFiles" : "ProgramFiles(x86)"),
-                $"Microsoft Visual Studio\\{VS_NAME}\\{Dte.Edition}",
-                VS_VERSION.StartsWith("17.") ? @"MSBuild\Microsoft\VC\v170"
-                    : VS_VERSION.StartsWith("16.") ? @"MSBuild\Microsoft\VC\v160" : null);
+            VC_TARGETS_PATH = Path.Combine(Environment.GetEnvironmentVariable(
+                    VS_VERSION.StartsWith("18.") || VS_VERSION.StartsWith("17.")
+                        ? "ProgramFiles"        // 64-bit VS
+                        : "ProgramFiles(x86)"), // 32-bit VS 2019 / older
+                VS_VERSION.StartsWith("18.") ? $@"Microsoft Visual Studio\18\{Dte.Edition}\MSBuild\Microsoft\VC\v180" :
+                VS_VERSION.StartsWith("17.") ? $@"Microsoft Visual Studio\{VS_NAME}\{Dte.Edition}\MSBuild\Microsoft\VC\v170" :
+                VS_VERSION.StartsWith("16.") ? $@"Microsoft Visual Studio\{VS_NAME}\{Dte.Edition}\MSBuild\Microsoft\VC\v160" :
+                throw new Exception($"Unsupported Visual Studio version {VS_VERSION} for 'VCTargetsPath'."));
         } else {
             throw new Exception("Unable to obtain 'VCTargetsPath' parameter.");
         }

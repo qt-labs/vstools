@@ -25,7 +25,7 @@ If applicable, add screenshots to help explain your problem.
 
 **Desktop (please complete the following information):**
  - Qt VS Tool Version [e.g. 2.7.1, 2.8.1, 2.8.1 (Rev.06)]
- - Visual Studio version [e.g. VS2017, VS2019, VS2022]
+ - Visual Studio version [e.g. VS2019, VS2022, VS2026]
 
 **Additional context**
 Add any other context about the problem here.

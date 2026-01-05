@@ -11,6 +11,8 @@ namespace QtVsTools.Core
             "142";
 #elif VS2022
             "143";
+#elif VS2026
+            "145";
 #else
 #error Unknown Visual Studio version!
 #endif

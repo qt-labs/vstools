@@ -9,6 +9,11 @@
     <LangVersion>9.0</LangVersion> <!-- C# 9.0 is supported by both VS2019 and VS2022 -->
   </PropertyGroup>
 
+  <!-- // Visual Studio 2026 -->
+  <PropertyGroup Condition="'$(VisualStudioVersion)'=='18.0'">
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+  </PropertyGroup>
+
   <!-- // Visual Studio 2022 -->
   <PropertyGroup Condition="'$(VisualStudioVersion)'=='17.0'">
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>

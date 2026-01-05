@@ -68,6 +68,11 @@ IF %BREAKLOOP% EXIT /B
 SET EMPTY_LOOP=%FALSE%
 SETLOCAL
 SET VS=%~1
+REM Normalize:
+REM  - 2019 -> 2019
+REM  - 2022 -> 2022
+REM  - 18   -> 2026 (Visual Studio 2026 / Dev18)
+IF "%VS%"=="18" SET VS=2026
 SET VS_PATH=%~2
 SET VS_NAME=%~3
 SET VS_PREVIEW=%~4
@@ -81,7 +86,9 @@ IF %LIST_VERSIONS% (
 )
 
 IF "%VCVARS_ARCH%" == "" (
-    IF "%VS%" == "2022" (
+    IF "%VS%" == "2026" (
+        SET VCVARS_ARCH=x64
+    ) ELSE IF "%VS%" == "2022" (
         SET VCVARS_ARCH=x64
     ) ELSE (
         SET VCVARS_ARCH=x86

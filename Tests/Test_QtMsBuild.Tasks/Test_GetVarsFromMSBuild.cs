@@ -78,6 +78,7 @@ LINK_OPTIONS=/Project/ItemDefinitionGroup/Link/AdditionalOptions;
   <PropertyGroup Condition=""&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;"" Label=""Configuration"">
     <PlatformToolset Condition=""'$(VisualStudioVersion)'=='16.0'"">v142</PlatformToolset>
     <PlatformToolset Condition=""'$(VisualStudioVersion)'=='17.0'"">v143</PlatformToolset>
+    <PlatformToolset Condition=""'$(VisualStudioVersion)'=='18.0'"">v145</PlatformToolset>
     <OutputDirectory>.\</OutputDirectory>
     <ATLMinimizesCRunTimeLibraryUsage>false</ATLMinimizesCRunTimeLibraryUsage>
     <CharacterSet>NotSet</CharacterSet>

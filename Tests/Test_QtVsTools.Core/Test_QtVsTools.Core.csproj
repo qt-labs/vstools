@@ -76,6 +76,12 @@
   // Version specific package references
   // -->
   <Choose>
+    <When Condition="'$(VisualStudioVersion)'=='18.0'">
+      <ItemGroup>
+        <PackageReference Include="Microsoft.ServiceHub.Framework" Version="4.8.55" />
+        <PackageReference Include="Microsoft.VisualStudio.Sdk.TestFramework" Version="17.11.66" />
+      </ItemGroup>
+    </When>
     <When Condition="'$(VisualStudioVersion)'=='17.0'">
       <ItemGroup>
         <PackageReference Include="Microsoft.ServiceHub.Framework" Version="4.8.3" />

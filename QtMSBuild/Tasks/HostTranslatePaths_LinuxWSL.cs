@@ -1,7 +1,7 @@
 // Copyright (C) 2025 The Qt Company Ltd.
 // SPDX-License-Identifier: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
 
-#region Task TaskName="HostTranslatePaths" Condition="('$(VisualStudioVersion)' == '16.0' OR '$(VisualStudioVersion)' == '17.0') AND '$(ApplicationType)' == 'Linux' AND '$(PlatformToolset)' == 'WSL_1_0'"
+#region Task TaskName="HostTranslatePaths" Condition="('$(VisualStudioVersion)' == '16.0' OR '$(VisualStudioVersion)' == '17.0' OR '$(VisualStudioVersion)' == '18.0') AND '$(ApplicationType)' == 'Linux' AND '$(PlatformToolset)' == 'WSL_1_0'"
 
 #region Reference
 //$(VCTargetsPath)\Application Type\Linux\1.0\liblinux.dll
@@ -49,7 +49,7 @@ namespace QtVsTools.QtMsBuild.Tasks
             System.String[] Names = null)
         #endregion
         {
-#if (VS2019 || VS2022)
+#if (VS2019 || VS2022 || VS2026)
             #region Code
             Result = new ITaskItem[] { };
             var newItems = new List<ITaskItem>();

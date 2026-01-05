@@ -36,10 +36,18 @@ IF "%ARG%" == "-init" (
         CALL %SCRIPTLIB%\usage.cmd
         EXIT /B 1
     )
+    REM The ".65535" (0xFFFF) is an intentionally huge upper bound for the trailing
+    REM version component. All realistic Visual Studio build numbers will be
+    REM much lower, so this means: "All versions >= <input> and <= <input>.65535"
     SET VS_VERSIONS=%VS_VERSIONS%,"-version [%2^,%2.65535]"
     SET VS_LATEST="-version [%2^,%2.65535]"
     SHIFT
     SET VS_VERSIONS_DEFAULT=%FALSE%
+) ELSE IF "%ARG%" == "%FLAG_VS2026%" (
+    SET VS_VERSIONS=%VS_VERSIONS%,%VS2026%
+    SET VS_LATEST=%VS2026%
+    SET VS_VERSIONS_DEFAULT=%FALSE%
+    SET FLAG_VS2026=
 ) ELSE IF "%ARG%" == "%FLAG_VS2022%" (
     SET VS_VERSIONS=%VS_VERSIONS%,%VS2022%
     SET VS_LATEST=%VS2022%

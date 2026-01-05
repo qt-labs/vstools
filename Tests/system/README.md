@@ -8,7 +8,7 @@ They will permanently delete the settings you saved. See [QTVSADDINBUG-1088](htt
 ## Prerequisites
 
 - Windows with English or German UI
-- Visual Studio 2019 or Visual Studio 2022 (English language pack)
+- Visual Studio 2019, Visual Studio 2022 or Visual Studio 2026 (English language pack)
 - Visual Studio SDK (Tools for building, testing, and deploying Visual Studio extensions)
 - Squish for Windows
 
@@ -65,6 +65,10 @@ Alternatively, a manual uninstallation is also possible. To remove the extension
 To remove the extension installed into VS 2022, run the following command:
 
     vsixinstaller /RootSuffix:SquishTestInstance /uninstall:QtVsTools.8e827d74-6fc4-40a6-a3aa-faf19652b3b8
+
+To remove the extension installed into VS 2026, run the following command:
+
+    vsixinstaller /RootSuffix:SquishTestInstance /uninstall:QtVsTools.8e827d74-6fc4-40a6-a3aa-faf19552b3b8
 
 #### Resetting the SquishTestInstance
 

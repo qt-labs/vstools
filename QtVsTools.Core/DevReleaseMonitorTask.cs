@@ -101,12 +101,17 @@ namespace QtVsTools.Core
         {
 #if VS2019
     return "2019-x86";
-#elif VS2022
+#elif VS2022 || VS2026
             var manifestPath = Path.Combine(Utils.PackageInstallPath, "extension.vsixmanifest");
             var doc = XDocument.Load(manifestPath);
             var arch = doc.Descendants()
                 .FirstOrDefault(e => e.Name.LocalName == "ProductArchitecture")?.Value;
-            return string.Equals(arch, "arm64", Utils.IgnoreCase) ? "2022-arm64" : "2022-x64";
+            return string.Equals(arch, "arm64", Utils.IgnoreCase)
+# if VS2022
+                ? "2022-arm64" : "2022-x64";
+# elif VS2026
+                ? "2026-arm64" : "2026-x64";
+# endif
 #endif
         });
 

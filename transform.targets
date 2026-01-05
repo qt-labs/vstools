@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Condition="'$(VisualStudioVersion)'=='18.0'"
+    Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v18.0\TextTemplating\Microsoft.TextTemplating.targets" />
   <Import Condition="'$(VisualStudioVersion)'=='17.0'"
     Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v17.0\TextTemplating\Microsoft.TextTemplating.targets" />
   <Import Condition="'$(VisualStudioVersion)'=='16.0'"
@@ -10,13 +12,19 @@
     <AssemblyRef_Microsoft_VisualStudio_Interop
       Condition="'$(AssemblyRef_Microsoft_VisualStudio_Interop)' == ''
         AND (
-          '$(VisualStudioVersion)' != '17.0'
+          '$(VisualStudioVersion)' == '16.0'
         )"
       >System</AssemblyRef_Microsoft_VisualStudio_Interop>
     <AssemblyRef_Microsoft_VisualStudio_Interop
       Condition="'$(AssemblyRef_Microsoft_VisualStudio_Interop)' == ''
         AND (
           '$(VisualStudioVersion)' == '17.0'
+        )"
+      >$(VsInstallRoot)\Common7\IDE\PublicAssemblies\Microsoft.VisualStudio.Interop.dll</AssemblyRef_Microsoft_VisualStudio_Interop>
+    <AssemblyRef_Microsoft_VisualStudio_Interop
+      Condition="'$(AssemblyRef_Microsoft_VisualStudio_Interop)' == ''
+        AND (
+          '$(VisualStudioVersion)' == '18.0'
         )"
       >$(VsInstallRoot)\Common7\IDE\PublicAssemblies\Microsoft.VisualStudio.Interop.dll</AssemblyRef_Microsoft_VisualStudio_Interop>
     <AssemblyRef_EnvDTE
@@ -71,5 +79,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(VisualStudioVersion)' == '17.0'">
     <DefineConstants>$(DefineConstants);VS2022</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(VisualStudioVersion)' == '18.0'">
+    <DefineConstants>$(DefineConstants);VS2026</DefineConstants>
   </PropertyGroup>
 </Project>

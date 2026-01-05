@@ -34,6 +34,14 @@
 <p>
     See also:
     <ul>
+        <#if (VS_NAME !="2026" ) {#>
+            <li>
+                <a title="Qt VS Tools for Visual Studio 2026"
+href="https://marketplace.visualstudio.com/items?itemName=TheQtCompany.QtVisualStudioTools2026">
+                    Qt VS Tools for Visual Studio 2026
+                </a>
+            </li>
+        <#}#>
         <#if (VS_NAME !="2022" ) {#>
             <li>
                 <a title="Qt VS Tools for Visual Studio 2022"

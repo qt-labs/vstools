@@ -110,7 +110,7 @@
   // Version specific package references
   // -->
   <Choose>
-    <When Condition="'$(VisualStudioVersion)'=='17.0'">
+    <When Condition="'$(VisualStudioVersion)'=='17.0' OR '$(VisualStudioVersion)'=='18.0'">
       <ItemGroup>
         <PackageReference Include="$(Name_Community_VisualStudio_SourceGenerators)" Version="$(Version_Community_VisualStudio_SourceGenerators)">
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

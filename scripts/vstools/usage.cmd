@@ -15,6 +15,7 @@ ECHO.
 %##########################%
 %##%
 %##% == 'VS Versions' can be one or more of the following:
+%##%  -vs2026 ................ Select the latest version of Visual Studio 2026
 %##%  -vs2022 ................ Select the latest version of Visual Studio 2022
 %##%  -vs2019 ................ Select the latest version of Visual Studio 2019
 %##%  -version ^<X^>.^<Y^> ....... Select version X.Y of Visual Studio

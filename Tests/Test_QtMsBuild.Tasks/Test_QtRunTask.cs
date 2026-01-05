@@ -33,7 +33,9 @@ namespace QtVsTools.Test.QtMsBuild.Tasks
 
             string vsPath = Path.GetDirectoryName(Path.GetDirectoryName(path));
             string vcTargetsPath = Path.Combine(vsPath, "MSBuild", "Microsoft", "VC");
-            if (Directory.Exists(Path.Combine(vcTargetsPath, "v170")))
+            if (Directory.Exists(Path.Combine(vcTargetsPath, "v180")))
+                vcTargetsPath = Path.Combine(vcTargetsPath, "v180");
+            else if (Directory.Exists(Path.Combine(vcTargetsPath, "v170")))
                 vcTargetsPath = Path.Combine(vcTargetsPath, "v170");
             else if (Directory.Exists(Path.Combine(vcTargetsPath, "v160")))
                 vcTargetsPath = Path.Combine(vcTargetsPath, "v160");

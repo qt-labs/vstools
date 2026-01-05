@@ -4,7 +4,7 @@
 This project requires an x86 static build of Qt that includes at least qtbase and qtdeclarative.
 
 By default, it will look for the Qt build three levels higher in the file system hierarchy, in
-"build\qt5-x86-<VS Version>-static", where <VS Version> is either "vs2019" or "vs2022".
+"build\qt5-x86-<VS Version>-static", where <VS Version> is "vs2019", "vs2022" or "vs2026".
 
 For example, when building in Visual Studio 2019, if the Qt VS Tools solution is located in
 X:\dev\vstools (and therefore vsqml is located in X:\dev\vstools\src\vsqml), the project will look
@@ -14,6 +14,7 @@ It is also possible to override the default Qt build location by setting the fol
 variables:
     QTBUILD_STATIC_VS2019 = <path to x86 static build of Qt for Visual Studio 2019>
     QTBUILD_STATIC_VS2022 = <path to x64 static build of Qt for Visual Studio 2022>
+    QTBUILD_STATIC_VS2026 = <path to x64 static build of Qt for Visual Studio 2026>
 
 The following configure options can be used to obtain an optimized build configuration:
 
