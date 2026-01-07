@@ -167,7 +167,7 @@ namespace QtVsTools.Package.QML.Language
 
         private async Task NotifyDidChangeConfigurationAsync()
         {
-            if (JsonRpc == null)
+            if (JsonRpc == null || JsonRpc.IsDisposed)
                 return;
 
             await JsonRpc.NotifyWithParameterObjectAsync(DidChangeConfiguration,
@@ -181,7 +181,7 @@ namespace QtVsTools.Package.QML.Language
         internal async Task NotifyDidChangeWorkspaceFoldersParamsAsync(WorkspaceFolder[] added,
             WorkspaceFolder[] removed)
         {
-            if (JsonRpc == null)
+            if (JsonRpc == null || JsonRpc.IsDisposed)
                 return;
 
             await JsonRpc.NotifyWithParameterObjectAsync(DidChangeWorkspaceFolders,

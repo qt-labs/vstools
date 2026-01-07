@@ -167,7 +167,7 @@ namespace QtVsTools.Package.QML.Language
         {
             // Check if the project's Qt version is supported by the latest QML Language Server.
             var projectsQtVersion = await GetProjectQtVersionAsync();
-            if (projectsQtVersion >= System.Version.Parse("6.5.0"))
+            if (projectsQtVersion == null || projectsQtVersion >= System.Version.Parse("6.5.0"))
                 return QmlLanguageServerManager.QmlLanguageServerExePath;
 
             Messages.Print("Qt version not supported by the latest QML Language Server.");
