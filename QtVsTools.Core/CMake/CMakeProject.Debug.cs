@@ -44,7 +44,8 @@ namespace QtVsTools.Core.CMake
             }
             launchConfigs.Skip(1).ToList().ForEach(x => x.Remove());
             try {
-                File.WriteAllText(launchVsJsonPath, launchVs.ToString(Formatting.Indented));
+                File.WriteAllText(launchVsJsonPath, launchVs.ToString(Formatting.Indented,
+                    Array.Empty<JsonConverter>()));
             } catch (Exception e) {
                 e.Log();
             }

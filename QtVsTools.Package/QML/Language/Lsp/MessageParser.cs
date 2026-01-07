@@ -56,7 +56,8 @@ namespace QtVsTools.Package.QML.Language.Lsp
 
         public static StreamData Serialize(JObject message)
         {
-            var json = message.ToString(Newtonsoft.Json.Formatting.None);
+            var json = message.ToString(Newtonsoft.Json.Formatting.None,
+                Array.Empty<Newtonsoft.Json.JsonConverter>());
             var jsonBytes = Encoding.UTF8.GetBytes(json);
 
             // Build the header

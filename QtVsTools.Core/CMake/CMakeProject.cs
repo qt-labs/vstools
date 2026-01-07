@@ -128,7 +128,8 @@ namespace QtVsTools.Core.CMake
         };
 
         private static JObject NullPresets { get; } = new() { ["version"] = 3 };
-        private static string NullPresetsText { get; } = NullPresets.ToString(Formatting.Indented);
+        private static string NullPresetsText { get; } = NullPresets.ToString(Formatting.Indented,
+            Array.Empty<JsonConverter>());
 
         private JObject Presets { get; set; }
         private JObject UserPresets { get; set; }

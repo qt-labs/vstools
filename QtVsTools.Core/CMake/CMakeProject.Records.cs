@@ -1,6 +1,7 @@
 // Copyright (C) 2025 The Qt Company Ltd.
 // SPDX-License-Identifier: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
@@ -39,8 +40,8 @@ namespace QtVsTools.Core.CMake
             if (RecordInfo(record)?.Value is not JObject info)
                 return string.Empty;
             info.Remove("checksum");
-            var json = record.ToString(Formatting.Indented);
-            var jsonUtf8 = Encoding.UTF8.GetBytes(json);
+            var json = record?.ToString(Formatting.Indented, Array.Empty<JsonConverter>());
+            var jsonUtf8 = Encoding.UTF8.GetBytes(json ?? string.Empty);
             using var sha1 = SHA1.Create();
             var sha1Data = sha1.ComputeHash(jsonUtf8);
             return System.Convert.ToBase64String(sha1Data);

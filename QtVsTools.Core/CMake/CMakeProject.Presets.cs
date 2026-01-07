@@ -102,9 +102,7 @@ namespace QtVsTools.Core.CMake
 
         private static IEnumerable<string> PresetInherits(JToken presetToken)
         {
-            if (presetToken is not JObject preset)
-                return Array.Empty<string>();
-            if (preset["inherits"] is not { } inherits)
+            if (presetToken is not JObject preset || preset["inherits"] is not { } inherits)
                 return Array.Empty<string>();
             return inherits switch
             {
@@ -196,15 +194,19 @@ namespace QtVsTools.Core.CMake
             var versionNames = QtVersionManager.GetVersions().Prepend("Qt-Default").ToHashSet();
 
             // All visible presets must have a reference to a Qt version
-            bool isQtVersion(JToken presetName) => versionNames.Contains(presetName.ToString());
-            var presetsMissingQtRef = visiblePresets.Where(preset => !preset.ContainsKey("inherits")
-                || (preset["inherits"] is JArray inherits && !inherits.Any(isQtVersion))
-                || (preset["inherits"] is JValue presetName && !isQtVersion(presetName)));
+            bool IsQtVersion(JToken presetName) => versionNames.Contains(presetName.ToString());
+
+            var presetsMissingQtRef = visiblePresets
+                .Where(preset => !preset.ContainsKey("inherits")
+                    || (preset["inherits"] is JArray inherits && !inherits.Any(IsQtVersion))
+                    || (preset["inherits"] is JValue presetName && !IsQtVersion(presetName)));
             foreach (var preset in presetsMissingQtRef) {
                 if (!preset.ContainsKey("inherits"))
                     preset["inherits"] = new JArray();
-                else if (preset["inherits"] is not JArray)
-                    preset["inherits"] = new JArray { (string)preset["inherits"] };
+                else if (preset["inherits"] is not JArray) {
+                    var inherits = (string)preset["inherits"];
+                    preset["inherits"] = inherits == null ? new JArray() : new JArray {inherits};
+                }
                 (preset["inherits"] as JArray)?.Add("Qt-Default");
             }
         }

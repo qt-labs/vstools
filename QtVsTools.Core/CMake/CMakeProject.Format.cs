@@ -124,8 +124,10 @@ namespace QtVsTools.Core.CMake
                 record.Info.Value["checksum"] = newChecksum;
             }
             if (isDirty) {
-                File.WriteAllText(PresetsPath, Presets.ToString(Formatting.Indented));
-                File.WriteAllText(UserPresetsPath, UserPresets.ToString(Formatting.Indented));
+                File.WriteAllText(PresetsPath, Presets.ToString(Formatting.Indented,
+                    Array.Empty<JsonConverter>()));
+                File.WriteAllText(UserPresetsPath, UserPresets.ToString(Formatting.Indented,
+                    Array.Empty<JsonConverter>()));
             }
             return isDirty;
         }

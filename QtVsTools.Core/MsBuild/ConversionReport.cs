@@ -309,7 +309,8 @@ namespace QtVsTools.Core.MsBuild
                     ["after"] = file.After.ToZipBase64()
                 };
             }
-            return metadata.ToString(JsonFormatting.Indented);
+            return metadata.ToString(JsonFormatting.Indented,
+                Array.Empty<Newtonsoft.Json.JsonConverter>());
         }
     }
 }
