@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -164,11 +165,16 @@ namespace QtVsTools.VisualStudio
 
             using (var key = Registry.CurrentUser.OpenSubKey(Resources.SettingsRegistryPath)) {
                 var value = key?.GetValue(OnExitIdleTime);
-                if (!DateTime.TryParse(value?.ToString(), out var time))
+                // Prefer UTC round-trip format, fall back to legacy local formatting
+                if (!DateTime.TryParse(value?.ToString(), CultureInfo.InvariantCulture,
+                    DateTimeStyles.RoundtripKind, out var time)
+                    && !DateTime.TryParse(value?.ToString(), out time)) {
                     time = DateTime.MinValue;
+                }
 
                 // If no valid DateTime was read or if more than 24 hours have passed, swap lists
-                if (time == DateTime.MinValue || (DateTime.Now - time).TotalHours >= 24) {
+                if (time == DateTime.MinValue
+                    || (DateTime.UtcNow - time.ToUniversalTime()).TotalHours >= 24) {
                     lock (criticalSection) {
                         activeIdleTasks.AddRange(processedIdleTasks);
                         processedIdleTasks.Clear();
@@ -176,8 +182,10 @@ namespace QtVsTools.VisualStudio
                 }
             }
 
-            if (!activeIdleTasks.Any())
-                return;
+            lock (criticalSection) {
+                if (!activeIdleTasks.Any())
+                    return;
+            }
 
             if (currentIdleTasksRunnerCancellationTokenSource?.IsCancellationRequested == false)
                 return;
@@ -205,10 +213,6 @@ namespace QtVsTools.VisualStudio
         {
             currentIdleTaskCancellationTokenSource?.Cancel();
             currentIdleTasksRunnerCancellationTokenSource?.Cancel();
-
-            using var registry = Registry.CurrentUser.OpenSubKey(Resources.SettingsRegistryPath,
-                writable: true);
-            registry?.SetValue(OnExitIdleTime, DateTime.Now);
         }
 
         /// <summary>
@@ -236,18 +240,24 @@ namespace QtVsTools.VisualStudio
         private async Tasks.Task ExecuteIdleTasksAsync()
         {
             await Tasks.TaskScheduler.Default;
+
+            DateTime? lastCompletionUtc = null;
             while (true) {
                 if (currentIdleTasksRunnerCancellationTokenSource?.IsCancellationRequested ?? true)
                     break;
                 try {
+                    IIdleTask taskToRun;
                     lock (criticalSection) {
                         if (!activeIdleTasks.Any())
-                            return;
-                        currentIdleTask = activeIdleTasks[0];
+                            break;
+                        // Capture under lock to avoid a null race if Remove clears currentIdleTask
+                        taskToRun = currentIdleTask = activeIdleTasks[0];
                         currentIdleTaskCancellationTokenSource?.Dispose();
                         currentIdleTaskCancellationTokenSource = new CancellationTokenSource();
                     }
-                    await currentIdleTask.RunAsync(currentIdleTaskCancellationTokenSource.Token);
+
+                    await taskToRun.RunAsync(currentIdleTaskCancellationTokenSource.Token);
+
                     lock (criticalSection) {
                         if (currentIdleTask == null)
                             continue; // can happen if the task was removed
@@ -256,12 +266,28 @@ namespace QtVsTools.VisualStudio
                         processedIdleTasks.Add(currentIdleTask);
                         activeIdleTasks.Remove(currentIdleTask);
                     }
+                    // Record completion time for the last successfully processed task
+                    lastCompletionUtc = DateTime.UtcNow;
                 } catch (OperationCanceledException) {
                     // Idle processing preempted for this task
                 } catch (Exception exception) {
                     exception.Log();
                 }
             }
+
+            // Persist last run time only if at least one task completed
+            if (lastCompletionUtc.HasValue)
+                SaveLastIdleRunUtc(lastCompletionUtc.Value);
+        }
+
+        /// <summary>
+        /// Persists the most recent idle task completion timestamp in UTC.
+        /// </summary>
+        private static void SaveLastIdleRunUtc(DateTime utcTime)
+        {
+            using var registry = Registry.CurrentUser.OpenSubKey(Resources.SettingsRegistryPath,
+                writable: true) ?? Registry.CurrentUser.CreateSubKey(Resources.SettingsRegistryPath);
+            registry?.SetValue(OnExitIdleTime, utcTime.ToString("o", CultureInfo.InvariantCulture));
         }
     }
 }
