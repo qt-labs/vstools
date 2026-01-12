@@ -1,4 +1,4 @@
-// Copyright (C) 2025 The Qt Company Ltd.
+// Copyright (C) 2026 The Qt Company Ltd.
 // SPDX-License-Identifier: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
 
 using System;
@@ -18,20 +18,20 @@ namespace QtVsTools.Core
     {
         public string QtDir { get; }
 
-        public string Namespace { get; }
-        public Platform Platform { get; }
+        public string Namespace { get; private set; }
+        public Platform Platform { get; private set; }
 
         public uint Major { get; private set; }
         public uint Minor { get; private set; }
         public uint Patch { get; private set; }
 
-        public bool IsWinRt { get; }
-        public string LibExecs { get; }
-        public string InstallPrefix { get; }
-        public string QtInstallDocs { get; }
+        public bool IsWinRt { get; private set; }
+        public string LibExecs { get; private set; }
+        public string InstallPrefix { get; private set; }
+        public string QtInstallDocs { get; private set; }
 
-        public string VsPlatformName { get; }
-        public string QMakeSpecDirectory { get; }
+        public string VsPlatformName { get; private set; }
+        public string QMakeSpecDirectory { get; private set; }
 
         /// <summary>
         /// Retrieves the value of a variable from the qmake.conf file.
@@ -149,50 +149,75 @@ namespace QtVsTools.Core
 
         private VersionInformation(string qtDir)
         {
-            QtDir = qtDir;
+            QtDir = null;
             try {
-                var qtConfig = new QtConfig(qtDir);
-                Platform = qtConfig.Platform;
-                Namespace = qtConfig.Namespace;
-                VsPlatformName = Platform switch
-                {
-                    Platform.x86 => "Win32",
-                    Platform.x64 => "x64",
-                    Platform.arm64 => "ARM64",
-                    _ => null
-                };
-
-                var query = QtBuildToolQuery.Get(qtDir);
-                var success = SetVersionComponents(query["QT_VERSION"]);
-                if (!success && !SetVersionComponents(qtConfig.VersionString)) {
-                    QtDir = null;
+                if (TryInitialize(qtDir) is not { } localConf)
                     return;
-                }
-                LibExecs = query["QT_INSTALL_LIBEXECS"];
-                QtInstallDocs = query["QT_INSTALL_DOCS"];
-                InstallPrefix = query["QT_INSTALL_PREFIX"];
-                IsWinRt = query["QMAKE_XSPEC"].StartsWith("winrt");
-
-                qmakeConf = new QMakeConf(query);
-                QMakeSpecDirectory = qmakeConf?.QMakeSpecDirectory;
+                QtDir = qtDir;
+                qmakeConf = localConf;
             } catch (Exception exception) {
                 exception.Log();
-                QtDir = null;
             }
         }
 
-        private bool SetVersionComponents(string version)
+        /// <summary>
+        /// Initializes version information from the Qt installation.
+        /// </summary>
+        private QMakeConf TryInitialize(string qtDir)
         {
-            if (string.IsNullOrEmpty(version))
-                return false;
-            var versionParts = version.Split('.');
-            if (versionParts.Length != 3)
-                return false;
+            var qtConfig = new QtConfig(qtDir);
+            if (!QtQueryInfo.TryCreate(qtDir, out var queryInfo))
+                return null;
 
-            Major = uint.Parse(versionParts[0]);
-            Minor = uint.Parse(versionParts[1]);
-            Patch = uint.Parse(versionParts[2]);
+            if (!TryParseVersion(queryInfo.QtVersion, out var parsedVersion)) {
+                if (!TryParseVersion(qtConfig.VersionString, out parsedVersion))
+                    return null;
+            }
 
+            var qmakeXSpec = queryInfo.QMakeXSpec;
+            var qmakeConfLocal = new QMakeConf(queryInfo);
+
+            // Reject non-MSVC generators for Windows mkspecs to fail closed.
+            if (qmakeXSpec.StartsWith("win", StringComparison.OrdinalIgnoreCase)) {
+                var generator = qmakeConfLocal["MAKEFILE_GENERATOR"];
+                if (generator is not ("MSVC.NET" or "MSBUILD"))
+                    return null;
+            }
+
+            Namespace = qtConfig.Namespace;
+            Platform = qtConfig.Platform;
+            VsPlatformName = Platform switch
+            {
+                Platform.x86 => "Win32",
+                Platform.x64 => "x64",
+                Platform.arm64 => "ARM64",
+                _ => null
+            };
+
+            Major = (uint)parsedVersion.Major;
+            Minor = (uint)parsedVersion.Minor;
+            Patch = (uint)parsedVersion.Build;
+
+            LibExecs = queryInfo.LibExecs;
+            QtInstallDocs = queryInfo.InstallDocs;
+            InstallPrefix = queryInfo.InstallPrefix;
+            IsWinRt = qmakeXSpec.StartsWith("winrt", StringComparison.OrdinalIgnoreCase);
+            QMakeSpecDirectory = qmakeConfLocal.QMakeSpecDirectory;
+
+            return qmakeConfLocal;
+        }
+
+        /// <summary>
+        /// Parses a strict three-part Qt version string (Major.Minor.Build).
+        /// </summary>
+        private static bool TryParseVersion(string version, out System.Version parsed)
+        {
+            parsed = null;
+            if (!System.Version.TryParse(version, out var result))
+                return false;
+            if (result.Build < 0 || result.Revision >= 0)
+                return false;
+            parsed = result;
             return true;
         }
     }
