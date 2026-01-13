@@ -91,12 +91,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		vstools.runsettings = vstools.runsettings
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "vsconfig", "vsconfig", "{3C98AF4A-719F-4CCC-A089-59CAA7D2546A}"
-	ProjectSection(SolutionItems) = preProject
-		vsconfig\2019.vsconfig = vsconfig\2019.vsconfig
-		vsconfig\2022.vsconfig = vsconfig\2022.vsconfig
-	EndProjectSection
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{4C13509A-C229-41AD-BCF0-86A8370F4B2F}"
 	ProjectSection(SolutionItems) = preProject
 		vstools.bat = vstools.bat

@@ -103,12 +103,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test_QtMsBuild.Tasks", "Tes
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test_QtVsTools.Core", "Tests\Test_QtVsTools.Core\Test_QtVsTools.Core.csproj", "{4B8FC08C-4901-45D4-BC00-C0C461292FF2}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "vsconfig", "vsconfig", "{3C98AF4A-719F-4CCC-A089-59CAA7D2546A}"
-	ProjectSection(SolutionItems) = preProject
-		vsconfig\2019.vsconfig = vsconfig\2019.vsconfig
-		vsconfig\2022.vsconfig = vsconfig\2022.vsconfig
-	EndProjectSection
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{4C13509A-C229-41AD-BCF0-86A8370F4B2F}"
 	ProjectSection(SolutionItems) = preProject
 		vstools.bat = vstools.bat

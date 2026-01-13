@@ -68,7 +68,7 @@ After cloning the repository, follow the instructions below to build the Qt Visu
 
 The following is required in order to build the Qt Visual Studio solution:
 
-- Visual Studio 2019 or 2022/2026, with the following workloads (a .vsconfig file per VS version can be found in the source tree):
+- Visual Studio 2019 or 2022/2026, with the following workloads:
     - Desktop development with C++
     - .NET desktop development
     - [Visual Studio extension development](https://docs.microsoft.com/en-us/visualstudio/extensibility/installing-the-visual-studio-sdk)
