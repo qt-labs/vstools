@@ -16,6 +16,7 @@ namespace QtVsTools.Core.Options
         public enum Notifications
         {
             [String("Notifications_AutoActivatePane")] AutoActivatePane,
+            [String("Notifications_ShowExceptionsInOutputPane")] ShowExceptionsInOutputPane,
             [String("Notifications_Installed")] Installed,
             [String("Notifications_UpdateQtInstallation")] UpdateQtInstallation,
             [String("Notifications_UpdateProjectFormat")] UpdateProjectFormat,
@@ -43,6 +44,24 @@ namespace QtVsTools.Core.Options
         [Settings(Notifications.AutoActivatePane, true)]
         public static bool AutoActivatePane
             => QtOptionsPageSettings.Instance.GetValue(() => AutoActivatePane);
+
+        [Category("Notifications")]
+        [DisplayName("Show exception details in output pane")]
+        [Description("Write exceptions to the Qt VS Tools output pane. When disabled, "
+            + @"exceptions are written to %TEMP%\QtVsTools\QtVsTools.Exceptions.log.")]
+        [TypeConverter(typeof(EnableDisableConverter))]
+        public bool ShowExceptionsInOutputPaneOption
+        {
+            get => ShowExceptionsInOutputPane;
+            set => ShowExceptionsInOutputPane = value;
+        }
+
+        [Settings(Notifications.ShowExceptionsInOutputPane, false)]
+        public static bool ShowExceptionsInOutputPane
+        {
+            get => QtOptionsPageSettings.Instance.GetValue(() => ShowExceptionsInOutputPane);
+            set => QtOptionsPageSettings.Instance.SetValue(() => ShowExceptionsInOutputPane, value);
+        }
 
         [Category("Notifications")]
         [DisplayName("New version installed")]

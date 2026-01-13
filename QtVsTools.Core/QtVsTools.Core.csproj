@@ -207,6 +207,7 @@
     </Compile>
     <Compile Include="MsBuild\MsBuildProjectFormat.cs" />
     <Compile Include="HelperFunctions.cs" />
+    <Compile Include="Messages.ExceptionLog.cs" />
     <Compile Include="Messages.cs" />
     <Compile Include="MsBuild\MsBuildProjectReaderWriter.cs" />
     <Compile Include="OutputWindowPane.cs" />

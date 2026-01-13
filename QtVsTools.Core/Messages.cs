@@ -17,7 +17,7 @@ namespace QtVsTools.Core
     using Options;
     using VisualStudio;
 
-    public static class Messages
+    public static partial class Messages
     {
         public static bool Initialized { get; set; } = false;
 
@@ -41,17 +41,6 @@ namespace QtVsTools.Core
             FlushMessages();
         }
 
-        public static void Log(this Exception exception, bool clear = false, bool activate = false)
-        {
-            MsgQueue.Enqueue(new Msg
-            {
-                Clear = clear,
-                Text = ExceptionToString(exception),
-                Activate = activate
-            });
-            FlushMessages();
-        }
-
         /// <summary>
         /// Activates the message pane of the Qt VS Tools extension.
         /// </summary>
@@ -68,13 +57,6 @@ namespace QtVsTools.Core
         {
             await OutputWindowPane_InitAsync();
             await Pane.ActivateAsync();
-        }
-
-        private static string ExceptionToString(Exception exception)
-        {
-            return $"An exception ({exception.GetType().Name}) occurred.\r\n"
-                   + $"Message:\r\n   {exception.Message}\r\n"
-                   + $"Stack Trace:\r\n   {exception.StackTrace.Trim()}\r\n";
         }
 
         private const string ErrorString = "The following error occurred:";
