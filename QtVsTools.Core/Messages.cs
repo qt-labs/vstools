@@ -1,4 +1,4 @@
-// Copyright (C) 2025 The Qt Company Ltd.
+// Copyright (C) 2026 The Qt Company Ltd.
 // SPDX-License-Identifier: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
 
 using System;
@@ -32,7 +32,7 @@ namespace QtVsTools.Core
         public static void Print(string text,
             bool clear = false, bool activate = false, bool trim = true)
         {
-            msgQueue.Enqueue(new Msg
+            MsgQueue.Enqueue(new Msg
             {
                 Clear = clear,
                 Text = trim ? text.Trim(' ', '\t', '\r', '\n') : text,
@@ -43,7 +43,7 @@ namespace QtVsTools.Core
 
         public static void Log(this Exception exception, bool clear = false, bool activate = false)
         {
-            msgQueue.Enqueue(new Msg
+            MsgQueue.Enqueue(new Msg
             {
                 Clear = clear,
                 Text = ExceptionToString(exception),
@@ -57,17 +57,17 @@ namespace QtVsTools.Core
         /// </summary>
         public static void ActivateMessagePane()
         {
-            msgQueue.Enqueue(new Msg
+            MsgQueue.Enqueue(new Msg
             {
                 Activate = true
             });
             FlushMessages();
         }
 
-        static async Task OutputWindowPane_ActivateAsync()
+        private static async Task OutputWindowPane_ActivateAsync()
         {
             await OutputWindowPane_InitAsync();
-            await Pane?.ActivateAsync();
+            await Pane.ActivateAsync();
         }
 
         private static string ExceptionToString(Exception exception)
@@ -116,27 +116,27 @@ namespace QtVsTools.Core
 
         public static void ClearPane()
         {
-            msgQueue.Enqueue(new Msg
+            MsgQueue.Enqueue(new Msg
             {
                 Clear = true
             });
             FlushMessages();
         }
 
-        static async Task OutputWindowPane_ClearAsync()
+        private static async Task OutputWindowPane_ClearAsync()
         {
             await OutputWindowPane_InitAsync();
-            await Pane?.ClearAsync();
+            await Pane.ClearAsync();
         }
 
-        class Msg
+        private class Msg
         {
             public bool Clear { get; set; }
             public string Text { get; set; }
             public bool Activate { get; set; }
         }
 
-        static readonly ConcurrentQueue<Msg> msgQueue = new();
+        private static readonly ConcurrentQueue<Msg> MsgQueue = new();
 
         private static async Task OutputWindowPane_InitAsync()
         {
@@ -149,13 +149,13 @@ namespace QtVsTools.Core
 
         public static JoinableTaskFactory JoinableTaskFactory { get; set; }
 
-        static readonly object staticCriticalSection = new();
-        static Task FlushTask { get; set; }
-        static EventWaitHandle MessageReady { get; set; }
+        private static readonly object StaticCriticalSection = new();
+        private static Task FlushTask { get; set; }
+        private static EventWaitHandle MessageReady { get; set; }
 
-        static void FlushMessages()
+        private static void FlushMessages()
         {
-            lock (staticCriticalSection) {
+            lock (StaticCriticalSection) {
                 if (FlushTask == null) {
                     MessageReady = new EventWaitHandle(false, EventResetMode.AutoReset);
                     FlushTask = Task.Run(async () =>
@@ -166,11 +166,11 @@ namespace QtVsTools.Core
                             await Task.Delay(Initialized ? 100 : 1000);
                             if (!await MessageReady.ToTask(3000))
                                 continue;
-                            bool clear = false;
-                            bool activate = false;
+                            var clear = false;
+                            var activate = false;
                             var msgText = new StringBuilder();
-                            while (!msgQueue.IsEmpty) {
-                                if (!msgQueue.TryDequeue(out var msg)) {
+                            while (!MsgQueue.IsEmpty) {
+                                if (!MsgQueue.TryDequeue(out var msg)) {
                                     await Task.Yield();
                                     continue;
                                 }
@@ -194,7 +194,7 @@ namespace QtVsTools.Core
             MessageReady.Set();
         }
 
-        static async Task OutputWindowPane_PrintAsync(string text)
+        private static async Task OutputWindowPane_PrintAsync(string text)
         {
             await OutputWindowPane_InitAsync();
             await Pane.PrintAsync(text);
