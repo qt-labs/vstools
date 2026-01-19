@@ -35,10 +35,17 @@ namespace QtVsTools.Core.Common
             return "x86";
 #elif VS2022 || VS2026
             var manifestPath = Path.Combine(PackageInstallPath, "extension.vsixmanifest");
-            var doc = XDocument.Load(manifestPath);
-            var arch = doc.Descendants()
-                .FirstOrDefault(e => e.Name.LocalName == "ProductArchitecture")?.Value;
-            return string.Equals(arch, "arm64", IgnoreCase) ? "arm64" : "x64";
+            if (!File.Exists(manifestPath))
+                return "x64";
+            try {
+                var doc = XDocument.Load(manifestPath);
+                var arch = doc.Descendants()
+                    .FirstOrDefault(e => e.Name.LocalName == "ProductArchitecture")?.Value;
+                return string.Equals(arch, "arm64", IgnoreCase) ? "arm64" : "x64";
+            } catch (Exception exception) {
+                System.Diagnostics.Debug.WriteLine(exception);
+                return "x64";
+            }
 #endif
         });
 

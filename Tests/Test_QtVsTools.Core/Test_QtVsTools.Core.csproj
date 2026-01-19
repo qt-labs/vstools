@@ -83,15 +83,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="extension.vsixmanifest_TT">
-      <DependsOn>$(SolutionDir)\common.tt</DependsOn>
+    <T4Template Include="extension.vsixmanifest_TT">
       <Generator>TextTemplatingFileGenerator</Generator>
+      <OutputFile>extension.vsixmanifest</OutputFile>
+      <DependsOn>$(SolutionDir)\version.tt;$(SolutionDir)\common.tt</DependsOn>
       <LastGenOutput>extension.vsixmanifest</LastGenOutput>
-    </None>
-
-    <None Include="extension.vsixmanifest" Condition="Exists('extension.vsixmanifest')">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    </T4Template>
   </ItemGroup>
 
   <Import Project="$(SolutionDir)\references.props" Condition="Exists('$(SolutionDir)\references.props')" />
