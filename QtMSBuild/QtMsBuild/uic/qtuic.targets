@@ -428,6 +428,9 @@
       </QtWork>
     </ItemGroup>
 
+    <Message Importance="High" Condition="'$(QtDebug)' == 'true' AND '@(QtWork)' != ''"
+      Text="## QtUic Command: @(QtWork->'%(ToolPath) %(Options)')" />
+
     <!--
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // Clean-up
