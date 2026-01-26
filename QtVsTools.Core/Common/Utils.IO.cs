@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -142,6 +143,91 @@ namespace QtVsTools.Core.Common
         {
             using var writer = File.CreateText(filePath);
             await writer.WriteAsync(text);
+        }
+
+        /// <summary>
+        /// Snapshot of a directory's files and subdirectories at a point in time. Used to detect
+        /// and clean up new entries created by a tool run.
+        /// </summary>
+        public sealed class DirectorySnapshot
+        {
+            public string Root { get; }
+            public bool Recursive { get; }
+            public HashSet<string> Files { get; } = new(CaseIgnorer);
+            public HashSet<string> Dirs { get; } = new(CaseIgnorer);
+
+            public DirectorySnapshot(string root, bool recursive)
+            {
+                Root = root ?? "";
+                Recursive = recursive;
+            }
+        }
+
+        /// <summary>
+        /// Creates a snapshot of the current files and directories in <paramref name="dir"/>.
+        /// </summary>
+        public static DirectorySnapshot TakeSnapshot(string dir, bool recursive = false)
+        {
+            var snapshot = new DirectorySnapshot(Path.GetFullPath(dir ?? ""), recursive);
+            if (string.IsNullOrEmpty(dir) || !Directory.Exists(dir))
+                return snapshot;
+
+            var searchOption = recursive
+                ? SearchOption.AllDirectories
+                : SearchOption.TopDirectoryOnly;
+
+            foreach (var file in Directory.EnumerateFiles(dir, "*", searchOption))
+                snapshot.Files.Add(Path.GetFullPath(file));
+            foreach (var subDir in Directory.EnumerateDirectories(dir, "*", searchOption))
+                snapshot.Dirs.Add(Path.GetFullPath(subDir));
+
+            return snapshot;
+        }
+
+        /// <summary>
+        /// Deletes files and directories created after <paramref name="snapshot"/> was taken.
+        /// Cleanup is best-effort; missing paths or IO errors are ignored.
+        /// </summary>
+        public static void CleanupNewEntries(string directory, DirectorySnapshot snapshot,
+            ISet<string> keepFiles = null, ISet<string> keepDirs = null,
+            Option deleteOption = Option.Recursive)
+        {
+            if (snapshot == null || string.IsNullOrEmpty(directory) || !Directory.Exists(directory))
+                return;
+
+            var keepFilesFull = new HashSet<string>(CaseIgnorer);
+            if (keepFiles != null) {
+                foreach (var file in keepFiles.Where(x => !string.IsNullOrEmpty(x)))
+                    keepFilesFull.Add(Path.GetFullPath(file));
+            }
+
+            var keepDirsFull = new HashSet<string>(CaseIgnorer);
+            if (keepDirs != null) {
+                foreach (var dir in keepDirs.Where(x => !string.IsNullOrEmpty(x)))
+                    keepDirsFull.Add(Path.GetFullPath(dir));
+            }
+
+            var searchOption = snapshot.Recursive
+                ? SearchOption.AllDirectories
+                : SearchOption.TopDirectoryOnly;
+
+            foreach (var file in Directory.EnumerateFiles(directory, "*", searchOption)) {
+                var fullPath = Path.GetFullPath(file);
+                if (snapshot.Files.Contains(fullPath) || keepFilesFull.Contains(fullPath))
+                    continue;
+                DeleteFile(fullPath);
+            }
+
+            var dirs = Directory.EnumerateDirectories(directory, "*", searchOption)
+                .Select(Path.GetFullPath);
+            if (snapshot.Recursive)
+                dirs = dirs.OrderByDescending(x => x.Length);
+
+            foreach (var dir in dirs) {
+                if (snapshot.Dirs.Contains(dir) || keepDirsFull.Contains(dir))
+                    continue;
+                DeleteDirectory(dir, deleteOption);
+            }
         }
 
         /// <summary>

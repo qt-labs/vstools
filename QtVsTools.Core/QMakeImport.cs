@@ -176,6 +176,11 @@ namespace QtVsTools.Core
             bool recursiveRun = false, bool disableWarnings = false)
         {
             versionInfo ??= VersionInformation.GetOrAddByName(QtVersionManager.GetDefaultVersion());
+
+            // Take a snapshot for non-recursive runs; recursive runs generate multiple projects.
+            var proDir = Path.GetDirectoryName(proFilePath);
+            var snapshot = recursiveRun ? null : TakeSnapshot(proDir);
+
             var qmake = new QMakeProcess(versionInfo) {
                 ProFile = proFilePath,
                 TemplatePrefix = "vc",
@@ -189,7 +194,28 @@ namespace QtVsTools.Core
                     {"QMAKE_QMAKE", @"$(QTDIR)\bin\qmake.exe"}
                 }
             };
-            return qmake.Run();
+            var exitCode = qmake.Run();
+            if (exitCode != 0 || snapshot == null)
+                return exitCode;
+
+            // Keep the generated .vcxproj/.vcxproj.filters and .vcxproj.user file.
+            var projectPath = Path.GetFullPath(Path.ChangeExtension(proFilePath, ".vcxproj"));
+            var keepFiles = new HashSet<string>(CaseIgnorer) {
+                projectPath,
+                projectPath + ".filters",
+                projectPath + ".user"
+            };
+
+            // Keep debug/release directories: qmake may emit .cbt inputs there.
+            var keepDirs = new HashSet<string>(CaseIgnorer) {
+                Path.Combine(proDir ?? "", "debug"),
+                Path.Combine(proDir ?? "", "release")
+            };
+
+            // Best-effort cleanup: if snapshot/dir is invalid, CleanupNewEntries is a no-op.
+            CleanupNewEntries(proDir, snapshot, keepFiles, keepDirs);
+
+            return exitCode;
         }
     }
 }
