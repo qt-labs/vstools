@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
- Copyright (C) 2025 The Qt Company Ltd.
+ Copyright (C) 2026 The Qt Company Ltd.
  SPDX-License-Identifier: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
 -->
 
@@ -51,6 +51,8 @@
   </ItemGroup>
   <PropertyGroup>
     <QtMocRuleName>QtRule30_Moc</QtMocRuleName>
+    <QtMocPreprocessDefinesEnabled Condition="'$(QtMocPreprocessDefinesEnabled)' == ''"
+      >true</QtMocPreprocessDefinesEnabled>
   </PropertyGroup>
 
   <!--
@@ -81,12 +83,37 @@
 
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////
+  /// TARGET QtEnsureCustomBuildMarkers
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Generic task to ensure custom-build marker files (*.cbt) exist.
+  // -->
+  <Target Name="QtEnsureCustomBuildMarkers"
+    BeforeTargets="CustomBuild"
+    Condition="'@(CustomBuild)' != ''">
+    <ItemGroup>
+      <QtCustomBuildCbtMissing Include="@(CustomBuild)"
+        Condition="'%(CustomBuild.Extension)' == '.cbt'
+          AND !Exists('%(CustomBuild.Identity)')" />
+    </ItemGroup>
+    <MakeDir
+      Directories="@(QtCustomBuildCbtMissing->'%(RootDir)%(Directory)')"
+      Condition="'@(QtCustomBuildCbtMissing)' != ''" />
+    <Touch
+      Files="@(QtCustomBuildCbtMissing->'%(Identity)')"
+      AlwaysCreate="true"
+      Condition="'@(QtCustomBuildCbtMissing)' != ''" />
+  </Target>
+
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
   /// TARGET QtMocPrepare
   /////////////////////////////////////////////////////////////////////////////////////////////////
   // Prepare to process sources
+  // Use the project file as the input to avoid missing-file errors for .cbt markers.
   // -->
   <Target Name="QtMocPrepare" DependsOnTargets="QtMocInit"
-    Inputs="%(QtMoc.Identity)" Outputs="@(QtMoc->'####### Don't skip this target #######')">
+    Inputs="@(QtMoc->'$(MSBuildProjectFile)')"
+    Outputs="@(QtMoc->'####### Don't skip this target #######')">
     <ItemGroup>
       <selected_files Include="$(SelectedFiles)"/>
     </ItemGroup>
@@ -178,6 +205,30 @@
 
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////
+  /// TARGET QtMocPreprocessDefines
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Generate moc_predefs.h before running moc
+  // -->
+  <Target Name="QtMocPreprocessDefines"
+    DependsOnTargets="QtMocUpdate"
+    Condition="'$(QtMocPreprocessDefinesEnabled)' == 'true'
+      AND '$(QtMocPreprocessDefinesCommand)' != ''"
+    Inputs="$(QtMocPreprocessDefinesInputs);$(MSBuildProjectFile)"
+    Outputs="$(QtMocPreprocessDefinesOutputs)">
+    <Message Importance="High"
+      Condition="'$(QtDebug)' == 'true' AND '$(QtMocPreprocessDefinesMessage)' != ''"
+      Text="$(QtMocPreprocessDefinesMessage)" />
+    <Message Importance="High"
+      Condition="'$(QtDebug)' == 'true' AND '$(QtMocPreprocessDefinesMessage)' == ''"
+      Text="## QtMocPreprocessDefines" />
+    <MakeDir Condition="'$(QtMocPreprocessDefinesOutputs)' != ''"
+      Directories="$([System.IO.Path]::GetDirectoryName('$(QtMocPreprocessDefinesOutputs)'))" />
+    <Exec Condition="'$(QtDesignTimeBuild)' != 'true'"
+      Command="$(QtMocPreprocessDefinesCommand)" />
+  </Target>
+
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
   /// TARGET QtMoc
   /////////////////////////////////////////////////////////////////////////////////////////////////
   // Process each source file and produce the corresponding QtWork items
@@ -188,6 +239,7 @@
       QtMocPrepare;
       QtMocSetModified;
       QtMocOverrideCpp;
+      QtMocPreprocessDefines;
       $(QtMocDependsOn)
     </QtMocDependsOn>
   </PropertyGroup>

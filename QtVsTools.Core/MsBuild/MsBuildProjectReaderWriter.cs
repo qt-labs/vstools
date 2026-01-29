@@ -1,4 +1,4 @@
-// Copyright (C) 2025 The Qt Company Ltd.
+// Copyright (C) 2026 The Qt Company Ltd.
 // SPDX-License-Identifier: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
 
 using System;
@@ -676,67 +676,18 @@ namespace QtVsTools.Core.MsBuild
             foreach (var cppIncludePath in cppIncludePaths)
                 cppIncludePath.Value = AddGeneratedFilesPath((string)cppIncludePath);
 
-            // replace each set of .moc.cbt custom build steps
-            // with a single .cpp custom build step
+            // convert moc_predefs custom build steps to Qt/MSBuild properties
             var mocCbtCustomBuilds = GetCustomBuilds("moc_predefs")
                 .Where(x =>
                 ((string)x.Attribute("Include")).EndsWith(".cbt", IgnoreCase)
                 || ((string)x.Attribute("Include")).EndsWith(".moc", IgnoreCase))
-                .GroupBy(CustomBuildMocInput);
+                .ToList();
 
-            var cbtToRemove = new List<XElement>();
-            foreach (var cbtGroup in mocCbtCustomBuilds) {
-
-                //create new CustomBuild item for .cpp
-                var newCbt = new XElement(ns + "CustomBuild",
-                    new XAttribute("Include", cbtGroup.Key),
-                    new XElement(ns + "FileType", "Document"));
-
-                //add properties from .moc.cbt items
-                var cbtPropertyNames = new List<string> {
-                    "AdditionalInputs",
-                    "Command",
-                    "Message",
-                    "Outputs"
-                };
-                foreach (var cbt in cbtGroup) {
-                    var enabledProperties = cbt.Elements().Where(x =>
-                        x.Parent != null
-                        && cbtPropertyNames.Contains(x.Name.LocalName)
-                        && x.Parent.Elements(ns + "ExcludedFromBuild")
-                            .All(y => (string)x.Attribute("Condition") != (string)y.Attribute("Condition")));
-                    foreach (var property in enabledProperties) {
-                        property.Value = property.Value.Replace("debug", "$(IntDir)")
-                            .Replace("release", "$(IntDir)");
-                        newCbt.Add(new XElement(property));
-                    }
-                    cbtToRemove.Add(cbt);
-                }
-                cbtGroup.First().AddBeforeSelf(newCbt);
-
-                //remove ClCompile item (cannot have duplicate items)
-                var cppMocItems = this[Files.Project].Xml
-                    .Elements(ns + "Project")
-                    .Elements(ns + "ItemGroup")
-                    .Elements(ns + "ClCompile")
-                    .Where(x =>
-                        string.Equals(cbtGroup.Key, (string)x.Attribute("Include"), IgnoreCase));
-                foreach (var cppMocItem in cppMocItems)
-                    cppMocItem.Remove();
-
-                //change type of item in filter
-                cppMocItems = this[Files.Filters]?.Xml
-                    ?.Elements(ns + "Project")
-                    .Elements(ns + "ItemGroup")
-                    .Elements(ns + "ClCompile")
-                    .Where(x =>
-                        string.Equals(cbtGroup.Key, (string)x.Attribute("Include"), IgnoreCase));
-                foreach (var cppMocItem in cppMocItems)
-                    cppMocItem.Name = ns + "CustomBuild";
-            }
-
-            //remove .moc.cbt CustomBuild items
-            cbtToRemove.ForEach(x => x.Remove());
+            var converted = TryConvertMocCbtCustomBuildsToPropertyGroups(mocCbtCustomBuilds,
+                configurations);
+            // Fallback to the existing custom-build conversion behavior on error
+            if (!converted && mocCbtCustomBuilds.Any())
+                ConvertMocCbtCustomBuildsToCustomBuild(mocCbtCustomBuilds);
 
             //convert moc custom build steps
             var mocCustomBuilds = GetCustomBuilds(QtMoc.ToolExecName);
