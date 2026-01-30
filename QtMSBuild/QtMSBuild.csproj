@@ -409,6 +409,25 @@
     </Content>
     <!--
     ///////////////////////////////////////////////////////////////////////////////////////////////
+    // Qt/MSBuild qmltyperegistrar tools property pages and targets
+    // -->
+    <Content Include="QtMSBuild\qmltyperegistrar\qt_import.props">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="QtMSBuild\qmltyperegistrar\qtqmltyperegistrar.props">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="QtMSBuild\qmltyperegistrar\qtqmltyperegistrar.targets">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="QtMSBuild\qmltyperegistrar\qtqmltyperegistrar.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="QtMSBuild\qmltyperegistrar\qtqmltyperegistrar_v3.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <!--
+    ///////////////////////////////////////////////////////////////////////////////////////////////
     // Inline tasks
     // -->
     <Compile Include="Tasks\QtRunTask.cs" />

@@ -1,4 +1,4 @@
-// Copyright (C) 2025 The Qt Company Ltd.
+// Copyright (C) 2026 The Qt Company Ltd.
 // SPDX-License-Identifier: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
 
 using System.Collections.Generic;
@@ -261,6 +261,13 @@ namespace QtVsTools.Core.MsBuild
                 property.ToString());
         }
 
+        public string GetPropertyChangedValue(QtQmlTypeRegistrar.Property property,
+            string itemName, string configName)
+        {
+            return GetPropertyChangedValue(configName, QtQmlTypeRegistrar.ItemTypeName, itemName,
+                property.ToString());
+        }
+
         public bool SetCommandLine(string itemType, object propertyStorage, string commandLine,
             IVsMacroExpander macros)
         {
@@ -270,6 +277,8 @@ namespace QtVsTools.Core.MsBuild
                 QtRcc.ItemTypeName => SetQtRccCommandLine(propertyStorage, commandLine, macros),
                 QtRepc.ItemTypeName => SetQtRepcCommandLine(propertyStorage, commandLine, macros),
                 QtUic.ItemTypeName => SetQtUicCommandLine(propertyStorage, commandLine, macros),
+                QtQmlTypeRegistrar.ItemTypeName =>
+                    SetQtQmlTypeRegistrarCommandLine(propertyStorage, commandLine, macros),
                 QtLRelease.ItemTypeName => SetQtLReleaseCommandLine(propertyStorage, commandLine, macros),
                 _ => false
             };
@@ -362,6 +371,28 @@ namespace QtVsTools.Core.MsBuild
                 return false;
             return properties.All(property => SetItemProperty(propertyStorage, property.Key,
                 property.Value));
+        }
+
+        #endregion
+
+        #region QtQmlTypeRegistrar
+
+        private static QtQmlTypeRegistrar _qtQmlTypeRegistrarInstance;
+
+        private static QtQmlTypeRegistrar QtQmlTypeRegistrarInstance =>
+            _qtQmlTypeRegistrarInstance ??= new QtQmlTypeRegistrar();
+
+        public bool SetItemProperty(object propertyStorage, QtQmlTypeRegistrar.Property property,
+            string propertyValue)
+        {
+            return SetItemPropertyByName(propertyStorage, property.ToString(), propertyValue);
+        }
+
+        private bool SetQtQmlTypeRegistrarCommandLine(object propertyStorage, string commandLine,
+            IVsMacroExpander macros)
+        {
+            return QtQmlTypeRegistrarInstance.ParseCommandLine(commandLine, macros, out var props)
+                && props.All(prop => SetItemProperty(propertyStorage, prop.Key, prop.Value));
         }
 
         #endregion

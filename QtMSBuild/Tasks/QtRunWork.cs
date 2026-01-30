@@ -1,4 +1,4 @@
-// Copyright (C) 2025 The Qt Company Ltd.
+// Copyright (C) 2026 The Qt Company Ltd.
 // SPDX-License-Identifier: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
 
 #region Task TaskName="QtRunWork"
@@ -47,6 +47,18 @@ namespace QtVsTools.QtMsBuild.Tasks
             bool ok = true;
             var Comparer = StringComparer.InvariantCultureIgnoreCase;
             var Comparison = StringComparison.InvariantCultureIgnoreCase;
+
+            Action<string, int, string, int, string> logExitError =
+                (toolPath, exitCode, workKey, procId, options) =>
+                {
+                    Log.LogError(string.Format(
+                        "[QtRunWork] {0} exited with code {1}", toolPath, exitCode));
+                    if (QtDebug) {
+                        Log.LogMessage(MessageImportance.High,
+                            string.Format("## QtRunWork exit error\r\n##    {0} [{1}]\r\n##    {2}",
+                            workKey, procId, options));
+                    }
+                };
 
             // Work item key = "%(WorkType)(%(Identity))"
             Func<string, string, string> KeyString = (x, y) => string.Format("{0}{{{1}}}", x, y);
@@ -198,7 +210,11 @@ namespace QtVsTools.QtMsBuild.Tasks
                         // Process terminated; check exit code and close
                         terminated.Add(workItem.Key);
                         result[workItem.Key].SetMetadata("ExitCode", proc.ExitCode.ToString());
-                        ok &= proc.ExitCode == 0;
+                        if (proc.ExitCode != 0) {
+                            logExitError(workItem.ToolPath, proc.ExitCode, workItem.Key, proc.Id,
+                                workItem.Self.GetMetadata("Options"));
+                            ok = false;
+                        }
                         proc.Close();
 
                         // Add postponed dependent items to work queue
@@ -266,7 +282,11 @@ namespace QtVsTools.QtMsBuild.Tasks
                     }
                     // Process terminated; check exit code and close
                     result[workItem.Key].SetMetadata("ExitCode", proc.ExitCode.ToString());
-                    ok &= proc.ExitCode == 0;
+                    if (proc.ExitCode != 0) {
+                        logExitError(workItem.ToolPath, proc.ExitCode, workItem.Key, proc.Id,
+                            workItem.Self.GetMetadata("Options"));
+                        ok = false;
+                    }
                     proc.Close();
                 } else {
                     // Process is still running; feed it back into the running queue

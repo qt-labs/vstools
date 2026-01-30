@@ -1,0 +1,81 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+ Copyright (C) 2026 The Qt Company Ltd.
+ SPDX-License-Identifier: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
+-->
+
+<!--
+///////////////////////////////////////////////////////////////////////////////////////////////////
+// Qt/MSBuild qmltyperegistrar property definitions
+// Defines MSBuild properties and item templates for Qt's QML type registrar tool.
+// Typically imported by .props or .targets files in Qt/MSBuild projects.
+// -->
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Import pre-requisites (e.g., Qt paths, common properties)
+  // -->
+  <Import
+    Condition="'$(QtMsBuildProps_BeforeQmlTypeRegistrar)' != ''"
+    Project="$(QtMsBuildProps_BeforeQmlTypeRegistrar)"/>
+
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // QtQmlTypeRegistrar item template
+  // Defines metadata and defaults for files processed by qmltyperegistrar.
+  // -->
+  <ItemDefinitionGroup>
+    <QtQmlTypeRegistrar>
+      <!-- Description shown in build logs -->
+      <ExecutionDescription>qmltyperegistrar %(Identity)</ExecutionDescription>
+
+      <!--
+        QTDIR: Path to Qt installation.
+          - For VS projects, uses QtInstallDir (set by Qt VS tools).
+          - For non-VS, uses the $(QTDIR) property (often from the environment).
+      -->
+      <QTDIR Condition="'$(QtVsProjectSettings)' != 'true'">$(QTDIR)</QTDIR>
+      <QTDIR Condition="'$(QtVsProjectSettings)' == 'true'">$(QtInstallDir)</QTDIR>
+
+      <!-- Input file (default: the item itself) -->
+      <InputFile>%(FullPath)</InputFile>
+
+      <!--
+        Output paths:
+          - Non-VS: GeneratedFiles\$(Configuration)\<filename>_qmltyperegistrations.cpp
+          - VS: $(QtIntDir)qmltyperegistrar\<filename>_qmltyperegistrations.cpp
+      -->
+      <OutputFile Condition="'$(QtVsProjectSettings)' != 'true'"
+        >$(ProjectDir)GeneratedFiles\$(Configuration)\$([System.String]::Copy('%(Filename)').Replace('_metatypes',''))_qmltyperegistrations.cpp</OutputFile>
+      <QtQmlTypeRegistrarDir Condition="'$(QtVsProjectSettings)' == 'true'"
+        >$(QtIntDir)qmltyperegistrar\</QtQmlTypeRegistrarDir>
+      <QtQmlTypeRegistrarFileName Condition="'$(QtVsProjectSettings)' == 'true'"
+        >%(Filename)_qmltyperegistrations.cpp</QtQmlTypeRegistrarFileName>
+
+      <!-- QML types output (similar path logic as above) -->
+      <GenerateQmlTypes Condition="'$(QtVsProjectSettings)' != 'true'"
+        >$(ProjectDir)GeneratedFiles\$(Configuration)\$([System.String]::Copy('%(Filename)').Replace('_metatypes','')).qmltypes</GenerateQmlTypes>
+      <QtQmlTypesDir Condition="'$(QtVsProjectSettings)' == 'true'"
+        >$(QtIntDir)qmltyperegistrar\</QtQmlTypesDir>
+      <QtQmlTypesFileName Condition="'$(QtVsProjectSettings)' == 'true'"
+        >%(Filename).qmltypes</QtQmlTypesFileName>
+
+      <!-- Add generated .cpp to compilation -->
+      <DynamicSource>output</DynamicSource>
+      <!-- Allow parallel execution (e.g., with QtRunWork) -->
+      <ParallelProcess>true</ParallelProcess>
+      <!-- Command-line template for the tool -->
+      <CommandLineTemplate>[AllOptions] [AdditionalOptions]</CommandLineTemplate>
+      <!-- Track outputs for incremental builds -->
+      <Outputs>%(OutputFile)</Outputs>
+    </QtQmlTypeRegistrar>
+  </ItemDefinitionGroup>
+
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Import dependants (e.g., post-processing rules)
+  // -->
+  <Import
+    Condition="'$(QtMsBuildProps_AfterQmlTypeRegistrar)' != ''"
+    Project="$(QtMsBuildProps_AfterQmlTypeRegistrar)"/>
+</Project>

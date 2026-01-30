@@ -153,6 +153,7 @@
     <Compile Include="FakeFilter.cs" />
     <Compile Include="FilesToList.cs" />
     <Compile Include="Common\SettingsAttribute.cs" />
+    <Compile Include="MsBuild\MsBuildProjectReaderWriter.QmlTypeRegistrar.cs" />
     <Compile Include="Options\QtOptionsPage.Notifications.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -179,6 +180,7 @@
     <Compile Include="MsBuild\IVsMacroExpander.cs" />
     <Compile Include="MsBuild\QtLRelease.cs" />
     <Compile Include="MsBuild\QtMoc.cs" />
+    <Compile Include="MsBuild\QtQmlTypeRegistrar.cs" />
     <Compile Include="MsBuild\QtModulesPopup.xaml.cs">
       <DependentUpon>QtModulesPopup.xaml</DependentUpon>
     </Compile>

@@ -1,4 +1,4 @@
-// Copyright (C) 2025 The Qt Company Ltd.
+// Copyright (C) 2026 The Qt Company Ltd.
 // SPDX-License-Identifier: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
 
 using System;
@@ -252,11 +252,16 @@ namespace QtVsTools.Core.MsBuild
                 .Elements().ToList().ForEach(item =>
                 {
                     var itemName = item.Name.LocalName;
+                    // Preserve InputFile for moc collect-json items: it is the JSON list input,
+                    // and must survive the property cleanup to keep collect-json functional.
+                    var keepMocInputFile = itemName == "QtMoc" && item.Elements(ns + "CollectJson")
+                        .Any(x => string.Equals(x.Value, "true", IgnoreCase));
                     item.Elements().ToList().ForEach(itemProp =>
                     {
                         var propName = itemProp.Name.LocalName;
                         switch (itemName) {
-                        case "QtMoc" when oldPropsAny.Contains(propName):
+                        case "QtMoc" when oldPropsAny.Contains(propName)
+                            && !(propName == "InputFile" && keepMocInputFile):
                         case "QtRcc" when oldQtProps.Contains(propName):
                         case "QtUic" when oldQtProps.Contains(propName):
                         case "QtRepc" when oldPropsAny.Contains(propName):

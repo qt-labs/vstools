@@ -83,6 +83,30 @@
 
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////
+  /// TARGET QtMocEnsureCollectJsonMarkers
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Ensure collect-json marker files (*.cbt) exist (e.g. after a clean checkout).
+  // -->
+  <Target Name="QtMocEnsureCollectJsonMarkers"
+    BeforeTargets="QtMocPrepare"
+    Condition="'@(QtMoc)' != ''">
+    <ItemGroup>
+      <QtMocCollectJsonMissing Include="@(QtMoc)"
+        Condition="'%(QtMoc.CollectJson)' == 'true'
+          AND '%(QtMoc.Extension)' == '.cbt'
+          AND !Exists('%(QtMoc.FullPath)')" />
+    </ItemGroup>
+    <MakeDir
+      Directories="@(QtMocCollectJsonMissing->'%(RootDir)%(Directory)')"
+      Condition="'@(QtMocCollectJsonMissing)' != ''" />
+    <Touch
+      Files="@(QtMocCollectJsonMissing->'%(FullPath)')"
+      AlwaysCreate="true"
+      Condition="'@(QtMocCollectJsonMissing)' != ''" />
+  </Target>
+
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
   /// TARGET QtEnsureCustomBuildMarkers
   /////////////////////////////////////////////////////////////////////////////////////////////////
   // Generic task to ensure custom-build marker files (*.cbt) exist.
@@ -469,8 +493,10 @@
       <options>
         <Value Condition="'%(Name)' == 'OutputJson' AND '%(Value)' != 'true'"></Value>
       </options>
+      <!--//  Suppress -output-json when collecting JSON; moc exits early in collect-json mode -->
       <options>
-        <Value Condition="'%(Name)' == 'OutputJson' AND '%(Value)' == 'true'">--output-json</Value>
+        <Value Condition="'%(Name)' == 'OutputJson' AND '%(Value)' == 'true'
+          AND '%(options.CollectJson)' != 'true'">--output-json</Value>
       </options>
 
       <!--//   -debug-includes            Display debug messages of each include path -->
@@ -565,6 +591,9 @@
     // Create work item
     // -->
     <ItemGroup Condition="'$(run_parallel)' == 'true' OR '$(run_single)' == 'true'">
+      <moc_json_inputs
+        Include="@(QtMoc)"
+        Condition="'%(QtMoc.CollectJson)' != 'true' AND '%(QtMoc.OutputJson)' == 'true'" />
       <QtWork Include="@(QtMoc)">
         <WorkType>moc</WorkType>
         <ToolPath Condition="'$(QtVsProjectSettings)' == 'true'"
@@ -573,6 +602,9 @@
           >%(QtMoc.QTDIR)\bin\moc.exe</ToolPath>
         <Options>$(options)</Options>
         <Message>%(QtMoc.ExecutionDescription)</Message>
+        <DependsOn Condition="'%(QtMoc.CollectJson)' == 'true'">
+          @(moc_json_inputs->'%(Identity)', ';')
+        </DependsOn>
         <DependenciesChanged>$(dependencies_changed)</DependenciesChanged>
         <InputChanged>$(input_changed)</InputChanged>
         <ParallelBuild Condition="'$(run_parallel)' == 'true'">true</ParallelBuild>

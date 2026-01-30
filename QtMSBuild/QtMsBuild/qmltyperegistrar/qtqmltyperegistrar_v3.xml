@@ -1,0 +1,230 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+ Copyright (C) 2026 The Qt Company Ltd.
+ SPDX-License-Identifier: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
+-->
+<ProjectSchemaDefinitions
+  xmlns="http://schemas.microsoft.com/build/2009/properties"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:sys="clr-namespace:System;assembly=mscorlib">
+  <Rule
+    Name="QtRule70_QmlTypeRegistrar"
+    PageTemplate="tool"
+    DisplayName="Qt QML Type Registrar"
+    Order="9">
+    <Rule.DataSource>
+      <DataSource
+        Persistence="ProjectFile"
+        ItemType="QtQmlTypeRegistrar" />
+    </Rule.DataSource>
+    <Rule.Categories>
+      <Category Name="General" DisplayName="qmltyperegistrar"/>
+    </Rule.Categories>
+    <StringListProperty
+      Name="Inputs"
+      Category="General"
+      IsRequired="true"
+      Visible="False">
+      <StringListProperty.DataSource>
+        <DataSource
+           Persistence="ProjectFile"
+           ItemType="QtQmlTypeRegistrar"
+           SourceType="Item" />
+      </StringListProperty.DataSource>
+    </StringListProperty>
+    <StringProperty
+      Name="ExecutionDescription"
+      DisplayName="Execution Description"
+      IncludeInCommandLine="False" />
+    <StringProperty
+      Name="QTDIR"
+      DisplayName="Qt Directory"
+      Visible="false"/>
+    <StringProperty
+      Name="InputFile"
+      DisplayName="Input File"
+      Visible="false"/>
+    <StringProperty
+      Name="OutputFile"
+      DisplayName="Output File"
+      Visible="false"/>
+
+    <!-- value switches -->
+    <StringProperty
+      Name="GenerateQmlTypes"
+      DisplayName="QML Types File"
+      Description="Write generated QML types to this file."
+      Switch="--generate-qmltypes &quot;[value]&quot;"/>
+    <StringProperty
+      Name="ImportName"
+      DisplayName="Import Name"
+      Description="QML import name."
+      Switch="--import-name &quot;[value]&quot;"/>
+    <StringProperty
+      Name="MajorVersion"
+      DisplayName="Major Version"
+      Description="QML import major version."
+      Switch="--major-version [value]"/>
+    <StringProperty
+      Name="MinorVersion"
+      DisplayName="Minor Version"
+      Description="QML import minor version."
+      Switch="--minor-version [value]"/>
+    <StringListProperty
+      Name="ForeignTypes"
+      DisplayName="Foreign Types"
+      Description="Foreign metatypes JSON files."
+      Switch="--foreign-types &quot;[value]&quot;"/>
+    <StringListProperty
+      Name="PastMajorVersion"
+      DisplayName="Past Major Version"
+      Description="Past major versions to register."
+      Switch="--past-major-version [value]"/>
+    <StringProperty
+      Name="Namespace"
+      DisplayName="Namespace"
+      Description="Namespace for generated code."
+      Switch="--namespace &quot;[value]&quot;"/>
+    <StringProperty
+      Name="MergeQtConf"
+      DisplayName="Merge Qt Conf"
+      Description="Merge qt.conf to the specified file."
+      Switch="--merge-qt-conf &quot;[value]&quot;"/>
+
+    <!-- flag switches -->
+    <BoolProperty
+      Name="PrivateIncludes"
+      DisplayName="Private Includes"
+      Description="Use private includes."
+      Switch="--private-includes"/>
+    <BoolProperty
+      Name="JsRoot"
+      DisplayName="JS Root"
+      Description="Use JS root meta types as sole input."
+      Switch="--jsroot"/>
+    <BoolProperty
+      Name="Extract"
+      DisplayName="Extract"
+      Description="Extract registrations for foreign types."
+      Switch="--extract"/>
+    <BoolProperty
+      Name="FollowForeignVersioning"
+      DisplayName="Follow Foreign Versioning"
+      Description="Follow foreign type versioning."
+      Switch="--follow-foreign-versioning"/>
+
+    <!-- build integration -->
+
+    <!-- hidden fields to build the tool command line -->
+    <StringProperty
+      Name="CommandLineTemplate"
+      DisplayName="Command Line"
+      Visible="False"
+      IncludeInCommandLine="False" />
+
+    <!-- hook this tool before/after targets -->
+    <DynamicEnumProperty
+      Name="QtQmlTypeRegistrarBeforeTargets"
+      Category="General"
+      EnumProvider="Targets"
+      IncludeInCommandLine="False" Visible="False">
+      <DynamicEnumProperty.DisplayName>
+        <sys:String>Execute Before</sys:String>
+      </DynamicEnumProperty.DisplayName>
+      <DynamicEnumProperty.Description>
+        <sys:String>Specifies the targets for the build customization to run before.</sys:String>
+      </DynamicEnumProperty.Description>
+      <DynamicEnumProperty.ProviderSettings>
+        <NameValuePair
+          Name="Exclude"
+          Value="^QtQmlTypeRegistrarBeforeTargets|^Compute" />
+      </DynamicEnumProperty.ProviderSettings>
+      <DynamicEnumProperty.DataSource>
+        <DataSource
+          Persistence="ProjectFile"
+          ItemType=""
+          HasConfigurationCondition="true" />
+      </DynamicEnumProperty.DataSource>
+    </DynamicEnumProperty>
+    <DynamicEnumProperty
+      Name="QtQmlTypeRegistrarAfterTargets"
+      Category="General"
+      EnumProvider="Targets"
+      IncludeInCommandLine="False" Visible="False">
+      <DynamicEnumProperty.DisplayName>
+        <sys:String>Execute After</sys:String>
+      </DynamicEnumProperty.DisplayName>
+      <DynamicEnumProperty.Description>
+        <sys:String>Specifies the targets for the build customization to run after.</sys:String>
+      </DynamicEnumProperty.Description>
+      <DynamicEnumProperty.ProviderSettings>
+        <NameValuePair
+          Name="Exclude"
+          Value="^QtQmlTypeRegistrarAfterTargets|^Compute" />
+      </DynamicEnumProperty.ProviderSettings>
+      <DynamicEnumProperty.DataSource>
+        <DataSource
+          Persistence="ProjectFile"
+          ItemType=""
+          HasConfigurationCondition="true" />
+      </DynamicEnumProperty.DataSource>
+    </DynamicEnumProperty>
+
+    <!-- incremental build bookkeeping (inputs/outputs) -->
+    <StringListProperty
+      Name="Outputs"
+      DisplayName="Outputs"
+      IncludeInCommandLine="False"
+      Visible="False" />
+    <StringListProperty
+      Name="AdditionalDependencies"
+      DisplayName="Additional Dependencies"
+      IncludeInCommandLine="False"/>
+
+    <!-- extra options appended to the tool command line -->
+    <StringProperty
+      Subtype="AdditionalOptions"
+      Name="AdditionalOptions"
+      Category="General">
+      <StringProperty.DisplayName>
+        <sys:String>Additional Options</sys:String>
+      </StringProperty.DisplayName>
+      <StringProperty.Description>
+        <sys:String>Additional Options</sys:String>
+      </StringProperty.Description>
+    </StringProperty>
+
+    <!-- inject generated C++ into ClCompile (like moc/rcc) -->
+    <EnumProperty
+      Name="DynamicSource"
+      DisplayName="Dynamic C++ Source"
+      Description="Add file to list of C++ sources during build.">
+      <EnumValue
+        Name="output"
+        DisplayName="Output File"
+        Description="Use output as dynamic C++ source."/>
+      <EnumValue
+        Name="false"
+        DisplayName="Disable"
+        Description="Disable dynamic source."/>
+    </EnumProperty>
+
+    <!-- allow QtRunWork parallel execution -->
+    <BoolProperty
+      Name="ParallelProcess"
+      DisplayName="Parallel Process"
+      Description="Run tool in parallel process."/>
+  </Rule>
+
+  <!-- VS item/type wiring: declare the item type and map files to it. -->
+  <ItemType
+    Name="QtQmlTypeRegistrar"
+    DisplayName="Qt QML Type Registrar" />
+  <FileExtension
+    Name="*_metatypes.json"
+    ContentType="QtQmlTypeRegistrar" />
+  <ContentType
+    Name="QtQmlTypeRegistrar"
+    DisplayName="Qt QML Type Registrar"
+    ItemType="QtQmlTypeRegistrar" />
+</ProjectSchemaDefinitions>

@@ -723,8 +723,22 @@ namespace QtVsTools.Core.MsBuild
                 //set properties
                 qtMsBuild.SetItemProperty(qtMoc,
                     QtMoc.Property.ExecutionDescription, "Moc'ing %(Identity)...");
-                qtMsBuild.SetItemProperty(qtMoc,
-                    QtMoc.Property.InputFile, "%(FullPath)");
+
+                // CollectJson runs in a separate moc mode that consumes JSON inputs,
+                // so we must preserve/restore the input list and avoid OutputJson.
+                var collectJsonValue = qtMsBuild.GetPropertyChangedValue(
+                    QtMoc.Property.CollectJson, itemName, configName);
+                if (string.IsNullOrEmpty(collectJsonValue))
+                    collectJsonValue = qtMoc.Element(ns + nameof(QtMoc.Property.CollectJson))?.Value;
+
+                var isCollectJson = string.Equals(collectJsonValue, "true", IgnoreCase);
+                if (isCollectJson) {
+                    ConfigureCollectJsonMocForQmlTypeRegistrar(qtMsBuild, qtMoc, itemName,
+                        configName, cbEvals);
+                } else {
+                    qtMsBuild.SetItemProperty(qtMoc, QtMoc.Property.InputFile, "%(FullPath)");
+                }
+
                 if (!IsSourceFile(itemName)) {
                     qtMsBuild.SetItemProperty(qtMoc,
                         QtMoc.Property.DynamicSource, "output");
@@ -859,6 +873,14 @@ namespace QtVsTools.Core.MsBuild
                 qtMsBuild.SetItemProperty(qtQm, QtLRelease.Property.InputFile, "%(FullPath)");
             }
 
+            //convert qmltyperegistrar custom build steps
+            var qmlTypeRegistrarMsBuilds = ConvertQmlTypeRegistrarCustomBuilds(qtMsBuild,
+                configurations, cbEvals, projItemsByPath, filterItemsByPath, projDir);
+            if (qmlTypeRegistrarMsBuilds == null) {
+                Rollback();
+                return false;
+            }
+
             // convert idc custom build steps
             var idcPostBuilds = GetPostBuildEvents("idc.exe");
             foreach (var idcPostBuild in idcPostBuilds) {
@@ -884,6 +906,14 @@ namespace QtVsTools.Core.MsBuild
             FinalizeProjectChanges(repcCustomBuilds, QtRepc.ItemTypeName);
             FinalizeProjectChanges(uicCustomBuilds, QtUic.ItemTypeName);
             FinalizeProjectChanges(qmCustomBuilds, QtLRelease.ItemTypeName);
+
+            FinalizeProjectChanges(qmlTypeRegistrarMsBuilds, QtQmlTypeRegistrar.ItemTypeName);
+            // Keep QtQmlTypeRegistrar items in a dedicated ItemGroup for clarity.
+            EnsureDedicatedItemGroup(QtQmlTypeRegistrar.ItemTypeName);
+            // Move collect-json items into "Generated Files" and drop unused filter definitions.
+            RegroupCollectJsonFilterItemsToGeneratedFiles();
+            // Retarget root .cbt item includes to configuration folders.
+            RetargetRootCbtIncludes();
 
             Commit("Converting custom build steps to Qt/MSBuild items");
             return true;

@@ -1,0 +1,391 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+ Copyright (C) 2026 The Qt Company Ltd.
+ SPDX-License-Identifier: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
+-->
+
+<!--
+///////////////////////////////////////////////////////////////////////////////////////////////////
+// Qt QML Type Registrar MSBuild Targets
+-->
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Import prerequisites
+  // Load any custom targets or properties defined before this file.
+  -->
+  <Import
+    Condition="'$(QtMsBuildTargets_BeforeQmlTypeRegistrar)' != ''"
+    Project="$(QtMsBuildTargets_BeforeQmlTypeRegistrar)"/>
+
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Global Properties
+  // Register this target as part of the Qt build process.
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <PropertyGroup>
+    <QtBuildTargets>QtQmlTypeRegistrar;$(QtBuildTargets)</QtBuildTargets>
+  </PropertyGroup>
+
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Property page and item type setup
+  // Define property pages for Visual Studio integration and register the QtQmlTypeRegistrar item type.
+  -->
+  <Choose>
+    <When Condition="'$(QtVsProjectSettings)' == 'true' AND '$(QtVsProjectClProperties)' == 'true'">
+      <ItemGroup>
+        <PropertyPageSchema
+          Include="$(MSBuildThisFileDirectory)qtqmltyperegistrar_v3.xml" />
+      </ItemGroup>
+    </When>
+    <Otherwise>
+      <ItemGroup>
+        <PropertyPageSchema
+          Include="$(MSBuildThisFileDirectory)qtqmltyperegistrar.xml" />
+      </ItemGroup>
+    </Otherwise>
+  </Choose>
+  <ItemGroup>
+    <AvailableItemName Include="QtQmlTypeRegistrar">
+      <Targets>QtQmlTypeRegistrar;_ClCompile</Targets>
+    </AvailableItemName>
+  </ItemGroup>
+  <PropertyGroup>
+    <QtQmlTypeRegistrarRuleName>QtRule70_QmlTypeRegistrar</QtQmlTypeRegistrarRuleName>
+  </PropertyGroup>
+
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // TARGET: QtQmlTypeRegistrarInit
+  // Initialize default metadata for QtQmlTypeRegistrar items.
+  -->
+  <Target Name="QtQmlTypeRegistrarInit">
+    <!-- Initialize %(OutputFile) and %(GenerateQmlTypes) if not already set -->
+    <ItemGroup Condition="'$(QtVsProjectSettings)' == 'true' AND '@(QtQmlTypeRegistrar)' != ''">
+      <QtQmlTypeRegistrarAux Include="@(QtQmlTypeRegistrar)">
+        <!-- Preserve explicit metadata from imported projects -->
+        <OutputFile Condition="'%(QtQmlTypeRegistrar.OutputFile)' == ''"
+          >$([System.IO.Path]::Combine('%(QtQmlTypeRegistrar.QtQmlTypeRegistrarDir)',
+            '%(QtQmlTypeRegistrar.QtQmlTypeRegistrarFileName)'))</OutputFile>
+        <!-- Preserve explicit metadata from imported projects -->
+        <GenerateQmlTypes Condition="'%(QtQmlTypeRegistrar.GenerateQmlTypes)' == ''"
+          >$([System.IO.Path]::Combine('%(QtQmlTypeRegistrar.QtQmlTypesDir)',
+            '%(QtQmlTypeRegistrar.QtQmlTypesFileName)'))</GenerateQmlTypes>
+      </QtQmlTypeRegistrarAux>
+      <QtQmlTypeRegistrar Remove="@(QtQmlTypeRegistrar)"/>
+      <QtQmlTypeRegistrar Include="@(QtQmlTypeRegistrarAux)"/>
+      <QtQmlTypeRegistrarAux Remove="@(QtQmlTypeRegistrarAux)"/>
+    </ItemGroup>
+  </Target>
+
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // TARGET: QtQmlTypeRegistrarPrepare
+  // Prepare sources for processing, handling manual selection and exclusions.
+  -->
+  <Target Name="QtQmlTypeRegistrarPrepare" DependsOnTargets="QtQmlTypeRegistrarInit"
+    Inputs="%(QtQmlTypeRegistrar.Identity)"
+    Outputs="@(QtQmlTypeRegistrar->'####### Don't skip this target #######')">
+    <ItemGroup>
+      <selected_files Include="$(SelectedFiles)"/>
+    </ItemGroup>
+
+    <Message Importance="High" Condition="'$(QtDebug)' == 'true'"
+        Text="## QtQmlTypeRegistrarPrepare @(QtQmlTypeRegistrar)"/>
+
+    <PropertyGroup>
+      <selected_files>[@(selected_files->'%(Identity)','][')]</selected_files>
+      <file>[@(QtQmlTypeRegistrar->'%(Identity)')]</file>
+      <output_file>@(QtQmlTypeRegistrar->'%(OutputFile)')</output_file>
+      <is_selected Condition="$(selected_files.Contains('$(file)'))">true</is_selected>
+      <is_selected Condition="!$(selected_files.Contains('$(file)'))">false</is_selected>
+    </PropertyGroup>
+
+    <!-- Delete output file if manually selected for build -->
+    <Delete Files="$(output_file)"
+      Condition="'$(SelectedFiles)' != '' AND '$(is_selected)' == 'true'" />
+
+    <!-- If a source was manually selected, remove all other sources -->
+    <ItemGroup Condition="'@(selected_files)' != ''">
+      <QtQmlTypeRegistrar Remove="@(QtQmlTypeRegistrar)"
+        Condition="'$(SelectedFiles)' != '' AND '$(is_selected)' != 'true'" />
+    </ItemGroup>
+
+    <!-- Remove sources excluded from build -->
+    <ItemGroup>
+      <QtQmlTypeRegistrar Remove="@(QtQmlTypeRegistrar)"
+        Condition="'$(SelectedFiles)' == '' AND '%(QtQmlTypeRegistrar.ExcludedFromBuild)' == 'true'"/>
+    </ItemGroup>
+
+    <!-- Clean-up temporary properties -->
+    <PropertyGroup>
+      <selected_files/>
+      <file/>
+      <output_file/>
+      <is_selected/>
+    </PropertyGroup>
+  </Target>
+
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // TARGET: QtQmlTypeRegistrarSetModified
+  // Set InputChanged flag if source or dependencies have been modified.
+  -->
+  <Target Name="QtQmlTypeRegistrarSetModified" DependsOnTargets="QtQmlTypeRegistrarPrepare"
+    Condition="'@(QtQmlTypeRegistrar)' != ''"
+    Inputs="%(QtQmlTypeRegistrar.FullPath);%(QtQmlTypeRegistrar.AdditionalDependencies)"
+    Outputs="@(QtQmlTypeRegistrar->'%(OutputFile)')">
+
+    <Message Importance="High" Condition="'$(QtDebug)' == 'true'"
+      Text="## QtQmlTypeRegistrarSetModified @(QtQmlTypeRegistrar)" />
+
+    <CreateProperty Value="true">
+      <!-- ValueSetByTask ensures $(input_changed) is only set when the target is executed -->
+      <Output TaskParameter="ValueSetByTask" PropertyName="input_changed" />
+    </CreateProperty>
+    <ItemGroup>
+      <QtQmlTypeRegistrar>
+        <InputChanged>$(input_changed)</InputChanged>
+      </QtQmlTypeRegistrar>
+    </ItemGroup>
+  </Target>
+
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // TARGET: QtQmlTypeRegistrar
+  // Process each source file and generate QtWork items for qmltyperegistrar.
+  -->
+  <PropertyGroup>
+    <QtQmlTypeRegistrarDependsOn>
+      QtVarsLoad;
+      <!-- Ensure item metadata is ready before building command lines -->
+      QtQmlTypeRegistrarPrepare;
+      QtQmlTypeRegistrarSetModified;
+      $(QtQmlTypeRegistrarDependsOn)
+    </QtQmlTypeRegistrarDependsOn>
+  </PropertyGroup>
+  <Target Name="QtQmlTypeRegistrar"
+    DependsOnTargets="$(QtQmlTypeRegistrarDependsOn)"
+    BeforeTargets="$(QtQmlTypeRegistrarBeforeTargets)" AfterTargets="$(QtQmlTypeRegistrarAfterTargets)"
+    Condition="'@(QtQmlTypeRegistrar)' != ''"
+    Inputs="%(QtQmlTypeRegistrar.FullPath);%(QtQmlTypeRegistrar.AdditionalDependencies);$(MSBuildProjectFile)"
+    Outputs="@(QtQmlTypeRegistrar->'%(OutputFile)')">
+
+    <Message Importance="High" Condition="'$(QtDebug)' == 'true'"
+      Text="## QtQmlTypeRegistrar @(QtQmlTypeRegistrar)" />
+
+    <CreateProperty Value="true">
+      <Output TaskParameter="ValueSetByTask" PropertyName="dependencies_changed" />
+    </CreateProperty>
+
+    <!-- Convert string lists in source item properties to lists of items -->
+    <Flatten Items="@(QtQmlTypeRegistrar)"
+      Metadata="InputFile;
+                OutputFile;
+                GenerateQmlTypes;
+                ImportName;
+                MajorVersion;
+                MinorVersion;
+                ForeignTypes;
+                PastMajorVersion;
+                PrivateIncludes;
+                Namespace;
+                JsRoot;
+                Extract;
+                MergeQtConf;
+                FollowForeignVersioning">
+      <Output
+        TaskParameter="Result" ItemName="LocalOptions" />
+    </Flatten>
+
+    <!-- Normalize file paths for the build host -->
+    <HostTranslatePaths
+      Items="@(LocalOptions)"
+      Names="InputFile;
+            OutputFile;
+            GenerateQmlTypes;
+            MergeQtConf;
+            ForeignTypes">
+      <Output
+        TaskParameter="Result" ItemName="options" />
+    </HostTranslatePaths>
+
+    <ItemGroup>
+      <!-- Remove quotes from paths, escape trailing backslashes, add quotes to paths with spaces -->
+      <options>
+        <Value Condition="'%(Name)' == 'InputFile' OR '%(Name)' == 'OutputFile'
+          OR '%(Name)' == 'GenerateQmlTypes' OR '%(Name)' == 'MergeQtConf'
+          OR '%(Name)' == 'ForeignTypes'"
+          >$([System.String]::Copy('%(Value)').Replace('&quot;', ''))</Value>
+      </options>
+      <options>
+        <Value Condition="('%(Name)' == 'InputFile' OR '%(Name)' == 'OutputFile'
+            OR '%(Name)' == 'GenerateQmlTypes' OR '%(Name)' == 'MergeQtConf'
+            OR '%(Name)' == 'ForeignTypes')
+          AND $([System.String]::Copy('%(Value)').Contains(' '))
+          AND $([System.String]::Copy('%(Value)').EndsWith('\'))"
+          >%(Value)\</Value>
+      </options>
+      <options>
+        <Value Condition="('%(Name)' == 'InputFile' OR '%(Name)' == 'OutputFile'
+            OR '%(Name)' == 'GenerateQmlTypes' OR '%(Name)' == 'MergeQtConf'
+            OR '%(Name)' == 'ForeignTypes')
+          AND $([System.String]::Copy('%(Value)').Contains(' '))"
+          >&quot;%(Value)&quot;</Value>
+      </options>
+
+      <!-- Keep a list of foreign types for comma-joining -->
+      <foreign_types Include="@(options)" Condition="'%(options.Name)' == 'ForeignTypes'" />
+    </ItemGroup>
+
+    <!-- Generate tool command line arguments -->
+    <ItemGroup>
+      <!-- -generate-qmltypes -->
+      <options>
+        <Value Condition="'%(Name)' == 'GenerateQmlTypes'">--generate-qmltypes=%(Value)</Value>
+      </options>
+      <!-- -import-name -->
+      <options>
+        <Value Condition="'%(Name)' == 'ImportName'">--import-name=%(Value)</Value>
+      </options>
+      <!-- -major-version -->
+      <options>
+        <Value Condition="'%(Name)' == 'MajorVersion'">--major-version=%(Value)</Value>
+      </options>
+      <!-- -minor-version -->
+      <options>
+        <Value Condition="'%(Name)' == 'MinorVersion'">--minor-version=%(Value)</Value>
+      </options>
+      <!-- -foreign-types -->
+      <options>
+        <Value Condition="'@(foreign_types)' != ''"
+          >--foreign-types=@(foreign_types->'%(Value)', ',')</Value>
+      </options>
+      <!-- -past-major-version -->
+      <options>
+        <Value Condition="'%(Name)' == 'PastMajorVersion'">--past-major-version %(Value)</Value>
+      </options>
+      <!-- -private-includes -->
+      <options>
+        <Value Condition="'%(Name)' == 'PrivateIncludes' AND '%(Value)' != 'true'"></Value>
+      </options>
+      <options>
+        <Value Condition="'%(Name)' == 'PrivateIncludes' AND '%(Value)' == 'true'"
+          >--private-includes</Value>
+      </options>
+      <!-- -namespace -->
+      <options>
+        <Value Condition="'%(Name)' == 'Namespace'">--namespace=%(Value)</Value>
+      </options>
+      <!-- -jsroot -->
+      <options>
+        <Value Condition="'%(Name)' == 'JsRoot' AND '%(Value)' != 'true'"></Value>
+      </options>
+      <options>
+        <Value Condition="'%(Name)' == 'JsRoot' AND '%(Value)' == 'true'">--jsroot</Value>
+      </options>
+      <!-- -extract -->
+      <options>
+        <Value Condition="'%(Name)' == 'Extract' AND '%(Value)' != 'true'"></Value>
+      </options>
+      <options>
+        <Value Condition="'%(Name)' == 'Extract' AND '%(Value)' == 'true'">--extract</Value>
+      </options>
+      <!-- -merge-qt-conf -->
+      <options>
+        <Value Condition="'%(Name)' == 'MergeQtConf'">--merge-qt-conf %(Value)</Value>
+      </options>
+      <!-- -follow-foreign-versioning -->
+      <options>
+        <Value Condition="'%(Name)' == 'FollowForeignVersioning' AND '%(Value)' != 'true'"></Value>
+      </options>
+      <options>
+        <Value Condition="'%(Name)' == 'FollowForeignVersioning' AND '%(Value)' == 'true'"
+          >--follow-foreign-versioning</Value>
+      </options>
+      <!-- -o -->
+      <options>
+        <Value Condition="'%(Name)' == 'OutputFile'">-o %(Value)</Value>
+      </options>
+      <!-- [metatypes.json] (positional input) -->
+      <options>
+        <Value Condition="'%(Name)' == 'InputFile'">%(Value)</Value>
+      </options>
+    </ItemGroup>
+    <PropertyGroup>
+      <options>@(options->'%(Value)', ' ')</options>
+    </PropertyGroup>
+
+    <!-- Auxiliary properties -->
+    <PropertyGroup>
+      <!-- Force modified flag if source was manually selected -->
+      <input_changed Condition="'$(SelectedFiles)' != ''">true</input_changed>
+      <input_changed Condition="'$(SelectedFiles)' == ''">%(QtQmlTypeRegistrar.InputChanged)</input_changed>
+
+      <!-- Run work in parallel or single process -->
+      <run_parallel Condition="'@(QtQmlTypeRegistrar)' != ''
+        AND '%(QtQmlTypeRegistrar.ParallelProcess)' == 'true'
+        AND '$(SelectedFiles)' == ''">true</run_parallel>
+      <run_single Condition="'@(QtQmlTypeRegistrar)' != ''
+        AND ('%(QtQmlTypeRegistrar.ParallelProcess)' != 'true'
+         OR '$(SelectedFiles)' != '')">true</run_single>
+
+      <!-- Get relative path to output -->
+      <output_relative
+        >$([MSBuild]::MakeRelative('$(ProjectDir)', '%(QtQmlTypeRegistrar.OutputFile)').TrimStart('\'))</output_relative>
+    </PropertyGroup>
+
+    <!-- Create work item for qmltyperegistrar -->
+    <ItemGroup>
+      <moc_collect_json Include="@(QtMoc)" Condition="'%(QtMoc.CollectJson)' == 'true'" />
+    </ItemGroup>
+    <ItemGroup Condition="'$(run_parallel)' == 'true' OR '$(run_single)' == 'true'">
+      <QtWork Include="@(QtQmlTypeRegistrar)">
+        <WorkType>qmltyperegistrar</WorkType>
+        <ToolPath Condition="'$(QtVsProjectSettings)' == 'true'">$(QtToolsPath)/qmltyperegistrar</ToolPath>
+        <ToolPath Condition="'$(QtVsProjectSettings)' != 'true'">%(QtQmlTypeRegistrar.QTDIR)\bin\qmltyperegistrar.exe</ToolPath>
+        <Options>$(options)</Options>
+        <Message>%(QtQmlTypeRegistrar.ExecutionDescription)</Message>
+        <!-- Depend on moc collect-json items so metatypes are ready -->
+        <DependsOn>@(moc_collect_json->'%(Identity)', ';')</DependsOn>
+        <DependenciesChanged>$(dependencies_changed)</DependenciesChanged>
+        <InputChanged>$(input_changed)</InputChanged>
+        <ParallelBuild Condition="'$(run_parallel)' == 'true'">true</ParallelBuild>
+        <ParallelBuild Condition="'$(run_single)'   == 'true'">false</ParallelBuild>
+        <ClCompile Condition="'%(QtQmlTypeRegistrar.DynamicSource)' == 'output'">$(output_relative)</ClCompile>
+      </QtWork>
+    </ItemGroup>
+
+    <!-- Clean-up temporary items and properties -->
+    <PropertyGroup>
+      <options/>
+      <dependencies_changed/>
+      <input_changed/>
+      <run_parallel/>
+      <run_single/>
+      <output_relative/>
+    </PropertyGroup>
+    <ItemGroup>
+      <LocalOptions Remove="@(LocalOptions)"/>
+      <foreign_types Remove="@(foreign_types)"/>
+      <options Remove="@(options)"/>
+      <selected_files Remove="@(selected_files)"/>
+    </ItemGroup>
+  </Target>
+
+  <!-- Clean-up generated files -->
+  <Target Name="QtQmlTypeRegistrarClean" BeforeTargets="QtClean">
+    <RemoveDir Directories="$(QtIntDir)qmltyperegistrar"/>
+  </Target>
+
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Import Dependants
+  // Load any custom targets or properties defined after this file.
+  -->
+  <Import
+    Condition="'$(QtMsBuildTargets_AfterQmlTypeRegistrar)' != ''"
+    Project="$(QtMsBuildTargets_AfterQmlTypeRegistrar)"/>
+</Project>

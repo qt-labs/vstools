@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
- Copyright (C) 2025 The Qt Company Ltd.
+ Copyright (C) 2026 The Qt Company Ltd.
  SPDX-License-Identifier: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
 -->
 <!--
@@ -194,7 +194,7 @@ more than one. (-n&lt;n|w&gt;)"
       DisplayName="Output JSON"
       Description=
 "In addition to generating C++ code, create a machine-readable JSON file in a file that matches the
-output file and an extra .json extension. (--output-json)"
+output file and an extra .json extension. Ignored when Collect JSON is enabled. (--output-json)"
       Switch="--output-json"/>
     <BoolProperty
       Name="DebugIncludes"
