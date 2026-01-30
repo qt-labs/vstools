@@ -210,5 +210,20 @@ namespace QtVsTools.Core.MsBuild
             var match = ConditionParser.Match(condition);
             return match.Success ? match.Groups[1].Value : "";
         }
+
+        private string CustomBuildMocInput(XElement cbt)
+        {
+            var commandLine = (string)cbt.Element(ns + "Command");
+            Dictionary<QtMoc.Property, string> properties;
+            using (var evaluator = new MSBuildEvaluator(this[Files.Project])) {
+                if (!MsBuildProjectContainer.QtMocInstance.ParseCommandLine(
+                    commandLine, evaluator, out properties)) {
+                    return (string)cbt.Attribute("Include");
+                }
+            }
+            if (!properties.TryGetValue(QtMoc.Property.InputFile, out var outputFile))
+                return (string)cbt.Attribute("Include");
+            return outputFile;
+        }
     }
 }

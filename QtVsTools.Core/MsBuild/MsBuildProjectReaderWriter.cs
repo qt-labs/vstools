@@ -507,17 +507,6 @@ namespace QtVsTools.Core.MsBuild
                 .ToList();
         }
 
-        private List<XElement> GetPostBuildEvents(string toolExecName)
-        {
-            return this[Files.Project].Xml
-                .Elements(ns + "Project")
-                .Elements(ns + "ItemDefinitionGroup")
-                .Elements(ns + "PostBuildEvent")
-                .Where(x => x.Elements(ns + "Command")
-                    .Any(y => y.Value.Contains(toolExecName)))
-                .ToList();
-        }
-
         private void FinalizeProjectChanges(List<XElement> customBuilds, string itemTypeName)
         {
             customBuilds
@@ -576,21 +565,6 @@ namespace QtVsTools.Core.MsBuild
                 exception.Log();
             }
             return type == "MocDir" ? "GeneratedFiles\\$(ConfigurationName)" : "GeneratedFiles";
-        }
-
-        private string CustomBuildMocInput(XElement cbt)
-        {
-            var commandLine = (string)cbt.Element(ns + "Command");
-            Dictionary<QtMoc.Property, string> properties;
-            using (var evaluator = new MSBuildEvaluator(this[Files.Project])) {
-                if (!MsBuildProjectContainer.QtMocInstance.ParseCommandLine(
-                    commandLine, evaluator, out properties)) {
-                    return (string)cbt.Attribute("Include");
-                }
-            }
-            if (!properties.TryGetValue(QtMoc.Property.InputFile, out var outputFile))
-                return (string)cbt.Attribute("Include");
-            return outputFile;
         }
 
         private static bool RemoveGeneratedFiles(
@@ -690,207 +664,56 @@ namespace QtVsTools.Core.MsBuild
                 ConvertMocCbtCustomBuildsToCustomBuild(mocCbtCustomBuilds);
 
             //convert moc custom build steps
-            var mocCustomBuilds = GetCustomBuilds(QtMoc.ToolExecName);
-            if (!SetCommandLines(qtMsBuild, configurations, mocCustomBuilds,
-                QtMoc.ToolExecName, QtMoc.ItemTypeName,
-                new ItemCommandLineReplacement[]
-                {
-                    (item, cmdLine) => cmdLine.Replace(
-                            $@"\moc_{Path.GetFileNameWithoutExtension(item)}.cpp",
-                        @"\moc_%(Filename).cpp", IgnoreCase)
-                    .Replace($" -o moc_{Path.GetFileNameWithoutExtension(item)}.cpp",
-                        @" -o $(ProjectDir)\moc_%(Filename).cpp", IgnoreCase),
-
-                    (item, cmdLine) => cmdLine.Replace(
-                            $@"\{Path.GetFileNameWithoutExtension(item)}.moc",
-                        @"\%(Filename).moc", IgnoreCase)
-                    .Replace($" -o {Path.GetFileNameWithoutExtension(item)}.moc",
-                        @" -o $(ProjectDir)\%(Filename).moc", IgnoreCase)
-                })) {
+            var mocDisableDynamicSource = new List<XElement>();
+            var mocCustomBuilds = ConvertMocCustomBuilds(qtMsBuild, configurations, projDir,
+                cbEvals, projItemsByPath, filterItemsByPath, mocDisableDynamicSource);
+            if (mocCustomBuilds == null) {
                 Rollback();
                 return false;
-            }
-            var mocDisableDynamicSource = new List<XElement>();
-            foreach (var qtMoc in mocCustomBuilds.Elements(ns + QtMoc.ItemTypeName)) {
-                var itemName = (string)qtMoc.Attribute("Include");
-                var configName = (string)qtMoc.Attribute("ConfigName");
-
-                //remove items with generated files
-                var hasGeneratedFiles = RemoveGeneratedFiles(
-                    projDir, cbEvals, configName, itemName,
-                    projItemsByPath, filterItemsByPath);
-
-                //set properties
-                qtMsBuild.SetItemProperty(qtMoc,
-                    QtMoc.Property.ExecutionDescription, "Moc'ing %(Identity)...");
-
-                // CollectJson runs in a separate moc mode that consumes JSON inputs,
-                // so we must preserve/restore the input list and avoid OutputJson.
-                var collectJsonValue = qtMsBuild.GetPropertyChangedValue(
-                    QtMoc.Property.CollectJson, itemName, configName);
-                if (string.IsNullOrEmpty(collectJsonValue))
-                    collectJsonValue = qtMoc.Element(ns + nameof(QtMoc.Property.CollectJson))?.Value;
-
-                var isCollectJson = string.Equals(collectJsonValue, "true", IgnoreCase);
-                if (isCollectJson) {
-                    ConfigureCollectJsonMocForQmlTypeRegistrar(qtMsBuild, qtMoc, itemName,
-                        configName, cbEvals);
-                } else {
-                    qtMsBuild.SetItemProperty(qtMoc, QtMoc.Property.InputFile, "%(FullPath)");
-                }
-
-                if (!IsSourceFile(itemName)) {
-                    qtMsBuild.SetItemProperty(qtMoc,
-                        QtMoc.Property.DynamicSource, "output");
-                    if (!hasGeneratedFiles)
-                        mocDisableDynamicSource.Add(qtMoc);
-                } else {
-                    qtMsBuild.SetItemProperty(qtMoc,
-                        QtMoc.Property.DynamicSource, "input");
-                }
-                var includePath = qtMsBuild.GetPropertyChangedValue(
-                    QtMoc.Property.IncludePath, itemName, configName);
-                if (!string.IsNullOrEmpty(includePath)) {
-                    qtMsBuild.SetItemProperty(qtMoc,
-                        QtMoc.Property.IncludePath, AddGeneratedFilesPath(includePath));
-                }
             }
 
             //convert rcc custom build steps
-            var rccCustomBuilds = GetCustomBuilds(QtRcc.ToolExecName);
-            if (!SetCommandLines(qtMsBuild, configurations, rccCustomBuilds,
-                QtRcc.ToolExecName, QtRcc.ItemTypeName,
-                new ItemCommandLineReplacement[]
-                {
-                    (item, cmdLine) => cmdLine.Replace(
-                        $@"\qrc_{Path.GetFileNameWithoutExtension(item)}.cpp",
-                        @"\qrc_%(Filename).cpp", IgnoreCase)
-                    .Replace(
-                        $" -o qrc_{Path.GetFileNameWithoutExtension(item)}.cpp",
-                        @" -o $(ProjectDir)\qrc_%(Filename).cpp", IgnoreCase)
-                })) {
+            var rccCustomBuilds = ConvertRccCustomBuilds(qtMsBuild, configurations, projDir,
+                cbEvals, projItemsByPath, filterItemsByPath);
+            if (rccCustomBuilds == null) {
                 Rollback();
                 return false;
-            }
-            foreach (var qtRcc in rccCustomBuilds.Elements(ns + QtRcc.ItemTypeName)) {
-                var itemName = (string)qtRcc.Attribute("Include");
-                var configName = (string)qtRcc.Attribute("ConfigName");
-
-                //remove items with generated files
-                RemoveGeneratedFiles(projDir, cbEvals, configName, itemName,
-                    projItemsByPath, filterItemsByPath);
-
-                //set properties
-                qtMsBuild.SetItemProperty(qtRcc,
-                    QtRcc.Property.ExecutionDescription, "Rcc'ing %(Identity)...");
-                qtMsBuild.SetItemProperty(qtRcc,
-                    QtRcc.Property.InputFile, "%(FullPath)");
             }
 
             //convert repc custom build steps
-            var repcCustomBuilds = GetCustomBuilds(QtRepc.ToolExecName);
-            if (!SetCommandLines(qtMsBuild, configurations, repcCustomBuilds,
-                QtRepc.ToolExecName, QtRepc.ItemTypeName,
-                new ItemCommandLineReplacement[] { })) {
+            var repcCustomBuilds = ConvertRepcCustomBuilds(qtMsBuild, configurations, projDir,
+                cbEvals, projItemsByPath, filterItemsByPath);
+            if (repcCustomBuilds == null) {
                 Rollback();
                 return false;
-            }
-            foreach (var qtRepc in repcCustomBuilds.Elements(ns + QtRepc.ItemTypeName)) {
-                var itemName = (string)qtRepc.Attribute("Include");
-                var configName = (string)qtRepc.Attribute("ConfigName");
-
-                //remove items with generated files
-                RemoveGeneratedFiles(projDir, cbEvals, configName, itemName,
-                    projItemsByPath, filterItemsByPath);
-
-                //set properties
-                qtMsBuild.SetItemProperty(qtRepc,
-                    QtRepc.Property.ExecutionDescription, "Repc'ing %(Identity)...");
-                qtMsBuild.SetItemProperty(qtRepc,
-                    QtRepc.Property.InputFile, "%(FullPath)");
             }
 
             //convert uic custom build steps
-            var uicCustomBuilds = GetCustomBuilds(QtUic.ToolExecName);
-            if (!SetCommandLines(qtMsBuild, configurations, uicCustomBuilds,
-                QtUic.ToolExecName, QtUic.ItemTypeName,
-                new ItemCommandLineReplacement[]
-                {
-                    (item, cmdLine) => cmdLine.Replace(
-                        $@"\ui_{Path.GetFileNameWithoutExtension(item)}.h",
-                        @"\ui_%(Filename).h", IgnoreCase)
-                    .Replace(
-                        $" -o ui_{Path.GetFileNameWithoutExtension(item)}.h",
-                        @" -o $(ProjectDir)\ui_%(Filename).h", IgnoreCase)
-                })) {
+            var uicCustomBuilds = ConvertUicCustomBuilds(qtMsBuild, configurations, projDir,
+                cbEvals, projItemsByPath, filterItemsByPath);
+            if (uicCustomBuilds == null) {
                 Rollback();
                 return false;
-            }
-            foreach (var qtUic in uicCustomBuilds.Elements(ns + QtUic.ItemTypeName)) {
-                var itemName = (string)qtUic.Attribute("Include");
-                var configName = (string)qtUic.Attribute("ConfigName");
-
-                //remove items with generated files
-                RemoveGeneratedFiles(projDir, cbEvals, configName, itemName,
-                    projItemsByPath, filterItemsByPath);
-
-                //set properties
-                qtMsBuild.SetItemProperty(qtUic,
-                    QtUic.Property.ExecutionDescription, "Uic'ing %(Identity)...");
-                qtMsBuild.SetItemProperty(qtUic,
-                    QtUic.Property.InputFile, "%(FullPath)");
             }
 
             // convert qm custom build steps
-            var qmCustomBuilds = GetCustomBuilds(QtLRelease.ToolExecName);
-            if (!SetCommandLines(qtMsBuild, configurations, qmCustomBuilds,
-                QtLRelease.ToolExecName, QtLRelease.ItemTypeName,
-                new ItemCommandLineReplacement[]
-                {
-                    (item, cmdLine) => cmdLine.Replace(
-                        $@"{Path.GetFileNameWithoutExtension(item)}.ts",
-                        @"%(Filename).ts", IgnoreCase)
-                    .Replace(
-                        $"{Path.GetFileNameWithoutExtension(item)}.qm",
-                        @"%(Filename).qm", IgnoreCase)
-                })) {
+            var qmCustomBuilds = ConvertQmCustomBuilds(qtMsBuild, configurations, projDir,
+                cbEvals, projItemsByPath, filterItemsByPath);
+            if (qmCustomBuilds == null) {
                 Rollback();
                 return false;
-            }
-            foreach (var qtQm in qmCustomBuilds.Elements(ns + QtLRelease.ItemTypeName)) {
-                var itemName = qtQm.Attribute("Include").ToString();
-                var configName = qtQm.Attribute("ConfigName").ToString();
-
-                // remove items with generated files
-                RemoveGeneratedFiles(projDir, cbEvals, configName, itemName, projItemsByPath,
-                    filterItemsByPath);
-
-                // set properties
-                qtMsBuild.SetItemProperty(qtQm, QtLRelease.Property.ReleaseDescription,
-                    "lrelease %(Identity)");
-
-                qtMsBuild.SetItemProperty(qtQm, QtLRelease.Property.BuildAction, "lrelease");
-                qtMsBuild.SetItemProperty(qtQm, QtLRelease.Property.InputFile, "%(FullPath)");
             }
 
             //convert qmltyperegistrar custom build steps
             var qmlTypeRegistrarMsBuilds = ConvertQmlTypeRegistrarCustomBuilds(qtMsBuild,
-                configurations, cbEvals, projItemsByPath, filterItemsByPath, projDir);
+                configurations, projDir, cbEvals, projItemsByPath, filterItemsByPath);
             if (qmlTypeRegistrarMsBuilds == null) {
                 Rollback();
                 return false;
             }
 
             // convert idc custom build steps
-            var idcPostBuilds = GetPostBuildEvents("idc.exe");
-            foreach (var idcPostBuild in idcPostBuilds) {
-                this[Files.Project].Xml.Root.Add(new XElement(ns + "PropertyGroup",
-                    new XAttribute("Label", "QtIDC"),
-                    idcPostBuild.Parent.Attribute("Condition"),
-                    new XElement(ns + "QtIDC", new XText("true")),
-                    new XElement(ns + "QtIDCVersion", new XText("1.0"))));
-                idcPostBuild.Remove();
-            }
+            ConvertIdcPostBuilds();
 
             qtMsBuild.EndSetItemProperties();
 

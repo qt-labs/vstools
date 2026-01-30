@@ -153,7 +153,16 @@
     <Compile Include="FakeFilter.cs" />
     <Compile Include="FilesToList.cs" />
     <Compile Include="Common\SettingsAttribute.cs" />
-    <Compile Include="MsBuild\MsBuildProjectReaderWriter.QmlTypeRegistrar.cs" />
+    <Compile Include="MsBuild\idc\MsBuildProjectReaderWriter.Idc.cs" />
+    <Compile Include="MsBuild\moc\MsBuildProjectReaderWriter.Moc.cs" />
+    <Compile Include="MsBuild\moc\MsBuildProjectReaderWriter.Moc.Helpers.cs" />
+    <Compile Include="MsBuild\qmltyperegistrar\MsBuildProjectReaderWriter.QmlTypeRegistrar.cs" />
+    <Compile Include="MsBuild\moc\MsBuildProjectReaderWriter.Moc.Predefs.cs" />
+    <Compile Include="MsBuild\MsBuildProjectReaderWriter.Helpers.cs" />
+    <Compile Include="MsBuild\repc\MsBuildProjectReaderWriter.Repc.cs" />
+    <Compile Include="MsBuild\rcc\MsBuildProjectReaderWriter.Rcc.cs" />
+    <Compile Include="MsBuild\translation\MsBuildProjectReaderWriter.Translation.cs" />
+    <Compile Include="MsBuild\uic\MsBuildProjectReaderWriter.Uic.cs" />
     <Compile Include="Options\QtOptionsPage.Notifications.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -178,9 +187,9 @@
     <Compile Include="MsBuild\ConversionReport.cs" />
     <Compile Include="MsBuild\IPropertyStorageProvider.cs" />
     <Compile Include="MsBuild\IVsMacroExpander.cs" />
-    <Compile Include="MsBuild\QtLRelease.cs" />
-    <Compile Include="MsBuild\QtMoc.cs" />
-    <Compile Include="MsBuild\QtQmlTypeRegistrar.cs" />
+    <Compile Include="MsBuild\translation\QtLRelease.cs" />
+    <Compile Include="MsBuild\moc\QtMoc.cs" />
+    <Compile Include="MsBuild\qmltyperegistrar\QtQmlTypeRegistrar.cs" />
     <Compile Include="MsBuild\QtModulesPopup.xaml.cs">
       <DependentUpon>QtModulesPopup.xaml</DependentUpon>
     </Compile>
@@ -192,10 +201,10 @@
     <Compile Include="MsBuild\MsBuildProject.IntelliSense.cs" />
     <Compile Include="MsBuild\MsBuildProjectLogger.cs" />
     <Compile Include="MsBuild\MsBuildProject.Tracker.cs" />
-    <Compile Include="MsBuild\QtRcc.cs" />
-    <Compile Include="MsBuild\QtRepc.cs" />
+    <Compile Include="MsBuild\rcc\QtRcc.cs" />
+    <Compile Include="MsBuild\repc\QtRepc.cs" />
     <Compile Include="MsBuild\QtTool.cs" />
-    <Compile Include="MsBuild\QtUic.cs" />
+    <Compile Include="MsBuild\uic\QtUic.cs" />
     <Compile Include="Notifications.cs" />
     <Compile Include="Options\QtOptionsPage.cs">
       <SubType>Component</SubType>
@@ -212,7 +221,6 @@
     <Compile Include="Messages.ExceptionLog.cs" />
     <Compile Include="Messages.cs" />
     <Compile Include="MsBuild\MsBuildProjectReaderWriter.cs" />
-    <Compile Include="MsBuild\MsBuildProjectReaderWriter.Moc.cs" />
     <Compile Include="OutputWindowPane.cs" />
     <T4Template Include="Properties\AssemblyInfo.cs">
       <Generator>TextTemplatingFileGenerator</Generator>
