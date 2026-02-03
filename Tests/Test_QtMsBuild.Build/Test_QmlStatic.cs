@@ -1,7 +1,6 @@
-// Copyright (C) 2025 The Qt Company Ltd.
+// Copyright (C) 2026 The Qt Company Ltd.
 // SPDX-License-Identifier: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
 
-using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -28,17 +27,34 @@ namespace QtVsTools.Test.QtMsBuild.Build
     </qresource>
 </RCC>");
 
-            var targetName = "QtQmlStaticGatherQmlPaths";
-            var project = MsBuild.Evaluate(temp.ProjectPath,
-                ("Platform", "x64"),
-                ("Configuration", "Debug"),
-                ("QtStaticPlugins", "true"));
-            var build = MsBuild.Prepare(project, targetName);
-            Assert.IsTrue(MsBuild.Run(build));
+            var xml = ProjectRootElement.Open(temp.ProjectPath);
+            Assert.IsNotNull(xml);
 
-            var items = build.Result.ResultsByTarget[targetName].Items;
-            Assert.HasCount(1, items);
-            Assert.AreEqual("foo.qml", Path.GetFileName(items[0].ItemSpec));
+            // Add a target to write the resulting @(QtQmlPaths)item list to a file
+            var target = xml.AddTarget("DumpQmlPaths");
+            target.DependsOnTargets = "QtQmlStaticGatherQmlPaths";
+            var task = target.AddTask("WriteLinesToFile");
+            task.SetParameter("File", "$(ProjectDir)qtqmlpaths.txt");
+            task.SetParameter("Lines", "@(QtQmlPaths)");
+            task.SetParameter("Overwrite", "true");
+
+            xml.Save();
+
+            var buildOk = MsBuild.Run(
+                temp.ProjectDir,
+                temp.ProjectPath,
+                "-t:DumpQmlPaths", // force QtQmlStaticGatherQmlPaths target to run
+                "-p:Platform=x64",
+                "-p:Configuration=Debug",
+                "-p:QtStaticPlugins=true");
+            Assert.IsTrue(buildOk);
+
+            var qmlPaths = File.ReadAllLines(Path.Combine(temp.ProjectDir, "qtqmlpaths.txt"))
+                .Select(Path.GetFileName)
+                .Where(x => !string.IsNullOrWhiteSpace(x))
+                .ToList();
+            Assert.HasCount(1, qmlPaths);
+            Assert.AreEqual("foo.qml", qmlPaths[0]);
         }
 
         [TestMethod]

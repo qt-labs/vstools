@@ -51,6 +51,7 @@ QtClass::QtClass(QObject *parent) : QObject(parent) {}
 QtClass::~QtClass() {}
 ");
             var xml = ProjectRootElement.Open(temp.ProjectPath);
+            Assert.IsNotNull(xml);
             var clCompile = xml.AddItemDefinitionGroup()
                 .AddItemDefinition("ClCompile");
             clCompile.AddMetadata("AdditionalIncludeDirectories", "foo");
@@ -63,10 +64,13 @@ QtClass::~QtClass() {}
                 pchCreate.AddMetadata("PrecompiledHeader", "Create");
             xml.Save();
 
-            var project = MsBuild.Evaluate(temp.ProjectPath,
-                ("Platform", "x64"), ("Configuration", "Debug"));
-            var build = MsBuild.Prepare(project);
-            Assert.IsTrue(MsBuild.Run(build));
+            var buildOk = MsBuild.Run(
+                temp.ProjectDir,
+                temp.ProjectPath,
+                "-t:Build",
+                "-p:Platform=x64",
+                "-p:Configuration=Debug");
+            Assert.IsTrue(buildOk);
         }
     }
 }
