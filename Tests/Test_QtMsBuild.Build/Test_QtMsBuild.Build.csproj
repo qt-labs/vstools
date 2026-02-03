@@ -34,9 +34,6 @@
     <PackageReference Include="$(Name_MSTest_TestFramework)" Version="$(Version_MSTest_TestFramework)" />
 
     <PackageReference Include="$(Name_Microsoft_Build)" Version="$(Version_Microsoft_Build)" />
-    <PackageReference Include="$(Name_Microsoft_Build_Framework)" Version="$(Version_Microsoft_Build)" />
-    <PackageReference Include="$(Name_Microsoft_Build_Tasks_Core)" Version="$(Version_Microsoft_Build)" />
-    <PackageReference Include="$(Name_Microsoft_Build_Utilities_Core)" Version="$(Version_Microsoft_Build)" />
   </ItemGroup>
 
   <ItemGroup>
@@ -46,11 +43,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="AssemblyResolver.cs" />
     <Compile Include="BigSolution.cs" />
-    <Compile Include="Logger.cs" />
-    <Compile Include="Logger.Format.cs" />
-    <Compile Include="Logger.Views.cs" />
     <Compile Include="MsBuild.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QTVSADDINBUG\Test_QTVSADDINBUG_1283.cs" />

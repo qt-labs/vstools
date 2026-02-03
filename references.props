@@ -13,12 +13,8 @@
   <PropertyGroup>
     <Name_Microsoft_Build
       >Microsoft.Build</Name_Microsoft_Build>
-    <Name_Microsoft_Build_Framework
-      >Microsoft.Build.Framework</Name_Microsoft_Build_Framework>
     <Name_Microsoft_Build_Tasks_Core
       >Microsoft.Build.Tasks.Core</Name_Microsoft_Build_Tasks_Core>
-    <Name_Microsoft_Build_Utilities_Core
-      >Microsoft.Build.Utilities.Core</Name_Microsoft_Build_Utilities_Core>
     <Version_Microsoft_Build Condition="'$(VisualStudioVersion)'=='16.0'"
       >16.11.0</Version_Microsoft_Build>
     <Version_Microsoft_Build Condition="'$(VisualStudioVersion)'=='17.0'"
