@@ -1,7 +1,6 @@
-// Copyright (C) 2025 The Qt Company Ltd.
+// Copyright (C) 2026 The Qt Company Ltd.
 // SPDX-License-Identifier: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
 
-using System;
 using System.IO;
 using Microsoft.Build.Construction;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -22,13 +21,38 @@ namespace QtVsTools.Test.QtMsBuild.Build
             props.AddProperty("IntDir", @"$(ProjectDir)build\$(Configuration)\");
             xml.Save();
 
-            var project = MsBuild.Evaluate(temp.ProjectPath,
-                ("Platform", "x64"), ("Configuration", "Debug"));
-            Assert.IsTrue(project.Build("Rebuild"));
-            Assert.IsTrue(
-                File.Exists(project.ExpandString($@"$(IntDir)qt\qmake\props.txt")));
-            Assert.IsFalse(
-                File.Exists(project.ExpandString($@"$(OldIntDir)qt\qmake\props.txt")));
+            var buildOk = MsBuild.Run(
+                temp.ProjectDir,
+                temp.ProjectPath,
+                "-t:Rebuild",
+                "-p:Platform=x64",
+                "-p:Configuration=Debug");
+            Assert.IsTrue(buildOk);
+
+            var intDir = MsBuild.GetProperty(
+                temp.ProjectDir,
+                temp.ProjectPath,
+                "IntDir",
+                "-p:Platform=x64",
+                "-p:Configuration=Debug");
+            var oldIntDir = MsBuild.GetProperty(
+                temp.ProjectDir,
+                temp.ProjectPath,
+                "OldIntDir",
+                "-p:Platform=x64",
+                "-p:Configuration=Debug");
+
+            Assert.IsTrue(File.Exists(Path.Combine(
+                ResolveDir(temp.ProjectDir, intDir), "qt", "qmake", "props.txt")));
+            Assert.IsFalse(File.Exists(Path.Combine(
+                ResolveDir(temp.ProjectDir, oldIntDir), "qt", "qmake", "props.txt")));
+        }
+
+        private static string ResolveDir(string projectDir, string dir)
+        {
+            if (string.IsNullOrWhiteSpace(dir))
+                return dir;
+            return Path.IsPathRooted(dir) ? dir : Path.GetFullPath(Path.Combine(projectDir, dir));
         }
     }
 }

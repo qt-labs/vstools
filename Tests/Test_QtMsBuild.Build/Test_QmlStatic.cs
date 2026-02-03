@@ -76,20 +76,31 @@ import Foo;
 import Bar;
 nimport Baz");
 
-            var targetName = "QtQmlStaticGenerateImportFile";
-            var project = MsBuild.Evaluate(temp.ProjectPath,
-                ("Platform", "x64"),
-                ("Configuration", "Debug"),
-                ("QtStaticPlugins", "true"));
-            var build = MsBuild.Prepare(project, targetName);
-            Assert.IsTrue(MsBuild.Run(build));
+            var buildOk = MsBuild.Run(
+                temp.ProjectDir,
+                temp.ProjectPath,
+                "-t:QtQmlStaticGenerateImportFile",
+                "-p:Platform=x64",
+                "-p:Configuration=Debug",
+                "-p:QtStaticPlugins=true");
+            Assert.IsTrue(buildOk);
 
-            var resultFile = File.ReadAllText(project.ExpandString("$(QtQmlStaticImportFile)") ?? "");
-            var expectedFile = $@"import Foo;
+            var importFile = MsBuild.GetProperty(
+                temp.ProjectDir,
+                temp.ProjectPath,
+                "QtQmlStaticImportFile",
+                "-p:Platform=x64",
+                "-p:Configuration=Debug",
+                "-p:QtStaticPlugins=true");
+            var importFilePath = Path.IsPathRooted(importFile)
+                ? importFile
+                : Path.GetFullPath(Path.Combine(temp.ProjectDir, importFile));
+            var resultFile = NormalizeNewlines(File.ReadAllText(importFilePath));
+            const string expectedFile = @"import Foo;
 import Bar;
-QmlObject {{ }}
+QmlObject { }
 ";
-            Assert.AreEqual(expectedFile, resultFile);
+            Assert.AreEqual(NormalizeNewlines(expectedFile), resultFile);
         }
 
         [TestMethod]
@@ -100,48 +111,85 @@ QmlObject {{ }}
             if (qtVersions == null || !qtVersions.GetSubKeyNames().Contains("dev_static"))
                 Assert.Inconclusive("Requires static build registered as 'dev_static'.");
 
+            var originalTemp = System.Environment.GetEnvironmentVariable("TEMP");
+            var originalTmp = System.Environment.GetEnvironmentVariable("TMP");
+            var testTempRoot = Path.Combine(Properties.SolutionDir, "Tests", "Temp");
+            Directory.CreateDirectory(testTempRoot);
+            System.Environment.SetEnvironmentVariable("TEMP", testTempRoot);
+            System.Environment.SetEnvironmentVariable("TMP", testTempRoot);
+
             using var temp = new TempProject();
-            temp.Clone(Path.Combine(Properties.SolutionDir,
-                @"Tests\ProjectTemplates\QtQuickApplication", "QtQuickApplication.vcxproj"));
+            try {
+                temp.Clone(Path.Combine(Properties.SolutionDir,
+                    @"Tests\ProjectTemplates\QtQuickApplication", "QtQuickApplication.vcxproj"));
 
-            var xml = ProjectRootElement.Open(temp.ProjectPath);
-            foreach (var qtSettings in xml.PropertyGroups.Where(x => x.Label == "QtSettings")) {
-                qtSettings.SetProperty("QtInstall", "dev_static");
-                qtSettings.SetProperty("QtQMLDebugEnable", "false");
-            }
-            xml.Save();
+                var xml = ProjectRootElement.Open(temp.ProjectPath);
+                Assert.IsNotNull(xml);
+                foreach (var qtSettings in xml.PropertyGroups.Where(x => x.Label == "QtSettings")) {
+                    qtSettings.SetProperty("QtInstall", "dev_static");
+                    qtSettings.SetProperty("QtQMLDebugEnable", "false");
+                }
+                xml.Save();
 
-            File.WriteAllText($@"{temp.ProjectDir}\main.qml", @"
+                File.WriteAllText($@"{temp.ProjectDir}\main.qml", @"
 import QtQuick 2.9
 import QtQuick.Window 2.2
 import QtQuick.Particles 2.0
 Item { Component.onCompleted: Qt.exit(42) }
 ");
-            var project = MsBuild.Evaluate(temp.ProjectPath,
-                ("Platform", "x64"), ("Configuration", "Debug"));
-            var build = MsBuild.Prepare(project);
-            Assert.IsTrue(MsBuild.Run(build));
+                var buildOk = MsBuild.Run(
+                    temp.ProjectDir,
+                    temp.ProjectPath,
+                    "-t:Build",
+                    "-p:Platform=x64",
+                    "-p:Configuration=Debug");
+                Assert.IsTrue(buildOk);
 
-            Assert.IsTrue(File.Exists(project.ExpandString("$(TargetPath)")));
-            Assert.IsTrue(File.Exists(Path.Combine(
-                project.ExpandString("$(QtVarsOutputDir)"), "qtvars_qml_plugin_import.cpp")));
-            Assert.IsTrue(build.Project
-                .GetItems("ClCompile")
-                .Select(x => x.GetMetadataValue("Filename"))
-                .Contains("qtvars_qml_plugin_import"));
+                var targetPath = MsBuild.GetProperty(
+                    temp.ProjectDir,
+                    temp.ProjectPath,
+                    "TargetPath",
+                    "-p:Platform=x64",
+                    "-p:Configuration=Debug");
+                Assert.IsTrue(File.Exists(targetPath));
 
-            var proc = Process.Start(new ProcessStartInfo
-            {
-                FileName = project.ExpandString("$(TargetPath)"),
-                WorkingDirectory = project.ExpandString("$(OutDir)"),
-                CreateNoWindow = true,
-                UseShellExecute = false
-            });
-            if (!proc.WaitForExit(3000)) {
-                proc.Kill();
-                Assert.Fail();
+                var qtVarsOutputDir = MsBuild.GetProperty(
+                    temp.ProjectDir,
+                    temp.ProjectPath,
+                    "QtVarsOutputDir",
+                    "-p:Platform=x64",
+                    "-p:Configuration=Debug");
+                var qtVarsFull = Path.IsPathRooted(qtVarsOutputDir)
+                    ? qtVarsOutputDir
+                    : Path.GetFullPath(Path.Combine(temp.ProjectDir, qtVarsOutputDir));
+                Assert.IsTrue(File.Exists(Path.Combine(
+                    qtVarsFull, "qtvars_qml_plugin_import.cpp")));
+
+                var workingDir = Path.GetDirectoryName(targetPath);
+                Assert.IsNotNull(workingDir);
+
+                var proc = Process.Start(new ProcessStartInfo
+                {
+                    FileName = targetPath,
+                    WorkingDirectory = workingDir,
+                    CreateNoWindow = true,
+                    UseShellExecute = false
+                });
+                Assert.IsNotNull(proc);
+                if (!proc.WaitForExit(3000)) {
+                    proc.Kill();
+                    Assert.Fail();
+                }
+                Assert.AreEqual(42, proc.ExitCode);
+            } finally {
+                System.Environment.SetEnvironmentVariable("TEMP", originalTemp);
+                System.Environment.SetEnvironmentVariable("TMP", originalTmp);
             }
-            Assert.AreEqual(42, proc.ExitCode);
+        }
+
+        private static string NormalizeNewlines(string text)
+        {
+            return text?.Replace("\r\n", "\n").Replace("\r", "\n");
         }
     }
 }

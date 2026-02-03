@@ -1,4 +1,4 @@
-// Copyright (C) 2025 The Qt Company Ltd.
+// Copyright (C) 2026 The Qt Company Ltd.
 // SPDX-License-Identifier: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
 
 /* https://bugreports.qt.io/browse/QTVSADDINBUG-1283 */
@@ -28,13 +28,25 @@ public Q_SLOTS:
 
             File.WriteAllText(Path.Combine(temp.ProjectDir, "QtProjectV304.h"), srcHeader);
 
-            var project = MsBuild.Evaluate(temp.ProjectPath,
-                ("Platform", "x64"), ("Configuration", "Debug"));
-            var build = MsBuild.Prepare(project, "QtAddCompilerSources");
-            Assert.IsTrue(MsBuild.Run(build));
+            var buildOk = MsBuild.Run(
+                temp.ProjectDir,
+                temp.ProjectPath,
+                "-t:QtAddCompilerSources",
+                "-p:Platform=x64",
+                "-p:Configuration=Debug");
+            Assert.IsTrue(buildOk);
 
-            var genSrcMoc = File.ReadAllText(Path.Combine(temp.ProjectDir,
-                build.Project.ExpandString("$(IntDir)") ?? "", @"qt\moc\moc_QtProjectV304.cpp"));
+            var intDir = MsBuild.GetProperty(
+                temp.ProjectDir,
+                temp.ProjectPath,
+                "IntDir",
+                "-p:Platform=x64",
+                "-p:Configuration=Debug");
+            var intDirFull = Path.IsPathRooted(intDir)
+                ? intDir
+                : Path.GetFullPath(Path.Combine(temp.ProjectDir, intDir));
+            var genSrcMoc = File.ReadAllText(Path.Combine(
+                intDirFull, "qt", "moc", "moc_QtProjectV304.cpp"));
             Assert.Contains("func1()", genSrcMoc);
             Assert.Contains("func2()", genSrcMoc);
         }
