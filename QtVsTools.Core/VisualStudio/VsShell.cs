@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
 
 using System;
+using Microsoft;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.ComponentModelHost;
 using Microsoft.VisualStudio.Shell;
@@ -104,6 +105,22 @@ namespace QtVsTools.VisualStudio
         {
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
             action();
+        }
+
+        public static string GetReleaseString() =>
+            ThreadHelper.JoinableTaskFactory.Run(async () => await GetReleaseStringAsync());
+
+        public static async System.Threading.Tasks.Task<string> GetReleaseStringAsync()
+        {
+            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+
+            var shell = await VsServiceProvider.GetServiceAsync<SVsShell, IVsShell>();
+            Assumes.Present(shell);
+
+            ErrorHandler.ThrowOnFailure(
+                shell.GetProperty((int)__VSSPROPID5.VSSPROPID_ReleaseVersion, out var value));
+
+            return value?.ToString() ?? "";
         }
     }
 }

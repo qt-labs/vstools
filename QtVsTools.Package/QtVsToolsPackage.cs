@@ -343,7 +343,7 @@ namespace QtVsTools
             //
             var properties = new Dictionary<string, string>
             {
-                {"VSVersion", Dte.Version},
+                {"VSVersion", await VsShell.GetReleaseStringAsync()},
                 {"VSToolsVersion", Version.PRODUCT_VERSION},
                 {"QtVersions", string.Join(";", QtVersionManager.GetVersions())}
             };

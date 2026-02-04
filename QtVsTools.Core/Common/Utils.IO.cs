@@ -62,6 +62,7 @@ namespace QtVsTools.Core.Common
 # if VS2022
             return $"2024-{Architecture}";
 # elif VS2026
+# error Remove this line if you want to build a special VS2026 version of the VsTools extension.
             return $"2026-{Architecture}";
 # endif
 #endif

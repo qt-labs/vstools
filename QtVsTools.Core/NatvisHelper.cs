@@ -89,24 +89,39 @@ namespace QtVsTools.Core
                         throw new InvalidOperationException("Unable to get service: DTE");
 
                     using var vsRootKey = Registry.CurrentUser.OpenSubKey(dte.RegistryRoot);
-                    if (vsRootKey?.GetValue("VisualStudioLocation") is string vsLocation)
-                        _visualizersPath = Path.Combine(vsLocation, "Visualizers");
+                    if (vsRootKey?.GetValue("VisualStudioLocation") is string vsLocation
+                        && !string.IsNullOrWhiteSpace(vsLocation))
+                    {
+                        var candidate = Path.Combine(vsLocation, "Visualizers");
+                        // optional, but prevents "non-empty invalid" path
+                        if (Directory.Exists(candidate))
+                            _visualizersPath = candidate;
+                    }
                 } catch (Exception exception) {
                     exception.Log();
                 }
-
-                if (string.IsNullOrEmpty(_visualizersPath)) {
-                    _visualizersPath = Path.Combine(Environment.GetFolderPath(Environment
-                        .SpecialFolder.MyDocuments),
-#if VS2026
-                        @"Visual Studio 18\Visualizers\");
-#elif VS2022
-                        @"Visual Studio 2022\Visualizers\");
-#elif VS2019
-                        @"Visual Studio 2019\Visualizers\");
-#endif
-                }
             });
+
+            if (!string.IsNullOrEmpty(_visualizersPath))
+                return;
+
+#if VS2019 || VS2022 || VS2026
+            string path = null;
+
+            var version = await VsShell.GetReleaseStringAsync() ?? string.Empty;
+
+            if (version.StartsWith("16.", StringComparison.Ordinal))
+                path = @"Visual Studio 2019\Visualizers\";
+            else if (version.StartsWith("17.", StringComparison.Ordinal))
+                path = @"Visual Studio 2022\Visualizers\";
+            else if (version.StartsWith("18.", StringComparison.Ordinal))
+                path = @"Visual Studio 18\Visualizers\";
+
+            _visualizersPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder
+                    .MyDocuments), path ?? @"Visual Studio 2022\Visualizers\");
+#else
+#error Unknown Visual Studio version!
+#endif
         }
     }
 }
