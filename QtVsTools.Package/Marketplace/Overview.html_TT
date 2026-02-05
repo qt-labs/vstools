@@ -10,6 +10,9 @@
 **          <#=WARNING_GENERATED_FILE#>
 ****************************************************************************************************
 -->
+<#
+    string VsDisplayName = (VS_NAME == "2022") ? "2022 and 2026" : VS_NAME;
+#>
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="utf-8" />
@@ -20,13 +23,13 @@
 <!-- CUT HERE vvv CUT HERE vvv CUT HERE vvv CUT HERE vvv CUT HERE vvv CUT HERE vvv CUT HERE vvv -->
 
 <#if (VS_TARGET_ARCH != "arm64") {#>
-    <p><h1>Qt VS Tools for Visual Studio <#=VS_NAME #></h1></p>
+    <p><h1>Qt VS Tools for Visual Studio <#=VsDisplayName #></h1></p>
 <#} else {#>
-    <p><h1>Qt VS Tools for Visual Studio <#=VS_NAME #> on ARM</h1></p>
+    <p><h1>Qt VS Tools for Visual Studio <#=VsDisplayName #> on ARM</h1></p>
 <#}#>
 <p>
     This official Qt Group extension, Qt Visual Studio Tools, integrates Qt development tools
-    into Microsoft Visual Studio <#=VS_NAME #><#if (VS_TARGET_ARCH == "arm64") {#> on ARM<#}#>,
+    into Microsoft Visual Studio <#=VsDisplayName #><#if (VS_TARGET_ARCH == "arm64") {#> on ARM<#}#>,
     enabling developers to use their familiar Windows environment without worrying about
     Qt-related build steps or tools.
 </p>
@@ -44,9 +47,9 @@ href="https://marketplace.visualstudio.com/items?itemName=TheQtCompany.QtVisualS
         <#}#>
         <#if (VS_NAME !="2022" ) {#>
             <li>
-                <a title="Qt VS Tools for Visual Studio 2022"
+                <a title="Qt VS Tools for Visual Studio 2022 and 2026"
 href="https://marketplace.visualstudio.com/items?itemName=TheQtCompany.QtVisualStudioTools2022">
-                    Qt VS Tools for Visual Studio 2022
+                    Qt VS Tools for Visual Studio 2022 and 2026
                 </a>
             </li>
         <#}#>
@@ -59,9 +62,9 @@ href="https://marketplace.visualstudio.com/items?itemName=TheQtCompany.QtVisualS
             </li>
         <#}#>
             <li>
-                <a title="Qt VS Tools for Visual Studio 2022 on ARM"
+                <a title="Qt VS Tools for Visual Studio 2022 and 2026 on ARM"
 href="https://marketplace.visualstudio.com/items?itemName=TheQtCompany.QtVisualStudioTools2022ARM">
-                    Qt VS Tools for Visual Studio 2022 on ARM
+                    Qt VS Tools for Visual Studio 2022 and 2026 on ARM
                 </a>
             </li>
     </ul>

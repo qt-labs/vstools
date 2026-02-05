@@ -15,6 +15,7 @@
     string PrerequisiteId = "Microsoft.VisualStudio.Component.VC.Tools.x86.x64";
     string VersionRange = "";
     string DisplayName = "MSVC C++ x64/x86 build tools";
+    string VsDisplayName = (VS_NAME == "2022") ? "2022 and 2026" : VS_NAME;
     switch (VS_NAME) {
         case "2026":
             VsProducts = new[]
@@ -86,7 +87,7 @@
       Language="en-US"
       Publisher="The Qt Company Ltd." />
     <DisplayName>Qt Visual Studio Tools</DisplayName>
-    <Description xml:space="preserve">This official Qt Group extension, Qt Visual Studio Tools, integrates Qt development tools into Microsoft Visual Studio <#=VS_NAME #><#if (VS_TARGET_ARCH == "arm64") {#> on ARM<#}#>, enabling developers to use their familiar Windows environment without worrying about Qt-related build steps or tools.</Description>
+    <Description xml:space="preserve">This official Qt Group extension, Qt Visual Studio Tools, integrates Qt development tools into Microsoft Visual Studio <#=VsDisplayName #><#if (VS_TARGET_ARCH == "arm64") {#> on ARM<#}#>, enabling developers to use their familiar Windows environment without worrying about Qt-related build steps or tools.</Description>
     <#=XML_COMMENT_BEGIN#> END Generated Text -->
     <MoreInfo>https://doc.qt.io/qtvstools/index.html</MoreInfo>
     <License>LICENSE.GPL3-EXCEPT</License>
