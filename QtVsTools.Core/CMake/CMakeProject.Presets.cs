@@ -244,14 +244,24 @@ namespace QtVsTools.Core.CMake
 
         private void CheckVisiblePresets()
         {
-            var visiblePresets = UserPresets["configurePresets"]?
+            var allPresets = UserPresets["configurePresets"]?
                 .Children<JObject>()
+                .ToList();
+            var visiblePresets = allPresets?
                 .Where(preset => !preset.ContainsKey("hidden") || !(bool)preset["hidden"])
                 .ToList();
 
             if (visiblePresets == null || !visiblePresets.Any()) {
+                // If there are no visible presets and Qt-Debug/Qt-Release already exist
+                // (hidden or not), don't add duplicates; otherwise add defaults.
+                bool HasPreset(string name) => allPresets?.Any(preset => string
+                    .Equals(preset["name"]?.Value<string>(), name, Utils.IgnoreCase)) ?? false;
+                if (HasPreset("Qt-Debug") || HasPreset("Qt-Release"))
+                    return;
+
                 var releasePreset = new JObject
                 {
+                    ["hidden"] = false,
                     ["name"] = "Qt-Release",
                     ["inherits"] = "Qt-Default",
                     ["binaryDir"] = "${sourceDir}/out/build/release",
@@ -262,6 +272,7 @@ namespace QtVsTools.Core.CMake
                 };
                 var debugPreset = new JObject
                 {
+                    ["hidden"] = false,
                     ["name"] = "Qt-Debug",
                     ["inherits"] = "Qt-Default",
                     ["binaryDir"] = "${sourceDir}/out/build/debug",
