@@ -110,11 +110,81 @@ namespace QtVsTools.Core.CMake
             ThreadHelper.JoinableTaskFactory.Run(async () => await RefreshAsync());
         }
 
+        private class AlertPresetsModified : InfoBarMessage
+        {
+            public AlertPresetsModified(CMakeProject project)
+            {
+                Project = project;
+            }
+
+            private CMakeProject Project { get; }
+
+            protected override ImageMoniker Icon => KnownMonikers.StatusWarning;
+
+            protected override TextSpan[] Text => new[]
+            {
+                new TextSpan { Bold = true, Text = "Qt Visual Studio Tools" },
+                new TextSpacer(2), EmDash, new TextSpacer(2),
+                "Detected user modifications to Qt VS Tools-managed CMake preset records. Choose "
+                    + "[Reset modified presets] to reset managed defaults or "
+                    + "[Keep my changes] to preserve them."
+            };
+
+            protected override Hyperlink[] Hyperlinks => new Hyperlink[]
+            {
+                new()
+                {
+                    Text = "Reset modified presets",
+                    CloseInfoBar = true,
+                    OnClicked = Project.ResetManagedPresets
+                },
+                new()
+                {
+                    Text = "Keep my changes",
+                    CloseInfoBar = true,
+                    OnClicked = Project.KeepManagedPresetChanges
+                },
+                new()
+                {
+                    Text = "Don't show again",
+                    CloseInfoBar = true,
+                    OnClicked = () =>
+                    {
+                        QtOptionsPage.NotifyCMakePresetsModified = false;
+                        QtOptionsPage.SaveSettingsToStorageStatic();
+                    }
+                }
+            };
+        }
+
+        private AlertPresetsModified PresetsModifiedMessage => Lazy.Get(
+            () => PresetsModifiedMessage, () => new AlertPresetsModified(this));
+
+        private async Task ShowPresetsModifiedAsync()
+        {
+            if (!QtOptionsPage.NotifyCMakePresetsModified)
+                return;
+            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+            PresetsModifiedMessage.Show();
+        }
+
+        private void ResetManagedPresets()
+        {
+            ManagedPresetResetPending = true;
+            ThreadHelper.JoinableTaskFactory.Run(async () => await CheckQtStatusAsync());
+        }
+
+        private void KeepManagedPresetChanges()
+        {
+            IgnoreCurrentMismatch();
+        }
+
         private async Task CloseMessagesAsync()
         {
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
             IncompatibleProjectMessage.Close();
             ConversionConfirmationMessage.Close();
+            PresetsModifiedMessage.Close();
         }
     }
 }

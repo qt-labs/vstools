@@ -47,7 +47,7 @@ namespace QtVsTools.Core.CMake
             return System.Convert.ToBase64String(sha1Data);
         }
 
-        private void VerifyChecksums()
+        private void VerifyChecksums(bool resetManagedPresets)
         {
             Presets ??= new JObject();
             UserPresets ??= new JObject();
@@ -69,11 +69,24 @@ namespace QtVsTools.Core.CMake
                 })
                 .Where(x => x.Info != null)
                 .ToList();
+
             foreach (var record in records) {
-                if (record.Checksum?.Value<string>() == EvalChecksum(record.Self))
+                var oldChecksum = record.Checksum?.Value<string>();
+                if (string.IsNullOrEmpty(oldChecksum))
                     continue;
-                if (record.Self != Presets && record.Self != UserPresets)
-                    record.Self.Remove();
+                if (IsRootPresetRecord(record.Self))
+                    continue;
+                var newChecksum = EvalChecksum(record.Self);
+                if (oldChecksum == newChecksum)
+                    continue;
+                HasUserModifiedPresets = true;
+                CurrentMismatchSignature = EvalMismatchSignature(record.Info.Name, oldChecksum,
+                    newChecksum);
+                if (!resetManagedPresets)
+                    break;
+                var root = GetRootRecord(record.Self);
+                record.Self.Remove();
+                TouchRecord(root);
             }
         }
     }

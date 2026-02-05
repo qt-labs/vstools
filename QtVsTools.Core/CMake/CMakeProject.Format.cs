@@ -87,12 +87,29 @@ namespace QtVsTools.Core.CMake
 
         private async Task RefreshAsync()
         {
-            VerifyChecksums();
+            ResetRecordTracking();
+            var resetManagedPresets = ManagedPresetResetPending;
+            ManagedPresetResetPending = false;
+            VerifyChecksums(resetManagedPresets);
+            if (resetManagedPresets) {
+                TouchRecord(Presets);
+                TouchRecord(UserPresets);
+            }
             CheckQtPresets();
-            CheckQtVersions();
+            CheckQtVersions(resetManagedPresets);
             CheckVisiblePresets();
             if (SaveIfRequired() && Index != null)
                 await Index.InvalidateFileScannerCache();
+            if (!resetManagedPresets && HasUserModifiedPresets && !IsCurrentMismatchIgnored()) {
+                if (!PresetsModifiedNotified) {
+                    await ShowPresetsModifiedAsync();
+                    PresetsModifiedNotified = true;
+                }
+            } else {
+                PresetsModifiedNotified = false;
+                if (!HasUserModifiedPresets)
+                    ClearIgnoredMismatch();
+            }
         }
 
         private bool SaveIfRequired()
@@ -120,6 +137,11 @@ namespace QtVsTools.Core.CMake
                 var newChecksum = EvalChecksum(record.Self);
                 if (oldChecksum == newChecksum)
                     continue;
+                if (!IsRecordTouched(record.Self)) {
+                    if (!string.IsNullOrEmpty(oldChecksum) && !IsRootPresetRecord(record.Self))
+                        HasUserModifiedPresets = true;
+                    continue;
+                }
                 isDirty = true;
                 record.Info.Value["checksum"] = newChecksum;
             }

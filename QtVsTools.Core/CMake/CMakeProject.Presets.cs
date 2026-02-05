@@ -31,13 +31,31 @@ namespace QtVsTools.Core.CMake
 
         private void CheckQtPresets()
         {
-            Presets["configurePresets"] ??= new JArray();
-            Presets["vendor"] ??= new JObject();
-            Presets["vendor"]["qt-project.org/Presets"] ??= new JObject();
+            if (Presets["configurePresets"] == null) {
+                Presets["configurePresets"] = new JArray();
+                TouchRecord(Presets);
+            }
+            if (Presets["vendor"] == null) {
+                Presets["vendor"] = new JObject();
+                TouchRecord(Presets);
+            }
+            if (Presets["vendor"]?["qt-project.org/Presets"] == null) {
+                Presets["vendor"]!["qt-project.org/Presets"] = new JObject();
+                TouchRecord(Presets);
+            }
 
-            UserPresets["configurePresets"] ??= new JArray();
-            UserPresets["vendor"] ??= new JObject();
-            UserPresets["vendor"]["qt-project.org/Presets"] ??= new JObject();
+            if (UserPresets["configurePresets"] == null) {
+                UserPresets["configurePresets"] = new JArray();
+                TouchRecord(UserPresets);
+            }
+            if (UserPresets["vendor"] == null) {
+                UserPresets["vendor"] = new JObject();
+                TouchRecord(UserPresets);
+            }
+            if (UserPresets["vendor"]?["qt-project.org/Presets"] == null) {
+                UserPresets["vendor"]!["qt-project.org/Presets"] = new JObject();
+                TouchRecord(UserPresets);
+            }
 
             var pathPreset = Presets["configurePresets"]
                 .FirstOrDefault(x => x["vendor"]?["qt-project.org/Qt"] != null);
@@ -56,6 +74,8 @@ namespace QtVsTools.Core.CMake
                     }
                 };
                 (Presets["configurePresets"] as JArray)?.Add(pathPreset);
+                TouchRecord(Presets);
+                TouchRecord(pathPreset as JObject);
             }
 
             var versionPresets = UserPresets["configurePresets"]
@@ -68,8 +88,10 @@ namespace QtVsTools.Core.CMake
                     if (string.Equals(qtDir, presetQtDir, Utils.IgnoreCase))
                         continue;
                     (versionPreset["environment"] ??= new JObject())["QTDIR"] = qtDir;
+                    TouchRecord(versionPreset as JObject);
                 } else {
                     versionPreset.Remove();
+                    TouchRecord(UserPresets);
                 }
             }
 
@@ -87,8 +109,11 @@ namespace QtVsTools.Core.CMake
             if (defaultPreset is { Name: "Qt-Default", InheritsDefault: true })
                 return;
 
-            defaultPreset?.Self.Remove();
-            (UserPresets["configurePresets"] as JArray)?.Add(new JObject
+            if (defaultPreset != null) {
+                defaultPreset.Self.Remove();
+                TouchRecord(UserPresets);
+            }
+            var qtDefaultPreset = new JObject
             {
                 ["hidden"] = true,
                 ["name"] = "Qt-Default",
@@ -97,7 +122,10 @@ namespace QtVsTools.Core.CMake
                 {
                     ["qt-project.org/Default"] = new JObject()
                 }
-            });
+            };
+            (UserPresets["configurePresets"] as JArray)?.Add(qtDefaultPreset);
+            TouchRecord(UserPresets);
+            TouchRecord(qtDefaultPreset);
         }
 
         private static IEnumerable<string> PresetInherits(JToken presetToken)
@@ -112,7 +140,50 @@ namespace QtVsTools.Core.CMake
             };
         }
 
-        private void CheckQtVersions()
+        private static bool SetValue(JObject obj, string key, JToken value)
+        {
+            if (JToken.DeepEquals(obj?[key], value))
+                return false;
+            obj[key] = value;
+            return true;
+        }
+
+        private void NormalizeQtVersionPreset(JObject preset, VersionInformation versionInfo)
+        {
+            if (preset == null || versionInfo == null)
+                return;
+
+            var changed = false;
+            changed |= SetValue(preset, "hidden", true);
+            changed |= SetValue(preset, "inherits", "Qt");
+            changed |= SetValue(preset, "generator", "Ninja");
+
+            if (preset["environment"] is not JObject environment) {
+                environment = new JObject();
+                preset["environment"] = environment;
+                changed = true;
+            }
+            changed |= SetValue(environment, "QTDIR",
+                HelperFunctions.FromNativeSeparators(versionInfo.InstallPrefix));
+
+            if (preset["architecture"] is not JObject architecture) {
+                architecture = new JObject();
+                preset["architecture"] = architecture;
+                changed = true;
+            }
+            changed |= SetValue(architecture, "strategy", "external");
+            changed |= SetValue(architecture, "value", versionInfo.Platform switch {
+                Platform.x86 => "x86",
+                Platform.x64 => "x64",
+                Platform.arm64 => "arm64",
+                _ => null
+            });
+
+            if (changed)
+                TouchRecord(preset);
+        }
+
+        private void CheckQtVersions(bool strict)
         {
             var versionRecords = GetRecords(UserPresets, "qt-project.org/Version")
                 .ToDictionary(x => x["name"], x => x);
@@ -127,7 +198,7 @@ namespace QtVsTools.Core.CMake
             foreach (var (name, missingVersion) in missingVersions) {
                 var platform = missingVersion.Platform;
                 var qtDir = missingVersion.InstallPrefix;
-                (UserPresets["configurePresets"] as JArray)?.Add(new JObject
+                var versionPreset = new JObject
                 {
                     ["hidden"] = true,
                     ["name"] = name,
@@ -151,7 +222,23 @@ namespace QtVsTools.Core.CMake
                     {
                         ["qt-project.org/Version"] = new JObject()
                     }
-                });
+                };
+                (UserPresets["configurePresets"] as JArray)?.Add(versionPreset);
+                TouchRecord(UserPresets);
+                TouchRecord(versionPreset);
+            }
+
+            if (!strict)
+                return;
+
+            foreach (var versionRecord in versionRecords.Values) {
+                var versionName = versionRecord["name"]?.Value<string>();
+                if (string.IsNullOrEmpty(versionName))
+                    continue;
+                var versionInfo = VersionInformation.GetOrAddByName(versionName);
+                if (versionInfo == null || string.IsNullOrEmpty(versionInfo.InstallPrefix))
+                    continue;
+                NormalizeQtVersionPreset(versionRecord, versionInfo);
             }
         }
 
@@ -163,7 +250,7 @@ namespace QtVsTools.Core.CMake
                 .ToList();
 
             if (visiblePresets == null || !visiblePresets.Any()) {
-                (UserPresets["configurePresets"] as JArray)?.AddFirst(new JObject
+                var releasePreset = new JObject
                 {
                     ["name"] = "Qt-Release",
                     ["inherits"] = "Qt-Default",
@@ -172,8 +259,8 @@ namespace QtVsTools.Core.CMake
                     {
                         ["CMAKE_BUILD_TYPE"] = "Release"
                     }
-                });
-                (UserPresets["configurePresets"] as JArray)?.AddFirst(new JObject
+                };
+                var debugPreset = new JObject
                 {
                     ["name"] = "Qt-Debug",
                     ["inherits"] = "Qt-Default",
@@ -187,7 +274,12 @@ namespace QtVsTools.Core.CMake
                     {
                         ["QML_DEBUG_ARGS"] = $"-qmljsdebugger=file:{{{Guid.NewGuid()}}},block"
                     }
-                });
+                };
+                (UserPresets["configurePresets"] as JArray)?.AddFirst(releasePreset);
+                (UserPresets["configurePresets"] as JArray)?.AddFirst(debugPreset);
+                TouchRecord(UserPresets);
+                TouchRecord(releasePreset);
+                TouchRecord(debugPreset);
                 return;
             }
 
@@ -208,6 +300,7 @@ namespace QtVsTools.Core.CMake
                     preset["inherits"] = inherits == null ? new JArray() : new JArray {inherits};
                 }
                 (preset["inherits"] as JArray)?.Add("Qt-Default");
+                TouchRecord(preset);
             }
         }
     }

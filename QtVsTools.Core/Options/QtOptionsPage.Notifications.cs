@@ -22,6 +22,7 @@ namespace QtVsTools.Core.Options
             [String("Notifications_UpdateProjectFormat")] UpdateProjectFormat,
             [String("Notifications_CMake_Incompatible")] CMakeIncompatible,
             [String("Notifications_CMake_Conversion")] CMakeConversion,
+            [String("Notifications_CMake_Presets_Modified")] CMakePresetsModified,
             [String("NotifySearchDevRelease")] NotifySearchDevRelease,
             [String("Notifications_SearchDevRelease")] NotifyQmlLanguageServersUpdateInstalled,
             [String("Notifications_DesignerDetachable")] NotifyDesignerDetachable,
@@ -147,6 +148,23 @@ namespace QtVsTools.Core.Options
         {
             get => QtOptionsPageSettings.Instance.GetValue(() => NotifyCMakeConversion);
             set => QtOptionsPageSettings.Instance.SetValue(() => NotifyCMakeConversion, value);
+        }
+
+        [Category("Notifications")]
+        [DisplayName("Qt VS Tools-managed CMake presets modified")]
+        [Description("Show notification when Qt VS Tools-managed CMake preset records are modified.")]
+        [TypeConverter(typeof(EnableDisableConverter))]
+        public bool NotifyCMakePresetsModifiedOption
+        {
+            get => NotifyCMakePresetsModified;
+            set => NotifyCMakePresetsModified = value;
+        }
+
+        [Settings(Notifications.CMakePresetsModified, true)]
+        public static bool NotifyCMakePresetsModified
+        {
+            get => QtOptionsPageSettings.Instance.GetValue(() => NotifyCMakePresetsModified);
+            set => QtOptionsPageSettings.Instance.SetValue(() => NotifyCMakePresetsModified, value);
         }
 
         [Category("Notifications")]
