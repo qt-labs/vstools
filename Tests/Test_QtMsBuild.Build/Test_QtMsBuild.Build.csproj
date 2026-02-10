@@ -55,6 +55,7 @@
     <Compile Include="Test_IntDir.cs" />
     <Compile Include="Test_LateBinding.cs" />
     <Compile Include="Test_Pch.cs" />
+    <Compile Include="Test_RcDefines.cs" />
     <Compile Include="Test_QmlStatic.cs" />
     <Compile Include="Test_StdAfx.cs" />
   </ItemGroup>

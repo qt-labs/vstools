@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
- Copyright (C) 2025 The Qt Company Ltd.
+ Copyright (C) 2026 The Qt Company Ltd.
  SPDX-License-Identifier: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
 -->
 
@@ -136,11 +136,44 @@
 
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////
+  /// TARGET QtPrepareResourceCompilerDefines
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Normalize defines that are valid for C/C++ but break resource compiler argument parsing.
+  // -->
+  <Target Name="QtPrepareResourceCompilerDefines">
+    <PropertyGroup>
+      <!-- copy all Qt defines -->
+      <QtResourceCompilerDefines>$(Qt_DEFINES_)</QtResourceCompilerDefines>
+    </PropertyGroup>
+    <ItemGroup Condition="'$(QtResourceCompilerDefines)' != ''">
+      <!-- split on ';' into individual define entries -->
+      <QtResourceCompilerDefine Include="$([System.String]::Copy('$(QtResourceCompilerDefines)').Split(';'))"/>
+      <!-- remove empty entries after split -->
+      <QtResourceCompilerDefine Remove="@(QtResourceCompilerDefine)" Condition="'%(Identity)' == ''"/>
+      <!-- normalize QT_TESTCASE_BUILDDIR="..." to QT_TESTCASE_BUILDDIR=... for rc.exe -->
+      <QtResourceCompilerDefine>
+        <Normalized
+          >$([System.Text.RegularExpressions.Regex]::Replace('%(Identity)',
+            '^QT_TESTCASE_BUILDDIR=&quot;(.+)&quot;$', 'QT_TESTCASE_BUILDDIR=$1'))</Normalized>
+      </QtResourceCompilerDefine>
+    </ItemGroup>
+    <PropertyGroup Condition="'@(QtResourceCompilerDefine)' != ''">
+      <!-- join items back to a ';' separated property -->
+      <QtResourceCompilerDefines>@(QtResourceCompilerDefine->'%(Normalized)', ';')</QtResourceCompilerDefines>
+    </PropertyGroup>
+    <ItemGroup>
+      <!-- cleanup temporary item list -->
+      <QtResourceCompilerDefine Remove="@(QtResourceCompilerDefine)"/>
+    </ItemGroup>
+  </Target>
+
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
   /// TARGET QtUpdateCompilerOptions
   /////////////////////////////////////////////////////////////////////////////////////////////////
   // -->
   <Target Name="QtUpdateCompilerOptions"
-          DependsOnTargets="QtAddCompilerSources"
+          DependsOnTargets="QtAddCompilerSources;QtPrepareResourceCompilerDefines"
           BeforeTargets="ClCompile;ResourceCompile">
 
     <ItemGroup>
@@ -167,8 +200,8 @@
       <ResourceCompile>
         <AdditionalIncludeDirectories Condition="'$(QtIncludePath)' != ''"
           >$(QtIncludePath);%(ResourceCompile.AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-        <PreprocessorDefinitions Condition="'$(Qt_DEFINES_)' != ''"
-          >$(Qt_DEFINES_);%(ResourceCompile.PreprocessorDefinitions)</PreprocessorDefinitions>
+        <PreprocessorDefinitions Condition="'$(QtResourceCompilerDefines)' != ''"
+          >$(QtResourceCompilerDefines);%(ResourceCompile.PreprocessorDefinitions)</PreprocessorDefinitions>
       </ResourceCompile>
     </ItemGroup>
 
