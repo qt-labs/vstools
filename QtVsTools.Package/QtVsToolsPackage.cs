@@ -128,6 +128,7 @@ namespace QtVsTools
 
                 VsServiceProvider.Instance = Instance = this;
                 AddService(typeof(SIdleTaskManager), CreateServiceAsync);
+                await VsShell.InitializeAsync();
 
                 var packages = await GetServiceAsync<
                     SVsPackageInfoQueryService, IVsPackageInfoQueryService>();

@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
 
 using System;
+using System.Threading;
 using Microsoft;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.ComponentModelHost;
@@ -19,9 +20,20 @@ namespace QtVsTools.VisualStudio
     public static class VsShell
     {
         static LazyFactory Lazy { get; } = new LazyFactory();
+        static IComponentModel componentModel;
 
-        static IComponentModel ComponentModel => Lazy.Get(() => ComponentModel,
+        static IComponentModel ComponentModel => componentModel ?? Lazy.Get(() => ComponentModel,
             () => VsServiceProvider.GetGlobalService<SComponentModel, IComponentModel>());
+
+        public static async Task InitializeAsync()
+        {
+            if (componentModel != null)
+                return;
+
+            var service = await VsServiceProvider.GetServiceAsync<SComponentModel, IComponentModel>();
+            if (service != null)
+                Interlocked.CompareExchange(ref componentModel, service, null);
+        }
 
         public static I GetComponentService<I>() where I : class
         {

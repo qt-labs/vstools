@@ -5,7 +5,6 @@ using System;
 using System.ComponentModel.Composition;
 using System.Linq;
 using Microsoft.VisualStudio;
-using Microsoft.VisualStudio.ComponentModelHost;
 using Microsoft.VisualStudio.Editor;
 using Microsoft.VisualStudio.OLE.Interop;
 using Microsoft.VisualStudio.Shell;
@@ -32,6 +31,9 @@ namespace QtVsTools.Qml.Classification
         [Import]
         internal IClassificationTypeRegistryService classificationTypeRegistry = null;
 
+        [Import]
+        internal IVsEditorAdaptersFactoryService editorFactory = null;
+
         [Export(typeof(ClassificationTypeDefinition))]
         [Name(ClassificationType)]
         internal static ClassificationTypeDefinition qmlDebug = null;
@@ -44,7 +46,7 @@ namespace QtVsTools.Qml.Classification
                     classificationTypeRegistry.GetClassificationType(ClassificationType));
             }
 
-            return QmlExpressionEval.Create(textView, buffer) as ITagger<T>;
+            return QmlExpressionEval.Create(textView, buffer, editorFactory) as ITagger<T>;
         }
     }
 
@@ -61,16 +63,21 @@ namespace QtVsTools.Qml.Classification
         IVsTextView vsTextView;
         IVsTextLines textLines;
         IOleCommandTarget nextTarget;
+        readonly IVsEditorAdaptersFactoryService editorFactory;
 
-        public static QmlExpressionEval Create(ITextView textView, ITextBuffer buffer)
+        public static QmlExpressionEval Create(ITextView textView, ITextBuffer buffer,
+            IVsEditorAdaptersFactoryService editorFactory)
         {
-            var _this = new QmlExpressionEval(textView, buffer);
+            var _this = new QmlExpressionEval(textView, buffer, editorFactory);
             return _this.Initialize(textView, buffer) ? _this : null;
         }
 
-        private QmlExpressionEval(ITextView textView, ITextBuffer buffer)
+        private QmlExpressionEval(ITextView textView, ITextBuffer buffer,
+                IVsEditorAdaptersFactoryService factory)
             : base(ClassificationType, textView, buffer)
-        { }
+        {
+            editorFactory = factory;
+        }
 
         private bool Initialize(ITextView textView, ITextBuffer buffer)
         {
@@ -81,8 +88,6 @@ namespace QtVsTools.Qml.Classification
             if (debugger == null)
                 return false;
 
-            var componentModel = VsServiceProvider.GetService<SComponentModel, IComponentModel>();
-            var editorFactory = componentModel?.GetService<IVsEditorAdaptersFactoryService>();
             if (editorFactory == null)
                 return false;
 
