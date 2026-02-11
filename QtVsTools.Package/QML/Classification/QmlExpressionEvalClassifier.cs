@@ -1,4 +1,4 @@
-// Copyright (C) 2025 The Qt Company Ltd.
+// Copyright (C) 2026 The Qt Company Ltd.
 // SPDX-License-Identifier: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
 
 using System;
@@ -40,13 +40,24 @@ namespace QtVsTools.Qml.Classification
 
         public ITagger<T> CreateTagger<T>(ITextView textView, ITextBuffer buffer) where T : ITag
         {
+            if (textView.TextBuffer != buffer)
+                return null;
+
             QmlClassificationType.InitClassificationTypes(classificationTypeRegistry);
             if (!QmlClassificationType.ClassificationTypes.ContainsKey(ClassificationType)) {
                 QmlClassificationType.ClassificationTypes.Add(ClassificationType,
                     classificationTypeRegistry.GetClassificationType(ClassificationType));
             }
 
-            return QmlExpressionEval.Create(textView, buffer, editorFactory) as ITagger<T>;
+            QmlExpressionEval tagger;
+            if (textView.Properties.TryGetProperty(typeof(QmlExpressionEval), out tagger))
+                return tagger as ITagger<T>;
+
+            tagger = QmlExpressionEval.Create(textView, buffer, editorFactory);
+            if (tagger != null)
+                textView.Properties.AddProperty(typeof(QmlExpressionEval), tagger);
+
+            return tagger as ITagger<T>;
         }
     }
 
