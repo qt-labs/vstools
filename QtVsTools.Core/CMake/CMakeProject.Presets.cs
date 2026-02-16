@@ -85,10 +85,16 @@ namespace QtVsTools.Core.CMake
                 if (VersionInformation.GetOrAddByName((string)versionPreset["name"]) is { } version) {
                     var qtDir = HelperFunctions.FromNativeSeparators(version.InstallPrefix);
                     var presetQtDir = versionPreset["environment"]?["QTDIR"]?.Value<string>();
-                    if (string.Equals(qtDir, presetQtDir, Utils.IgnoreCase))
-                        continue;
-                    (versionPreset["environment"] ??= new JObject())["QTDIR"] = qtDir;
-                    TouchRecord(versionPreset as JObject);
+                    var hasQtOnlyInherits = PresetInherits(versionPreset)
+                        .All(x => string.Equals(x, "Qt", Utils.IgnoreCase));
+                    if (!hasQtOnlyInherits) {
+                        versionPreset["inherits"] = "Qt";
+                        TouchRecord(versionPreset as JObject);
+                    }
+                    if (!string.Equals(qtDir, presetQtDir, Utils.IgnoreCase)) {
+                        (versionPreset["environment"] ??= new JObject())["QTDIR"] = qtDir;
+                        TouchRecord(versionPreset as JObject);
+                    }
                 } else {
                     versionPreset.Remove();
                     TouchRecord(UserPresets);
@@ -300,9 +306,9 @@ namespace QtVsTools.Core.CMake
             bool IsQtVersion(JToken presetName) => versionNames.Contains(presetName.ToString());
 
             var presetsMissingQtRef = visiblePresets
-                .Where(preset => !preset.ContainsKey("inherits")
+                .Where(preset => !IsQtManagedPreset(preset) && (!preset.ContainsKey("inherits")
                     || (preset["inherits"] is JArray inherits && !inherits.Any(IsQtVersion))
-                    || (preset["inherits"] is JValue presetName && !IsQtVersion(presetName)));
+                    || (preset["inherits"] is JValue presetName && !IsQtVersion(presetName))));
             foreach (var preset in presetsMissingQtRef) {
                 if (!preset.ContainsKey("inherits"))
                     preset["inherits"] = new JArray();
@@ -313,6 +319,12 @@ namespace QtVsTools.Core.CMake
                 (preset["inherits"] as JArray)?.Add("Qt-Default");
                 TouchRecord(preset);
             }
+        }
+
+        private static bool IsQtManagedPreset(JObject preset)
+        {
+            return preset?["vendor"]?["qt-project.org/Version"] != null
+                || preset?["vendor"]?["qt-project.org/Default"] != null;
         }
     }
 }
