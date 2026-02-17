@@ -245,6 +245,14 @@
     <Defines>QT_MULTIMEDIAWIDGETS_LIB</Defines>
   </Module>
   <Module>
+    <Name>Qt Spatial Audio</Name>
+    <Selectable>true</Selectable>
+    <LibraryPrefix>QtSpatialAudio</LibraryPrefix>
+    <proVarQT>spatialaudio</proVarQT>
+    <IncludePath>$(QTDIR)\include\QtSpatialAudio</IncludePath>
+    <Defines>QT_SPATIALAUDIO_LIB</Defines>
+  </Module>
+  <Module>
     <Name>Qt Print Support</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtPrintSupport</LibraryPrefix>
@@ -269,6 +277,14 @@
     <Defines>QT_REMOTEOBJECTS_LIB</Defines>
   </Module>
   <Module>
+    <Name>Qt Remote Objects QML</Name>
+    <Selectable>true</Selectable>
+    <LibraryPrefix>QtRemoteObjectsQml</LibraryPrefix>
+    <proVarQT>remoteobjectsqml</proVarQT>
+    <IncludePath>$(QTDIR)\include\QtRemoteObjectsQml</IncludePath>
+    <Defines>QT_REMOTEOBJECTSQML_LIB</Defines>
+  </Module>
+  <Module>
     <Name>Qt SCXML</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtScxml</LibraryPrefix>
@@ -277,12 +293,28 @@
     <Defines>QT_SCXML_LIB</Defines>
   </Module>
   <Module>
+    <Name>Qt SCXML QML</Name>
+    <Selectable>true</Selectable>
+    <LibraryPrefix>QtScxmlQml</LibraryPrefix>
+    <proVarQT>scxmlqml</proVarQT>
+    <IncludePath>$(QTDIR)\include\QtScxmlQml</IncludePath>
+    <Defines>QT_SCXMLQML_LIB</Defines>
+  </Module>
+  <Module>
     <Name>Qt Sensors</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtSensors</LibraryPrefix>
     <proVarQT>sensors</proVarQT>
     <IncludePath>$(QTDIR)\include\QtSensors</IncludePath>
     <Defines>QT_SENSORS_LIB</Defines>
+  </Module>
+  <Module>
+    <Name>Qt Sensors Quick</Name>
+    <Selectable>true</Selectable>
+    <LibraryPrefix>QtSensorsQuick</LibraryPrefix>
+    <proVarQT>sensorsquick</proVarQT>
+    <IncludePath>$(QTDIR)\include\QtSensorsQuick</IncludePath>
+    <Defines>QT_SENSORSQUICK_LIB</Defines>
   </Module>
   <Module>
     <Name>Qt Serial Bus</Name>
@@ -309,12 +341,28 @@
     <Defines>QT_SQL_LIB</Defines>
   </Module>
   <Module>
+    <Name>Qt Text To Speech</Name>
+    <Selectable>true</Selectable>
+    <LibraryPrefix>QtTextToSpeech</LibraryPrefix>
+    <proVarQT>texttospeech</proVarQT>
+    <IncludePath>$(QTDIR)\include\QtTextToSpeech</IncludePath>
+    <Defines>QT_TEXTTOSPEECH_LIB</Defines>
+  </Module>
+  <Module>
     <Name>Qt State Machine</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtStateMachine</LibraryPrefix>
     <proVarQT>statemachine</proVarQT>
     <IncludePath>$(QTDIR)\include\QtStateMachine</IncludePath>
     <Defines>QT_STATEMACHINE_LIB</Defines>
+  </Module>
+  <Module>
+    <Name>Qt State Machine QML</Name>
+    <Selectable>true</Selectable>
+    <LibraryPrefix>QtStateMachineQml</LibraryPrefix>
+    <proVarQT>statemachineqml</proVarQT>
+    <IncludePath>$(QTDIR)\include\QtStateMachineQml</IncludePath>
+    <Defines>QT_STATEMACHINEQML_LIB</Defines>
   </Module>
   <Module>
     <Name>Qt SVG</Name>
@@ -339,6 +387,14 @@
     <proVarQT>webchannel</proVarQT>
     <IncludePath>$(QTDIR)\include\QtWebChannel</IncludePath>
     <Defines>QT_WEBCHANNEL_LIB</Defines>
+  </Module>
+  <Module>
+    <Name>Qt WebChannel Quick</Name>
+    <Selectable>true</Selectable>
+    <LibraryPrefix>QtWebChannelQuick</LibraryPrefix>
+    <proVarQT>webchannelquick</proVarQT>
+    <IncludePath>$(QTDIR)\include\QtWebChannelQuick</IncludePath>
+    <Defines>QT_WEBCHANNELQUICK_LIB</Defines>
   </Module>
   <Module>
     <Name>Qt WebEngine</Name>
@@ -367,6 +423,14 @@
     <LibraryPrefix>QtWebView</LibraryPrefix>
   </Module>
   <Module>
+    <Name>Qt WebView Quick</Name>
+    <Selectable>true</Selectable>
+    <LibraryPrefix>QtWebViewQuick</LibraryPrefix>
+    <proVarQT>webviewquick</proVarQT>
+    <IncludePath>$(QTDIR)\include\QtWebViewQuick</IncludePath>
+    <Defines>QT_WEBVIEWQUICK_LIB</Defines>
+  </Module>
+  <Module>
     <Name>Qt XML</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtXml</LibraryPrefix>
@@ -381,6 +445,22 @@
     <proVarQT>positioning</proVarQT>
     <IncludePath>$(QTDIR)\include\QtPositioning</IncludePath>
     <Defines>QT_POSITIONING_LIB</Defines>
+  </Module>
+  <Module>
+    <Name>Qt Positioning Quick</Name>
+    <Selectable>true</Selectable>
+    <LibraryPrefix>QtPositioningQuick</LibraryPrefix>
+    <proVarQT>positioningquick</proVarQT>
+    <IncludePath>$(QTDIR)\include\QtPositioningQuick</IncludePath>
+    <Defines>QT_POSITIONINGQUICK_LIB</Defines>
+  </Module>
+  <Module>
+    <Name>Qt Location</Name>
+    <Selectable>true</Selectable>
+    <LibraryPrefix>QtLocation</LibraryPrefix>
+    <proVarQT>location</proVarQT>
+    <IncludePath>$(QTDIR)\include\QtLocation</IncludePath>
+    <Defines>QT_LOCATION_LIB</Defines>
   </Module>
   <Module>
     <Name>Qt NFC</Name>
@@ -399,6 +479,14 @@
     <Defines>QT_CHARTS_LIB</Defines>
   </Module>
   <Module>
+    <Name>Qt Charts QML</Name>
+    <Selectable>true</Selectable>
+    <LibraryPrefix>QtChartsQml</LibraryPrefix>
+    <proVarQT>chartsqml</proVarQT>
+    <IncludePath>$(QTDIR)\include\QtChartsQml</IncludePath>
+    <Defines>QT_CHARTSQML_LIB</Defines>
+  </Module>
+  <Module>
     <Name>Qt Data Visualization</Name>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtDataVisualization</LibraryPrefix>
@@ -406,9 +494,38 @@
     <IncludePath>$(QTDIR)\include\QtDataVisualization</IncludePath>
     <Defines>QT_DATAVISUALIZATION_LIB</Defines>
   </Module>
-  <!--
-      lottie
-  -->
+  <Module>
+    <Name>Qt Data Visualization QML</Name>
+    <Selectable>true</Selectable>
+    <LibraryPrefix>QtDataVisualizationQml</LibraryPrefix>
+    <proVarQT>datavisualizationqml</proVarQT>
+    <IncludePath>$(QTDIR)\include\QtDataVisualizationQml</IncludePath>
+    <Defines>QT_DATAVISUALIZATIONQML_LIB</Defines>
+  </Module>
+  <Module>
+    <Name>Qt Graphs</Name>
+    <Selectable>true</Selectable>
+    <LibraryPrefix>QtGraphs</LibraryPrefix>
+    <proVarQT>graphs</proVarQT>
+    <IncludePath>$(QTDIR)\include\QtGraphs</IncludePath>
+    <Defines>QT_GRAPHS_LIB</Defines>
+  </Module>
+  <Module>
+    <Name>Qt Graphs Widgets</Name>
+    <Selectable>true</Selectable>
+    <LibraryPrefix>QtGraphsWidgets</LibraryPrefix>
+    <proVarQT>graphswidgets</proVarQT>
+    <IncludePath>$(QTDIR)\include\QtGraphsWidgets</IncludePath>
+    <Defines>QT_GRAPHSWIDGETS_LIB</Defines>
+  </Module>
+  <Module>
+    <Name>Qt Lottie</Name>
+    <Selectable>true</Selectable>
+    <LibraryPrefix>QtLottie</LibraryPrefix>
+    <proVarQT>lottie</proVarQT>
+    <IncludePath>$(QTDIR)\include\QtLottie</IncludePath>
+    <Defines>QT_LOTTIE_LIB</Defines>
+  </Module>
   <Module>
     <Name>Qt Network Authorization</Name>
     <Selectable>true</Selectable>
@@ -416,6 +533,14 @@
     <proVarQT>networkauth</proVarQT>
     <IncludePath>$(QTDIR)\include\QtNetworkAuth</IncludePath>
     <Defines>QT_NETWORKAUTH_LIB</Defines>
+  </Module>
+  <Module>
+    <Name>Qt HTTP Server</Name>
+    <Selectable>true</Selectable>
+    <LibraryPrefix>QtHttpServer</LibraryPrefix>
+    <proVarQT>httpserver</proVarQT>
+    <IncludePath>$(QTDIR)\include\QtHttpServer</IncludePath>
+    <Defines>QT_HTTPSERVER_LIB</Defines>
   </Module>
   <Module>
     <Name>Qt Protobuf</Name>
@@ -534,6 +659,14 @@
     <proVarQT>waylandcompositor</proVarQT>
     <Selectable>true</Selectable>
     <LibraryPrefix>QtWaylandCompositor</LibraryPrefix>
+  </Module>
+  <Module>
+    <Name>Qt VNC Server</Name>
+    <Selectable>true</Selectable>
+    <LibraryPrefix>QtVncServer</LibraryPrefix>
+    <proVarQT>vncserver</proVarQT>
+    <IncludePath>$(QTDIR)\include\QtVncServer</IncludePath>
+    <Defines>QT_VNCSERVER_LIB</Defines>
   </Module>
   <Module>
     <Name>Qt WebEngine Widgets</Name>
