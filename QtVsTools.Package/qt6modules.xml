@@ -418,6 +418,62 @@
     <Defines>QT_NETWORKAUTH_LIB</Defines>
   </Module>
   <Module>
+    <Name>Qt Protobuf</Name>
+    <Selectable>true</Selectable>
+    <LibraryPrefix>QtProtobuf</LibraryPrefix>
+    <proVarQT>protobuf</proVarQT>
+    <IncludePath>$(QTDIR)\include\QtProtobuf</IncludePath>
+    <Defines>QT_PROTOBUF_LIB</Defines>
+  </Module>
+  <Module>
+    <Name>Qt Protobuf Qt Core Types</Name>
+    <Selectable>true</Selectable>
+    <LibraryPrefix>QtProtobufQtCoreTypes</LibraryPrefix>
+    <proVarQT>protobufqtcoretypes</proVarQT>
+    <IncludePath>$(QTDIR)\include\QtProtobufQtCoreTypes</IncludePath>
+    <Defines>QT_PROTOBUFQTCORETYPES_LIB</Defines>
+  </Module>
+  <Module>
+    <Name>Qt Protobuf Qt GUI Types</Name>
+    <Selectable>true</Selectable>
+    <LibraryPrefix>QtProtobufQtGuiTypes</LibraryPrefix>
+    <proVarQT>protobufqtguitypes</proVarQT>
+    <IncludePath>$(QTDIR)\include\QtProtobufQtGuiTypes</IncludePath>
+    <Defines>QT_PROTOBUFQTGUITYPES_LIB</Defines>
+  </Module>
+  <Module>
+    <Name>Qt Protobuf Quick</Name>
+    <Selectable>true</Selectable>
+    <LibraryPrefix>QtProtobufQuick</LibraryPrefix>
+    <proVarQT>protobufquick</proVarQT>
+    <IncludePath>$(QTDIR)\include\QtProtobufQuick</IncludePath>
+    <Defines>QT_PROTOBUFQUICK_LIB</Defines>
+  </Module>
+  <Module>
+    <Name>Qt Protobuf Well Known Types</Name>
+    <Selectable>true</Selectable>
+    <LibraryPrefix>QtProtobufWellKnownTypes</LibraryPrefix>
+    <proVarQT>protobufwellknowntypes</proVarQT>
+    <IncludePath>$(QTDIR)\include\QtProtobufWellKnownTypes</IncludePath>
+    <Defines>QT_PROTOBUFWELLKNOWNTYPES_LIB</Defines>
+  </Module>
+  <Module>
+    <Name>Qt GRPC</Name>
+    <Selectable>true</Selectable>
+    <LibraryPrefix>QtGrpc</LibraryPrefix>
+    <proVarQT>grpc</proVarQT>
+    <IncludePath>$(QTDIR)\include\QtGrpc</IncludePath>
+    <Defines>QT_GRPC_LIB</Defines>
+  </Module>
+  <Module>
+    <Name>Qt GRPC Quick</Name>
+    <Selectable>true</Selectable>
+    <LibraryPrefix>QtGrpcQuick</LibraryPrefix>
+    <proVarQT>grpcquick</proVarQT>
+    <IncludePath>$(QTDIR)\include\QtGrpcQuick</IncludePath>
+    <Defines>QT_GRPCQUICK_LIB</Defines>
+  </Module>
+  <Module>
     <Name>Qt Virtual Keyboard</Name>
     <proVarQT>virtualkeyboard</proVarQT>
     <Selectable>true</Selectable>
