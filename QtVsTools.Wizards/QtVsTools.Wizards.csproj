@@ -107,7 +107,6 @@
     </Resource>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Common\UniformWarpPanel.cs" />
     <Compile Include="ItemWizard\Translation\TranslationPage.xaml.cs">
       <DependentUpon>TranslationPage.xaml</DependentUpon>
     </Compile>

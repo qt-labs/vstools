@@ -170,6 +170,7 @@
     <Compile Include="QmlLanguageServerMonitorTask.cs" />
     <Compile Include="NatvisHelper.cs" />
     <Compile Include="ProjectConfigurationEventArgs.cs" />
+    <Compile Include="UniformWrapPanel.cs" />
     <Compile Include="VisualStudio\DebuggerEvents.cs" />
     <Compile Include="VisualStudio\IdleTaskManager.cs" />
     <Compile Include="Options\QtOptionsPageSettings.cs" />

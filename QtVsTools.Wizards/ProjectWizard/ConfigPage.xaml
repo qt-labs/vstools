@@ -5,6 +5,7 @@
 
 <common:WizardPage x:Class="QtVsTools.Wizards.ProjectWizard.ConfigPage"
     xmlns:common="clr-namespace:QtVsTools.Wizards.Common"
+    xmlns:core="clr-namespace:QtVsTools.Core;assembly=QtVsTools.Core"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -258,7 +259,7 @@
                                         Grid.Column="0">
                                 <ListView.ItemsPanel>
                                   <ItemsPanelTemplate>
-                                    <common:UniformWrapPanel IsAutoUniform="false"
+                                    <core:UniformWrapPanel IsAutoUniform="false"
                                                              Rows="2" />
                                   </ItemsPanelTemplate>
                                 </ListView.ItemsPanel>

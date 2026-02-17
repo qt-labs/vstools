@@ -24,9 +24,9 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace QtVsTools.Wizards.Common
+namespace QtVsTools.Core
 {
-    internal class UniformWrapPanel : WrapPanel
+    public class UniformWrapPanel : WrapPanel
     {
         #region Dependency Properties
 
@@ -223,15 +223,29 @@ namespace QtVsTools.Wizards.Common
 
             // Calculate the total desired size and the maximum count of rows/columns to consider
             var totalDesiredSize = rowOrColumnSizes.Sum();
-            var maxCount = Math.Min(targetRowCountOrColumnCount, rowOrColumnSizes.Count);
+            var maxCount = targetRowCountOrColumnCount > 0
+                ? Math.Min(targetRowCountOrColumnCount, rowOrColumnSizes.Count)
+                : rowOrColumnSizes.Count;
+            if (maxCount <= 0)
+                return maxSize;
 
             // Calculate the suitable size for rows/columns based on total desired size and maximum
             // count
             var suitableSize = totalDesiredSize / maxCount;
+            if (double.IsNaN(suitableSize) || double.IsInfinity(suitableSize))
+                return maxSize;
 
             // Adjust suitableSize to ensure it doesn't exceed the maximum count of rows/columns
+            var maxIterations = rowOrColumnSizes.Count * 4 + 16;
+            var iteration = 0;
             while (CalculateRowCountOrColumnCountWithinLimit(rowOrColumnSizes, suitableSize,
                        out var nextLengthIncrement) > maxCount) {
+                if (++iteration > maxIterations
+                    || nextLengthIncrement <= 0.0
+                    || double.IsNaN(nextLengthIncrement)
+                    || double.IsInfinity(nextLengthIncrement)) {
+                    return Math.Max(suitableSize, maxSize);
+                }
                 suitableSize += nextLengthIncrement;
             }
 
