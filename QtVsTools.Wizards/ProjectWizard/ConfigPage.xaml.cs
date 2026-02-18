@@ -91,9 +91,7 @@ namespace QtVsTools.Wizards.ProjectWizard
                     Target = Target,
                     Platform = Platform,
                     IsDebug = IsDebug,
-                    Modules = AllModules
-                        .Select(m => m.Clone())
-                        .ToDictionary(m => m.Name)
+                    Modules = ToModuleMap(AllModules.Select(m => m.Clone()))
                 };
             }
         }
@@ -196,7 +194,7 @@ namespace QtVsTools.Wizards.ProjectWizard
                                 : versionInfo.Platform == Platform.arm64
                                     ? ProjectPlatforms.ARM64.Cast<string>()
                                     : string.Empty,
-                    Modules = DefaultModules.ToDictionary(m => m.Name)
+                    Modules = ToModuleMap(DefaultModules)
                 },
                 new() {
                     ConfigPage = this,
@@ -215,7 +213,7 @@ namespace QtVsTools.Wizards.ProjectWizard
                                 : versionInfo.Platform == Platform.arm64
                                     ? ProjectPlatforms.ARM64.Cast<string>()
                                     : string.Empty,
-                    Modules = DefaultModules.ToDictionary(m => m.Name)
+                    Modules = ToModuleMap(DefaultModules)
                 }
             };
             currentConfigs = defaultConfigs.Clone();
@@ -373,7 +371,7 @@ namespace QtVsTools.Wizards.ProjectWizard
                                     ? ProjectPlatforms.ARM64.Cast<string>()
                                     : string.Empty;
                     config.Modules =
-                        QtModules.Instance.GetAvailableModules(config.QtVersion.Major)
+                        ToModuleMap(QtModules.Instance.GetAvailableModules(config.QtVersion.Major)
                             .Where(mi => mi.Selectable)
                             .Select(mi => new Module
                             {
@@ -381,7 +379,7 @@ namespace QtVsTools.Wizards.ProjectWizard
                                 Id = mi.proVarQT,
                                 IsSelected = Data.DefaultModules.Contains(mi.LibraryPrefix),
                                 IsReadOnly = Data.DefaultModules.Contains(mi.LibraryPrefix)
-                            }).ToDictionary(m => m.Name);
+                            }));
                 } else if (config.QtVersionPath.StartsWith("SSH:")) {
                     config.Target = ProjectTargets.LinuxSSH.Cast<string>();
                 } else if (config.QtVersionPath.StartsWith("WSL:")) {
@@ -390,6 +388,19 @@ namespace QtVsTools.Wizards.ProjectWizard
                 ConfigTable.Items.Refresh();
             }
             Validate();
+        }
+
+        private static Dictionary<string, Module> ToModuleMap(IEnumerable<Module> modules)
+        {
+            var map = new Dictionary<string, Module>(CaseIgnorer);
+            foreach (var module in modules) {
+                var baseKey = module.Name ?? string.Empty;
+                var key = baseKey;
+                for (var i = 2; map.ContainsKey(key); ++i)
+                    key = $"{baseKey} [{i}]";
+                map[key] = module;
+            }
+            return map;
         }
 
         void Target_ComboBox_Loaded(object sender, RoutedEventArgs e)
