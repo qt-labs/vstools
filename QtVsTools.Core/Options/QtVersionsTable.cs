@@ -319,6 +319,8 @@ namespace QtVsTools.Core.Options
 
         private void OnAutodetectQtInstallations_Click(object sender, RoutedEventArgs e)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var versions = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
             void TryAddVersions(string path, string xmlVersions)
@@ -329,8 +331,27 @@ namespace QtVsTools.Core.Options
 
             TryAddVersions(GetShortcutTargetPath(Path.Combine(Environment.GetFolderPath(Environment
                 .SpecialFolder.CommonPrograms), QtMaintenanceToolLnk)), QtVersionsXmlInstaller);
-            TryAddVersions(GetShortcutTargetPath(Path.Combine(Environment.GetFolderPath(Environment
-                .SpecialFolder.Programs), QtMaintenanceToolLnk)), QtVersionsXmlInstaller);
+
+            var maintenanceToolLink = Path.Combine(Environment.GetFolderPath(Environment
+                .SpecialFolder.Programs), QtMaintenanceToolLnk);
+            var shortcutTargetPath = GetShortcutTargetPath(maintenanceToolLink);
+            if (!string.IsNullOrWhiteSpace(shortcutTargetPath)) {
+                TryAddVersions(shortcutTargetPath, QtVersionsXmlInstaller);
+
+                var datFile = Path.Combine(shortcutTargetPath, MaintenanceToolDat);
+                if (File.Exists(datFile)) {
+                    var waitDialog = WaitDialog.Start("Qt VS Tools", "Searching for Qt Installations",
+                        delay: 2, isCancelable: true);
+                    try {
+                        var qtInstallPath = Path.GetDirectoryName(datFile);
+                        versions.AddRange(SearchAllQMake(qtInstallPath, waitDialog));
+                    } catch (Exception ex) {
+                        ex.Log();
+                    }
+                    waitDialog.Stop();
+                }
+            }
+
             TryAddVersions(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
                 QtVersionsXmlCreator);
 
@@ -545,6 +566,7 @@ namespace QtVsTools.Core.Options
         private void AddQtVersionsFromPath(IEnumerable<string> allQMakePath)
         {
             var versions = new List<QtVersion>();
+            var visited = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
             // Create a list of new versions
             foreach (var qmakePath in allQMakePath) {
@@ -552,6 +574,13 @@ namespace QtVsTools.Core.Options
                     continue;
                 var qmakeBinDir = Path.GetDirectoryName(qmakePath);
                 var compilerDir = Path.GetDirectoryName(qmakeBinDir);
+
+                // qmake/qtpaths and .exe/.bat variants may point to the same compiler dir.
+                // Process each compiler dir once to avoid running the qmake/qtpaths query twice.
+                var cleanCompilerDir = NormalizePath(compilerDir);
+                if (string.IsNullOrEmpty(cleanCompilerDir) || !visited.Add(cleanCompilerDir))
+                    continue;
+
                 var qtVersionDir = Path.GetDirectoryName(compilerDir);
                 var versionName = $"{Path.GetFileName(qtVersionDir)}"
                   + $"_{Path.GetFileName(compilerDir)}".Replace(" ", "_");

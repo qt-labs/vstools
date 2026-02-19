@@ -131,7 +131,7 @@ namespace QtVsTools.Core
                                 value = new VersionInformation(key);
                             return value;
                         });
-                    return vi;
+                    return string.IsNullOrEmpty(vi?.QtDir) ? null : vi;
                 } catch (Exception exception) {
                     exception.Log();
                     return null;
