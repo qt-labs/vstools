@@ -140,10 +140,13 @@ namespace QtVsTools.Core
         public async Task PrintAsync(string value = "")
         {
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+            var text = value ?? string.Empty;
+            if (!text.EndsWith("\n", StringComparison.Ordinal))
+                text += Environment.NewLine;
             if (Pane is IVsOutputWindowPaneNoPump noPumpPane)
-                noPumpPane.OutputStringNoPump(value + Environment.NewLine);
+                noPumpPane.OutputStringNoPump(text);
             else
-                ErrorHandler.ThrowOnFailure(Pane.OutputStringThreadSafe(value + Environment.NewLine));
+                ErrorHandler.ThrowOnFailure(Pane.OutputStringThreadSafe(text));
         }
     }
 }
