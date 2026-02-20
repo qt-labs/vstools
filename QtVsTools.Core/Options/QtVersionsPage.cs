@@ -146,18 +146,22 @@ namespace QtVsTools.Core.Options
                     if (string.Equals(Path.GetFileName(versionPath ?? ""), "bin", IgnoreCase))
                         versionPath = Path.GetDirectoryName(versionPath);
 
-                    var versionInfo = VersionInformation.GetOrAddByPath(versionPath);
-                    var generator = versionInfo?.GetQMakeConfEntry("MAKEFILE_GENERATOR");
-
-                    if (generator is "MSVC.NET" or "MSBUILD")
-                        continue;
-
                     var message = string.Empty;
                     if (!string.IsNullOrEmpty(version.Name))
                         message += $"{version.Name} - ";
-                    message += "Incompatible makefile generator";
-                    if (!string.IsNullOrEmpty(generator))
-                        message += $": {generator}";
+
+                    var versionInfo = VersionInformation.GetOrAddByPath(versionPath);
+                    if (versionInfo == null) {
+                        message += "Could not read Qt version information";
+                    } else {
+                        var generator = versionInfo.GetQMakeConfEntry("MAKEFILE_GENERATOR");
+                        if (generator is "MSVC.NET" or "MSBUILD")
+                            continue;
+                        if (string.IsNullOrEmpty(generator))
+                            message += "Could not detect makefile generator";
+                        else
+                            message += $"Incompatible makefile generator: {generator}";
+                    }
 
                     errorMessages.Add(message);
                     version.ErrorMessage = message;
