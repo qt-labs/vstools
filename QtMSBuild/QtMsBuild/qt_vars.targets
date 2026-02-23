@@ -28,6 +28,100 @@
 
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////
+  /// TASK QtAtomicReplaceFile
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Replace destination file atomically when supported by the runtime/filesystem.
+  // Falls back to delete+move if atomic replace is unavailable.
+  // -->
+  <UsingTask TaskName="QtAtomicReplaceFile"
+    TaskFactory="CodeTaskFactory"
+    AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
+    <ParameterGroup>
+      <SourceFile ParameterType="System.String" Required="true" />
+      <DestinationFile ParameterType="System.String" Required="true" />
+    </ParameterGroup>
+    <Task>
+      <Using Namespace="System" />
+      <Using Namespace="System.IO" />
+      <Using Namespace="Microsoft.Build.Framework" />
+      <Code Type="Fragment" Language="cs">
+        <![CDATA[
+          try {
+              if (!File.Exists(SourceFile)) {
+                  Log.LogError("Source file does not exist: {0}", SourceFile);
+                  return false;
+              }
+              var destinationDir = Path.GetDirectoryName(DestinationFile);
+              if (!string.IsNullOrEmpty(destinationDir) && !Directory.Exists(destinationDir))
+                  Directory.CreateDirectory(destinationDir);
+
+              var maxAttempts = 4;
+              for (var attempt = 1; attempt <= maxAttempts; ++attempt) {
+                  try {
+                      File.Replace(SourceFile, DestinationFile, null, true);
+                      Log.LogMessage(MessageImportance.Low, "Atomic replace succeeded for {0}",
+                          DestinationFile);
+                      return true;
+                  } catch (FileNotFoundException) {
+                      // Destination does not exist yet. Try a direct move; if another writer
+                      // wins the race, retry and replace against the now-existing destination.
+                      try {
+                          File.Move(SourceFile, DestinationFile);
+                          Log.LogMessage(MessageImportance.Low, "Destination did not exist; "
+                              + "moved {0} to {1}", SourceFile, DestinationFile);
+                          return true;
+                      } catch (IOException) {
+                          if (attempt == maxAttempts)
+                              throw;
+                      } catch (UnauthorizedAccessException) {
+                          if (attempt == maxAttempts)
+                              throw;
+                      }
+                  } catch (PlatformNotSupportedException) {
+                      Log.LogMessage(MessageImportance.Low, "Atomic replace not supported; "
+                          + "falling back to move/replace for {0}", DestinationFile);
+                      try {
+                          File.Move(SourceFile, DestinationFile);
+                          return true;
+                      } catch (IOException) {
+                          if (attempt == maxAttempts)
+                              throw;
+                      } catch (UnauthorizedAccessException) {
+                          if (attempt == maxAttempts)
+                              throw;
+                      }
+                  } catch (NotSupportedException) {
+                      Log.LogMessage(MessageImportance.Low, "Atomic replace not supported; "
+                          + "falling back to move/replace for {0}", DestinationFile);
+                      try {
+                          File.Move(SourceFile, DestinationFile);
+                          return true;
+                      } catch (IOException) {
+                          if (attempt == maxAttempts)
+                              throw;
+                      } catch (UnauthorizedAccessException) {
+                          if (attempt == maxAttempts)
+                              throw;
+                      }
+                  } catch (IOException) {
+                      if (attempt == maxAttempts)
+                          throw;
+                  } catch (UnauthorizedAccessException) {
+                      if (attempt == maxAttempts)
+                          throw;
+                  }
+              }
+          } catch (Exception e) {
+              Log.LogErrorFromException(e, true);
+              return false;
+          }
+        ]]>
+      </Code>
+    </Task>
+  </UsingTask>
+
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
   /// TARGET QtVars
   /////////////////////////////////////////////////////////////////////////////////////////////////
   // Call qmake with generated .pro file to export Qt variables into MSBuild .props file
@@ -283,25 +377,6 @@
             ;$(QtVarsProFileInput)"
       Overwrite="true"/>
 
-    <!--// Write start of Qt vars data file:
-        //  * Open property group tag -->
-    <PropertyGroup>
-      <!--
-######## BEGIN generated XML (.props) ##############################################################
-##    -->
-      <QtVarsDataFileText>
-        <![CDATA[
-<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <PropertyGroup>
-        ]]>
-      </QtVarsDataFileText>
-      <!--
-##
-######## END generated XML (.props) ################################################################
-      -->
-    </PropertyGroup>
-    <WriteLinesToFile File="$(QtVarsWorkPath)" Lines="$(QtVarsDataFileText)" Overwrite="true"/>
-
     <!--// Run qmake: convert Makefile vars to .props (XML) file -->
     <PropertyGroup>
       <Cmd><![CDATA["$(QtToolsPath)/qmake" $(QMakeArgs) qtvars.pro]]></Cmd>
@@ -404,36 +479,42 @@
       <Output TaskParameter="OutVars" ItemName="QtVar"/>
     </GetVarsFromMSBuild>
 
-    <!--// Write variables as MSBuild properties to .props file -->
+    <!--// Build variable data as MSBuild properties -->
     <PropertyGroup>
       <QtMakefileVars Condition="'@(QtVar)' != ''">
-        <![CDATA[@(QtVar->'<Qt_%(Identity)_>%(Value)</Qt_%(Identity)_>','%0D%0A')]]>
+        <![CDATA[@(QtVar->'    <Qt_%(Identity)_>%(Value)</Qt_%(Identity)_>','%0D%0A')]]>
       </QtMakefileVars>
     </PropertyGroup>
-    <WriteLinesToFile Condition="'$(QtMakefileVars)' != ''"
-      File="$(QtVarsWorkPath)" Lines="$([System.String]::Copy($(QtMakefileVars)))"/>
 
-    <!--// Write qmake properties as MSBuild properties to .props file -->
+    <!--// Build qmake properties as MSBuild properties -->
     <PropertyGroup>
       <QMakeProps Condition="'@(QtVar)' != ''">
-        <![CDATA[@(QMakeProperty->'<QMake_%(Identity)_>%(Value)</QMake_%(Identity)_>','%0D%0A')]]>
+        <![CDATA[@(QMakeProperty->'    <QMake_%(Identity)_>%(Value)</QMake_%(Identity)_>','%0D%0A')]]>
       </QMakeProps>
     </PropertyGroup>
-    <WriteLinesToFile Condition="'$(QMakeProps)' != ''"
-      File="$(QtVarsWorkPath)" Lines="$([System.String]::Copy($(QMakeProps)))"/>
+    <!--// Normalize variable fragments before template expansion:
+        //  * provide explicit empty defaults
+        //  * avoid fragile direct expression expansion inside the final XML text -->
+    <PropertyGroup>
+      <QtMakefileVarsData Condition="'$(QtMakefileVars)' != ''"
+        >$([System.String]::Copy($(QtMakefileVars)))</QtMakefileVarsData>
+      <QtMakefileVarsData Condition="'$(QtMakefileVars)' == ''"></QtMakefileVarsData>
+      <QMakePropsData Condition="'$(QMakeProps)' != ''"
+        >$([System.String]::Copy($(QMakeProps)))</QMakePropsData>
+      <QMakePropsData Condition="'$(QMakeProps)' == ''"></QMakePropsData>
+    </PropertyGroup>
 
-    <!--// Write end of .props (XML) file
-        //  * Add Qt tools output directories to include path
-        //  * Save settings backup
-        //  * Close property group tag
-        //  * Create QtVar items to export Qt variables to the calling instance of MSBuild
-        //  * Close project tag -->
+    <!--// Write .props (XML) file in a single operation to avoid partial/corrupted output -->
     <PropertyGroup>
       <!--
 ######## BEGIN generated XML (.props) ##############################################################
 ##    -->
       <QtVarsDataFileText>
         <![CDATA[
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    $(QtMakefileVarsData)
+    $(QMakePropsData)
     <QtBkup_QtHash>$(QtHash)</QtBkup_QtHash>
     <QtVersion>$(QtVersion)</QtVersion>
     <QtVersionMajor>$(QtVersionMajor)</QtVersionMajor>
@@ -448,18 +529,23 @@
 ######## END generated XML (.props) ################################################################
       -->
     </PropertyGroup>
-    <WriteLinesToFile File="$(QtVarsWorkPath)" Lines="$(QtVarsDataFileText)"/>
+    <WriteLinesToFile File="$(QtVarsWorkPath)" Lines="$(QtVarsDataFileText)" Overwrite="true"/>
 
     <!--// Create $(QtVarsOutputDir) -->
     <MakeDir Directories="$(QtVarsOutputDir)"/>
 
-    <!--// Copy generated .props to $(QtVarsOutputDir) -->
-    <Delete
-      Condition="'$(ErrorLevel)' == '0'"
-      Files="$(QtVarsFilePath)"/>
+    <!--// Copy generated .props to $(QtVarsOutputDir) using an atomic replace -->
+    <PropertyGroup>
+      <QtVarsFileTmpPath
+        >$(QtVarsFilePath).$([System.Guid]::NewGuid().ToString("N")).tmp</QtVarsFileTmpPath>
+    </PropertyGroup>
     <Copy
       Condition="'$(ErrorLevel)' == '0'"
-      SourceFiles="$(QtVarsWorkPath)" DestinationFiles="$(QtVarsFilePath)"/>
+      SourceFiles="$(QtVarsWorkPath)" DestinationFiles="$(QtVarsFileTmpPath)"/>
+    <QtAtomicReplaceFile
+      Condition="'$(ErrorLevel)' == '0'"
+      SourceFile="$(QtVarsFileTmpPath)" DestinationFile="$(QtVarsFilePath)"/>
+    <Delete Files="$(QtVarsFileTmpPath)" Condition="Exists('$(QtVarsFileTmpPath)')"/>
 
     <!--// Copy generated qtvars_plugin_import.cpp to $(QtVarsOutputDir) -->
     <Delete
@@ -508,6 +594,9 @@
       <QtVarsDataFileText/>
       <Cmd/>
       <QtMakefileVars/>
+      <QtMakefileVarsData/>
+      <QMakePropsData/>
+      <QtVarsFileTmpPath/>
     </PropertyGroup>
   </Target>
 
