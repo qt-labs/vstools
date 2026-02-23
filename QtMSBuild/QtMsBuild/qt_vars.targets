@@ -149,6 +149,15 @@
       Condition="'$(ApplicationType)' != 'Linux' AND '$(ErrorLevel)' != '0'"
       Name="PATH" Prefix="true" Value="$(ExecutablePath)"/>
 
+    <!--// Use a unique work directory per invocation to avoid contention on qmake intermediates -->
+    <PropertyGroup>
+      <QtVarsWorkDir
+        >$([System.IO.Path]::Combine('$(QtVarsOutputDir)','$(QtVarsWorkDirName)',
+          '$([System.Guid]::NewGuid().ToString("N"))'))</QtVarsWorkDir>
+      <QtVarsWorkPath>$(QtVarsWorkDir)\$(QtVarsFileName)</QtVarsWorkPath>
+      <QtVarsWorkImportFile>$(QtVarsWorkDir)\import.qml</QtVarsWorkImportFile>
+    </PropertyGroup>
+
     <!--// Set-up temp directory -->
     <MakeDir Directories="$(QtVarsWorkDir)"/>
 
@@ -358,6 +367,10 @@
     </PropertyGroup>
 
     <!--// Write dummy QML and QRC files -->
+    <Copy
+      Condition="$(QtModules.Contains('quick')) AND Exists('$(QtQmlStaticImportFile)')"
+      SourceFiles="$(QtQmlStaticImportFile)"
+      DestinationFiles="$(QtVarsWorkImportFile)"/>
     <WriteLinesToFile
       Condition="$(QtModules.Contains('quick'))"
       File="$(QtVarsWorkDir)\qml.qrc"
@@ -597,6 +610,7 @@
       <QtMakefileVarsData/>
       <QMakePropsData/>
       <QtVarsFileTmpPath/>
+      <QtVarsWorkImportFile/>
     </PropertyGroup>
   </Target>
 
