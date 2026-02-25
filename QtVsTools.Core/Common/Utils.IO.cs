@@ -147,6 +147,47 @@ namespace QtVsTools.Core.Common
         }
 
         /// <summary>
+        /// Asynchronously compares two files by content. Returns false if either file does not
+        /// exist or cannot be read.
+        /// </summary>
+        public static async Task<bool> CompareFilesAsync(string sourcePath, string targetPath)
+        {
+            try {
+                var sourceInfo = new FileInfo(sourcePath);
+                var targetInfo = new FileInfo(targetPath);
+                if (!sourceInfo.Exists || !targetInfo.Exists)
+                    return false;
+                if (sourceInfo.Length != targetInfo.Length)
+                    return false;
+
+                const int bufferSize = 64 * 1024;
+                var sourceBuffer = new byte[bufferSize];
+                var targetBuffer = new byte[bufferSize];
+
+                using var source = new FileStream(sourcePath, FileMode.Open, FileAccess.Read,
+                    FileShare.ReadWrite | FileShare.Delete, bufferSize, useAsync: true);
+                using var target = new FileStream(targetPath, FileMode.Open, FileAccess.Read,
+                    FileShare.ReadWrite | FileShare.Delete, bufferSize, useAsync: true);
+                while (true) {
+                    var sourceRead = await source.ReadAsync(sourceBuffer, 0, sourceBuffer.Length)
+                        .ConfigureAwait(false);
+                    var targetRead = await target.ReadAsync(targetBuffer, 0, targetBuffer.Length)
+                        .ConfigureAwait(false);
+                    if (sourceRead != targetRead)
+                        return false;
+                    if (sourceRead == 0)
+                        return true;
+                    for (var i = 0; i < sourceRead; ++i) {
+                        if (sourceBuffer[i] != targetBuffer[i])
+                            return false;
+                    }
+                }
+            } catch (Exception) {
+                return false;
+            }
+        }
+
+        /// <summary>
         /// Snapshot of a directory's files and subdirectories at a point in time. Used to detect
         /// and clean up new entries created by a tool run.
         /// </summary>

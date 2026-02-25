@@ -190,56 +190,7 @@ namespace QtVsTools
                 // Install Qt/MSBuild files from package folder to standard location
                 //  -> %LOCALAPPDATA%\QtMsBuild
                 //
-                var qtMsBuildDefault = Path.Combine(
-                    Environment.GetEnvironmentVariable("LocalAppData") ?? "", "QtMsBuild");
-                try {
-                    var qtMsBuildDefaultUri = new Uri(qtMsBuildDefault + Path.DirectorySeparatorChar);
-                    var qtMsBuildVsixPath = Path.Combine(Utils.PackageInstallPath, "QtMsBuild");
-                    var qtMsBuildVsixUri = new Uri(qtMsBuildVsixPath + Path.DirectorySeparatorChar);
-                    if (qtMsBuildVsixUri != qtMsBuildDefaultUri) {
-                        var qtMsBuildVsixFiles = Directory
-                            .GetFiles(qtMsBuildVsixPath, "*", SearchOption.AllDirectories)
-                            .Select(x => qtMsBuildVsixUri.MakeRelativeUri(new Uri(x)));
-                        foreach (var qtMsBuildFile in qtMsBuildVsixFiles) {
-                            var sourcePath = new Uri(qtMsBuildVsixUri, qtMsBuildFile).LocalPath;
-                            var targetPath = new Uri(qtMsBuildDefaultUri, qtMsBuildFile).LocalPath;
-                            var targetPathTemp = targetPath + ".tmp";
-                            Directory.CreateDirectory(Path.GetDirectoryName(targetPath) ?? "");
-                            File.Copy(sourcePath, targetPathTemp, overwrite: true);
-                            ////////
-                            // Copy Qt/MSBuild files to standard location, taking care not to
-                            // overwrite the updated Qt props file, possibly containing user-defined
-                            // build settings (written by the VS Property Manager). This file is
-                            // recognized as being named "Qt.props" and containing the import
-                            // statement for qt_private.props.
-                            //
-                            const string qtPrivateImport
-                                = @"<Import Project=""$(MSBuildThisFileDirectory)\qt_private.props""";
-                            static bool IsUpdateQtProps(string path) =>
-                                string.Equals(Path.GetFileName(path), "Qt.props", Utils.IgnoreCase)
-                                    && File.ReadAllText(path).Contains(qtPrivateImport);
-
-                            if (!File.Exists(targetPath)) {
-                                // Target file does not exist
-                                //  -> Create new
-                                File.Move(targetPathTemp, targetPath);
-                            } else if (!IsUpdateQtProps(targetPath)) {
-                                // Target file is not the updated Qt.props
-                                //  -> Overwrite
-                                File.Replace(targetPathTemp, targetPath, null);
-                            } else {
-                                // Target file *is* the updated Qt.props; skip!
-                                //  -> Remove temp file
-                                Utils.DeleteFile(targetPathTemp);
-                            }
-                        }
-                    }
-                } catch {
-                    /////////
-                    // Error copying files to standard location.
-                    //  -> FAIL-SAFE: use source folder (within package) as the standard location
-                    qtMsBuildDefault = Path.Combine(Utils.PackageInstallPath, "QtMsBuild");
-                }
+                var qtMsBuildDefault = await InstallQtMsBuildFilesAsync();
 
                 ///////
                 // Set %QTMSBUILD% by default to point to standard location of Qt/MSBuild
@@ -414,6 +365,116 @@ namespace QtVsTools
         }
 
         public static bool IsInitialized => Initialized.WaitOne(0);
+
+        internal static void ClearSettingsRegistry()
+        {
+            Registry.CurrentUser.DeleteSubKeyTree(Resources.ObsoleteRegistryPath, false);
+            Registry.CurrentUser.DeleteSubKeyTree(Resources.RegistryPath, false);
+        }
+
+        /// <summary>
+        /// Returns true when the target is the migrated/user-managed Qt.props variant (identified
+        /// by importing qt_private.props), which must not be overwritten.
+        /// </summary>
+        private static bool IsUpdatedQtProps(string path)
+        {
+            const string qtPrivateImport
+                = @"<Import Project=""$(MSBuildThisFileDirectory)\qt_private.props""";
+            try {
+                return string.Equals(Path.GetFileName(path), "Qt.props", Utils.IgnoreCase)
+                    && File.ReadAllText(path).Contains(qtPrivateImport);
+            } catch (Exception) {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Copies one Qt/MSBuild file to the target path. Skips files that are preserved
+        /// Qt.props or already identical, otherwise stages to a temp file and commits via
+        /// replace/move with handling for target creation races after existence checks.
+        /// </summary>
+        private static async Task CopyQtMsBuildFileAsync(string sourcePath, string targetPath)
+        {
+            Directory.CreateDirectory(Path.GetDirectoryName(targetPath) ?? "");
+
+            if (IsUpdatedQtProps(targetPath))
+                return;
+            if (await Utils.CompareFilesAsync(sourcePath, targetPath))
+                return;
+
+            var targetPathTemp = targetPath + ".tmp." + Guid.NewGuid().ToString("N");
+            try {
+                File.Copy(sourcePath, targetPathTemp, overwrite: true);
+                if (!File.Exists(targetPath)) {
+                    // Target file does not exist. -> Create new
+                    try {
+                        File.Move(targetPathTemp, targetPath);
+                    } catch (IOException) when (File.Exists(targetPath)) {
+                        // Race after the existence check: target appeared before commit.
+                        // -> Replace existing target instead. target instead.
+                        File.Replace(targetPathTemp, targetPath, null);
+                    }
+                } else {
+                    // Target exists and is not updated Qt.props -> Overwrite
+                    File.Replace(targetPathTemp, targetPath, null);
+                }
+            } finally {
+                Utils.DeleteFile(targetPathTemp);
+            }
+        }
+
+        /// <summary>
+        /// Installs Qt/MSBuild files from the package folder to the standard location under
+        /// %LOCALAPPDATA%\QtMsBuild.
+        /// </summary>
+        /// <remarks>
+        /// Uses a named local mutex to serialize this copy step across concurrent VS instances,
+        /// so shared qt*.props/qt*.targets files are not replaced in parallel. The lock scope is
+        /// limited to the copy block and uses a bounded wait to avoid hanging startup.
+        /// </remarks>>
+        private static async Task<string> InstallQtMsBuildFilesAsync()
+        {
+            var qtMsBuildDefault = Path.Combine(
+                Environment.GetEnvironmentVariable("LocalAppData") ?? "", "QtMsBuild");
+            try {
+                var defaultUri = new Uri(qtMsBuildDefault + Path.DirectorySeparatorChar);
+                var vsixPath = Path.Combine(Utils.PackageInstallPath, "QtMsBuild");
+                var vsixUri = new Uri(vsixPath + Path.DirectorySeparatorChar);
+                if (vsixUri == defaultUri)
+                    return qtMsBuildDefault;
+
+                using var mutex = new Mutex(false, @"Local\QtVsTools.QtMsBuild.Copy");
+                var locked = false;
+                try {
+                    try {
+                        locked = mutex.WaitOne(TimeSpan.FromSeconds(30));
+                    } catch (AbandonedMutexException) {
+                        locked = true;
+                    }
+
+                    if (!locked)
+                        throw new TimeoutException("Timed out waiting for Qt/MSBuild copy lock.");
+
+                    var qtMsBuildFiles = Directory
+                        .GetFiles(vsixPath, "*", SearchOption.AllDirectories)
+                        .Select(x => vsixUri.MakeRelativeUri(new Uri(x)));
+                    foreach (var qtMsBuildFile in qtMsBuildFiles) {
+                        var sourcePath = new Uri(vsixUri, qtMsBuildFile).LocalPath;
+                        var targetPath = new Uri(defaultUri, qtMsBuildFile).LocalPath;
+                        await CopyQtMsBuildFileAsync(sourcePath, targetPath);
+                    }
+                } finally {
+                    if (locked)
+                        mutex.ReleaseMutex();
+                }
+            } catch {
+                /////////
+                // Error copying files to standard location.
+                //  -> FAIL-SAFE: use source folder (within package) as the standard location
+                qtMsBuildDefault = Path.Combine(Utils.PackageInstallPath, "QtMsBuild");
+            }
+            return qtMsBuildDefault;
+        }
 
         private async Task CheckVersionsAsync()
         {
