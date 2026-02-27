@@ -62,13 +62,9 @@ Alternatively, a manual uninstallation is also possible. To remove the extension
 
     vsixinstaller /RootSuffix:SquishTestInstance /uninstall:QtVsTools.bf3c71c0-ab41-4427-ada9-9b3813d89ff5
 
-To remove the extension installed into VS 2022, run the following command:
+To remove the extension installed into VS 2022 and VS 2026, run the following command:
 
     vsixinstaller /RootSuffix:SquishTestInstance /uninstall:QtVsTools.8e827d74-6fc4-40a6-a3aa-faf19652b3b8
-
-To remove the extension installed into VS 2026, run the following command:
-
-    vsixinstaller /RootSuffix:SquishTestInstance /uninstall:QtVsTools.8e827d74-6fc4-40a6-a3aa-faf19552b3b8
 
 #### Resetting the SquishTestInstance
 
