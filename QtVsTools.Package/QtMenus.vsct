@@ -241,6 +241,7 @@
                 <CommandFlag>DefaultInvisible</CommandFlag>
                 <Strings>
                     <ButtonText>Clear Settings</ButtonText>
+                    <CommandName>QtVSTools.ClearSettings</CommandName>
                 </Strings>
             </Button>
 

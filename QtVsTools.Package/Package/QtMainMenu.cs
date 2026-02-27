@@ -53,7 +53,8 @@ namespace QtVsTools
             ConvertToQtMsBuild = QtMenus.Package.ConvertToQtMsBuild,
             QtProjectSettings = QtMenus.Package.QtProjectSettings,
             QtOptions = QtMenus.Package.QtOptions,
-            QtVersions = QtMenus.Package.QtVersions
+            QtVersions = QtMenus.Package.QtVersions,
+            QtClearSettings = QtMenus.Package.QtClearSettings
         }
 
         /// <summary>
@@ -161,6 +162,9 @@ namespace QtVsTools
             case QtMenus.Package.QtVersions:
                 QtVsToolsPackage.Instance.ShowOptionPage(typeof(Core.Options.QtVersionsPage));
                 break;
+            case QtMenus.Package.QtClearSettings:
+                QtVsToolsPackage.ClearSettingsRegistry();
+                break;
             }
         }
 
@@ -187,6 +191,10 @@ namespace QtVsTools
                 command.Text = "Qt Visual Studio Tools version " + Version.USER_VERSION;
                 command.Visible = true;
                 command.Enabled = false;
+                break;
+            case QtMenus.Package.QtClearSettings:
+                command.Visible = false;
+                command.Enabled = true;
                 break;
             case QtMenus.Package.ImportPriFile:
             case QtMenus.Package.QtProjectSettings:

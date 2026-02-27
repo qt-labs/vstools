@@ -152,10 +152,8 @@ namespace QtVsTools
                     Messages.Print("Unable to get service: IVsAppCommandLine");
                 }
 
-                if (Dte.CommandLineArguments?.Contains("/Command QtVSTools.ClearSettings") == true) {
-                    Registry.CurrentUser.DeleteSubKeyTree(Resources.ObsoleteRegistryPath, false);
-                    Registry.CurrentUser.DeleteSubKeyTree(Resources.RegistryPath, false);
-                }
+                if (Dte.CommandLineArguments?.Contains("/Command QtVSTools.ClearSettings") == true)
+                    ClearSettingsRegistry();
 
                 if (await VsServiceProvider.GetServiceAsync<IVsDebugger>() is { } service) {
                     debuggerEventsHandler = new DebuggerEvents(Dte);
