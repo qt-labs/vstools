@@ -110,7 +110,7 @@
                 \li \l {Debug on Linux}
                 \li \l {Enable QML debugging}
                 \li \l {Get help}
-                \li \l {Hide output}
+                \li \l {Show and hide output}
                 \li \l {Load Qt projects}
                 \li \l {Manage resources}
                 \li \l {Profile Qt Quick applications}
@@ -229,7 +229,7 @@
         \li \l {Build solutions that have Qt/MSBuild format 2}
         \li \l {Convert solutions to latest Qt/MSBuild format}
         \li \l {Cross-compile}
-        \li \l {Hide output}
+        \li \l {Show and hide output}
         \li \l {Update IntelliSense info}
     \endlist
 
@@ -367,9 +367,16 @@
     \list 1
         \li Go to \uicontrol Extensions > \uicontrol {Qt VS Tools} >
             \uicontrol Options > \uicontrol Qt > \uicontrol General >
-            \uicontrol {Notifications}, and then select \uicontrol {Enable} to
-            show notifications that let you turn searching for new releases on
-            or off.
+            \uicontrol {Notifications} to show notifications about
+            development releases:
+            \list
+                \li In \uicontrol {Development release download}, select
+                    \uicontrol {Enable} to show notifications that let you
+                    download new releases.
+                \li In \uicontrol {Development releases}, select
+                    \uicontrol {Enable} to show notifications that let you
+                    turn searching for new releases on or off.
+            \endlist
         \li In \uicontrol {Development releases}, select options:
             \image {qtvstools-options-qt-general-dev-releases.webp} {Development releases in Qt General Options}
             \list
@@ -1489,6 +1496,20 @@
             To select the default Qt version, use \c {"Qt-Default"}.
     \endlist
 
+    \section2 Hide notifications about changes
+
+    Qt VS Tools shows a notification if it changes the presets. To hide the
+    notifications:
+
+    \list 1
+        \li Go to \uicontrol Extensions > \uicontrol {Qt VS Tools} >
+            \uicontrol Options > \uicontrol Qt > \uicontrol General >
+            \uicontrol {Notifications}.
+            \image {qtvstools-options-qt-general-notifications.webp} {Notifications in Qt General Options}
+        \li In \uicontrol {Qt VS Tools-managed CMake presets modified}, select
+            \uicontrol Disable.
+    \endlist
+
     \sa {Add Qt versions}, {Cross-compile}
 */
 
@@ -2085,11 +2106,11 @@
     \l{QML Language Server Reference}{language server protocol (LSP)}. The IDE
     can then offer services, such as code completion.
 
-    Turn on the QML Language Server to get code editing services when developing
+    Turn on QML Language Server to get code editing services when developing
     Qt Quick applications if:
 
     \list
-        \li The default Qt version supports the QML Language Server
+        \li The default Qt version supports QML Language Server
             (available since Qt 6.5).
         \li The Visual Studio version supports
             \l {https://learn.microsoft.com/en-us/visualstudio/extensibility/adding-an-lsp-extension}
@@ -2099,14 +2120,14 @@
     The services you get depend on the Qt version and Visual Studio version
     that you use.
 
-    To turn on the QML Language Server:
+    To turn on QML Language Server and set options for running it:
 
     \list 1
         \li Go to \uicontrol Extensions > \uicontrol {Qt VS Tools} >
             \uicontrol Options > \uicontrol Qt > \uicontrol General >
             \uicontrol {QML Language Server}.
             \image {qtvstools-options-qt-general-qmlls.webp} {QML Language Server in Qt General Options}
-        \li In \uicontrol Enable, select \uicontrol Enable to turn on the
+        \li In \uicontrol Enable, select \uicontrol Enable to turn on
             QML Language Server.
         \li In \uicontrol Log, select \uicontrol Enable to write LSP messages to
             a log file in a temporary folder.
@@ -2117,7 +2138,12 @@
             develop with a Qt version earlier than 6.5.0, Qt VS Tools tries to
             start QML Language Server for that version, and if it is not
             available, the default version.
+        \li In \uicontrol {Search for updates}, select \uicontrol Enable to
+            search for QML Language Server updates every 24 hours after Visual
+            Studio has been idle for 60 seconds.
     \endlist
+
+    \section1 Receive update notifications
 
     To receive notifications for QML Language Server updates:
 
@@ -2803,12 +2829,27 @@ QTEST_MAIN(QtTest)
     \page qtvstools-how-to-hide-output.html
     \ingroup qtvstools-how-to
 
-    \title Hide output
+    \title Show and hide output
 
     Qt VS Tools shows messages in the \uicontrol Output pane when you start it
     and build applications, for example.
 
     \image {qtvstools-output.webp} {Qt VS Tools messages in the Output pane}
+
+    \section1 Show exceptions in Output
+
+    To show detailed information about exceptions in the \uicontrol Output pane:
+
+    \list 1
+        \li Go to \uicontrol Extensions > \uicontrol {Qt VS Tools} >
+            \uicontrol Options > \uicontrol Qt > \uicontrol General >
+            \uicontrol {Notifications}.
+            \image {qtvstools-options-qt-general-notifications.webp} {Notifications in Qt General Options}
+        \li In \uicontrol {Show exception details in output pane}, select
+            \uicontrol Enable.
+    \endlist
+
+    \section1 Hide Qt VS Tools output
 
     To stop the Qt VS Tools output from being activated and hiding the output
     from Visual Studio:
@@ -2817,7 +2858,6 @@ QTEST_MAIN(QtTest)
         \li Go to \uicontrol Extensions > \uicontrol {Qt VS Tools} >
             \uicontrol Options > \uicontrol Qt > \uicontrol General >
             \uicontrol {Notifications}.
-            \image {qtvstools-options-qt-general-notifications.webp} {Notifications in Qt General Options}
         \li In \uicontrol {Auto activate console pane}, select \uicontrol Disable.
     \endlist
 */
