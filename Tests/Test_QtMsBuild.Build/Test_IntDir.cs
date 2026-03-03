@@ -1,6 +1,7 @@
 // Copyright (C) 2026 The Qt Company Ltd.
 // SPDX-License-Identifier: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
 
+using System;
 using System.IO;
 using Microsoft.Build.Construction;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -42,10 +43,13 @@ namespace QtVsTools.Test.QtMsBuild.Build
                 "-p:Platform=x64",
                 "-p:Configuration=Debug");
 
-            Assert.IsTrue(File.Exists(Path.Combine(
-                ResolveDir(temp.ProjectDir, intDir), "qt", "qmake", "props.txt")));
-            Assert.IsFalse(File.Exists(Path.Combine(
-                ResolveDir(temp.ProjectDir, oldIntDir), "qt", "qmake", "props.txt")));
+            var intQmakeDir = Path.Combine(ResolveDir(temp.ProjectDir, intDir), "qt", "qmake");
+            var oldIntQmakeDir = Path.Combine(ResolveDir(temp.ProjectDir, oldIntDir), "qt", "qmake");
+
+            Assert.HasCount(1, GetFiles(intQmakeDir, "props.txt"),
+                "Expected qmake props.txt under current IntDir.");
+            Assert.HasCount(0, GetFiles(oldIntQmakeDir, "props.txt"),
+                "Did not expect qmake props.txt under previous IntDir.");
         }
 
         private static string ResolveDir(string projectDir, string dir)
@@ -53,6 +57,13 @@ namespace QtVsTools.Test.QtMsBuild.Build
             if (string.IsNullOrWhiteSpace(dir))
                 return dir;
             return Path.IsPathRooted(dir) ? dir : Path.GetFullPath(Path.Combine(projectDir, dir));
+        }
+
+        private static string[] GetFiles(string dir, string pattern)
+        {
+            if (string.IsNullOrWhiteSpace(dir) || !Directory.Exists(dir))
+                return Array.Empty<string>();
+            return Directory.GetFiles(dir, pattern, SearchOption.AllDirectories);
         }
     }
 }
