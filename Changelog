@@ -1,3 +1,28 @@
+Qt Visual Studio Tools version 3.5.0:
+
+This update to the Qt VS Tools extension adds support for Visual Studio 2026, introduces
+additional controls for automatic QML Language Server downloads, and improves reliability
+for CMake presets, Qt/MSBuild, and Qt version detection.
+
+Changes
+-------
+ - Support for Visual Studio 2026
+ - Add an option to disable network access for automatic QML Language Server updates
+ - Preserve user edits in CMakePresets while maintaining integrity checks for Qt-managed presets
+ - Improve reliability of Qt/MSBuild file publication and concurrent QtVars/qmake operations
+ - Improve Qt autodetection and Qt version validation
+ - Expand the Qt 6 module catalog, including Qt Protobuf and Qt GRPC
+ - Add a QML smart indent provider to avoid TextMate indentation crashes
+ - Fixed QTVSADDINBUG-1330: Support downloading qmlls under its new package names
+ - Fixed QTVSADDINBUG-1337: Route exceptions to a log file by default and keep the output pane clean
+ - Fixed QTVSADDINBUG-1299: Fix rc.exe error RC1107 when paths contain spaces
+ - Fixed QTVSADDINBUG-1255 and QTVSADDINBUG-1317: Preserve user edits in CMakePresets
+ - Fixed QTVSADDINBUG-1321: Prevent duplicate hidden Qt-Debug and Qt-Release presets
+ - Fixed QTVSADDINBUG-1329: Improve Qt query validation and version initialization
+ - Fixed QTVSADDINBUG-1174: Add qmltyperegistrar support when converting qmake custom build steps
+ - Fixed QTVSADDINBUG-1340: Make concurrent qtvars.xml generation race-resilient
+
+
 Qt Visual Studio Tools version 3.4.1:
 
 The Qt Visual Studio Tools version 3.4.1 contains a bug fix for QTVSADDINBUG-1319.
