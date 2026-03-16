@@ -10,6 +10,14 @@ namespace QtVsTools.Test.QtMsBuild.Build
     [TestClass]
     public class Test_Eval
     {
+        private static string NormalizeProductVersion(string versionText)
+        {
+            var version = new System.Version(versionText);
+            return version.Revision <= 0
+                ? $"{version.Major}.{version.Minor}.{version.Build}"
+                : $"{version.Major}.{version.Minor}.{version.Build}.{version.Revision}";
+        }
+
         [TestMethod]
         public void Eval()
         {
@@ -21,7 +29,7 @@ namespace QtVsTools.Test.QtMsBuild.Build
                 "QtVSToolsVersion",
                 "-p:Platform=x64",
                 "-p:Configuration=Debug");
-            Assert.AreEqual(Version.PRODUCT_VERSION, qtVsToolsVersion);
+            Assert.AreEqual(Version.PRODUCT_VERSION, NormalizeProductVersion(qtVsToolsVersion));
         }
     }
 }
