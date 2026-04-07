@@ -74,12 +74,14 @@
 
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////
-  // Add Qt DLL path to debugger definitions
+  // Add Qt paths to debugger definitions
+  // The debug launch hook converts these to a PATH entry at runtime.
   // -->
-  <PropertyGroup>
-    <LocalDebuggerEnvironment  Condition="'$(QtDllPath)' != ''"
-      >PATH=$(QtDllPath);%PATH%&#xD;&#xA;$(LocalDebuggerEnvironment)
-    </LocalDebuggerEnvironment>
+  <PropertyGroup Condition="'$(QtInstallDir)' != ''">
+    <LocalDebuggerEnvironment
+      >QTDIR=$(QtInstallDir)&#xD;&#xA;$(LocalDebuggerEnvironment)</LocalDebuggerEnvironment>
+    <LocalDebuggerEnvironment Condition="'$(QtDllPath)' != ''"
+      >QT_DLL_PATH=$(QtDllPath)&#xD;&#xA;$(LocalDebuggerEnvironment)</LocalDebuggerEnvironment>
   </PropertyGroup>
 
   <!--

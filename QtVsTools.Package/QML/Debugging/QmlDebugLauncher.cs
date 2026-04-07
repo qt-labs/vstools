@@ -381,9 +381,13 @@ namespace QtVsTools.Qml.Debug
                 return NextHook?.OnLaunchDebugTargets(targetCount, targets, results) ?? S_OK;
 
             if (env.ContainsKey("PATH") && env.ContainsKey("QTDIR")) {
-                env["PATH"] += $";{env["QTDIR"]}/bin";
-                var bstrEnv = string.Join("\0", env.Select(kv => $"{kv.Key}={kv.Value}"));
-                targets[0].bstrEnv = bstrEnv + '\0'; // Add a final list-terminating null character
+                var qtDllPath = env.TryGetValue("QT_DLL_PATH", out var dllPath)
+                    ? dllPath : $"{env["QTDIR"]}/bin";
+                if (!env["PATH"].Contains(qtDllPath)) {
+                    env["PATH"] = $"{qtDllPath};{env["PATH"]}";
+                    var bstrEnv = string.Join("\0", env.Select(kv => $"{kv.Key}={kv.Value}"));
+                    targets[0].bstrEnv = bstrEnv + '\0';
+                }
             }
 
             // Early return when starting a QML project in a debug configuration, but without debug
