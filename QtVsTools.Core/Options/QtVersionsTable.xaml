@@ -60,7 +60,9 @@
             <Trigger Property="IsSelected"
                      Value="True">
               <Setter Property="Background"
-                      Value="LightSkyBlue" />
+                      Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
+              <Setter Property="Foreground"
+                      Value="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}" />
             </Trigger>
           </Style.Triggers>
         </Style>
@@ -69,6 +71,9 @@
                TargetType="Label">
           <Setter Property="MinHeight"
                   Value="30" />
+          <Setter Property="Foreground"
+                  Value="{Binding Foreground,
+                    RelativeSource={RelativeSource AncestorType=DataGridCell}}" />
           <Setter Property="Template">
             <Setter.Value>
               <ControlTemplate TargetType="Label">
