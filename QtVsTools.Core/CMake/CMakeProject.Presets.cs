@@ -102,13 +102,22 @@ namespace QtVsTools.Core.CMake
             }
 
             var defaultVersion = QtVersionManager.GetDefaultVersion();
+
+            bool MatchesDefaultVersion(JToken preset)
+            {
+                IEnumerable<string> inherits = PresetInherits(preset);
+                return string.IsNullOrEmpty(defaultVersion)
+                    ? !inherits.Any()
+                    : inherits.Any(name => name == defaultVersion);
+            }
+
             var defaultPreset = UserPresets["configurePresets"]
                 .Select(x => new
                 {
                     Self = x,
                     IsDefault = x["vendor"]?["qt-project.org/Default"] is not null,
                     Name = x?["name"]?.Value<string>(),
-                    InheritsDefault = PresetInherits(x).Any(y => y == defaultVersion)
+                    InheritsDefault = MatchesDefaultVersion(x)
                 })
                 .FirstOrDefault(x => x.IsDefault);
 
@@ -129,6 +138,8 @@ namespace QtVsTools.Core.CMake
                     ["qt-project.org/Default"] = new JObject()
                 }
             };
+            if (string.IsNullOrEmpty(defaultVersion))
+                qtDefaultPreset.Remove("inherits");
             (UserPresets["configurePresets"] as JArray)?.Add(qtDefaultPreset);
             TouchRecord(UserPresets);
             TouchRecord(qtDefaultPreset);
