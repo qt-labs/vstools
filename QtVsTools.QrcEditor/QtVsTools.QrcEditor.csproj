@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+ Copyright (C) 2026 The Qt Company Ltd.
+ SPDX-License-Identifier: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
+-->
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net48</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <Platforms>AnyCPU</Platforms>
+    <LangVersion>9.0</LangVersion>
+
+    <RootNamespace>QtVsTools.QrcEditor</RootNamespace>
+    <!-- The extension starts the editor as QrcEditor.exe -->
+    <AssemblyName>QrcEditor</AssemblyName>
+    <ApplicationIcon>qrceditor.ico</ApplicationIcon>
+
+    <!-- We have an AssemblyInfo.cs -->
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <!-- We want to be explicit about the included files -->
+    <EnableDefaultItems>false</EnableDefaultItems>
+
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\QtVsTools.Qrc\QtVsTools.Qrc.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ApplicationDefinition Include="App.xaml" />
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="CommandLine.cs" />
+    <Compile Include="Converters.cs" />
+    <Compile Include="EditorCommands.cs" />
+    <Compile Include="LocationIssueDialog.xaml.cs">
+      <DependentUpon>LocationIssueDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="MainWindow.xaml.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Page Include="LocationIssueDialog.xaml" />
+    <Page Include="MainWindow.xaml" />
+    <Page Include="Themes\Dark.xaml" />
+    <Page Include="Themes\Light.xaml" />
+    <Resource Include="qrceditor.ico" />
+  </ItemGroup>
+
+  <!-- Provides the text templating targets that 'vstools -init' runs for every project -->
+  <Import Project="$(SolutionDir)\transform.targets" Condition="Exists('$(SolutionDir)\transform.targets')" />
+
+</Project>

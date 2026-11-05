@@ -131,6 +131,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QtVsTools.Qrc", "QtVsTools.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test_QtVsTools.Qrc", "Tests\Test_QtVsTools.Qrc\Test_QtVsTools.Qrc.csproj", "{C3E1B6A4-7F2D-4E58-B0A9-5D1C2E7F8A90}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QtVsTools.QrcEditor", "QtVsTools.QrcEditor\QtVsTools.QrcEditor.csproj", "{9D4E2C71-5A8B-4F36-8E1D-3B7A6C0F2E45}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|arm64 = Debug|arm64
@@ -177,6 +179,18 @@ Global
 		{6B1F3A52-3C0E-4F0B-9A57-2D6F4B8E9C11}.Tests|arm64.Build.0 = Release|Any CPU
 		{6B1F3A52-3C0E-4F0B-9A57-2D6F4B8E9C11}.Tests|x64.ActiveCfg = Release|Any CPU
 		{6B1F3A52-3C0E-4F0B-9A57-2D6F4B8E9C11}.Tests|x64.Build.0 = Release|Any CPU
+		{9D4E2C71-5A8B-4F36-8E1D-3B7A6C0F2E45}.Debug|arm64.ActiveCfg = Debug|Any CPU
+		{9D4E2C71-5A8B-4F36-8E1D-3B7A6C0F2E45}.Debug|arm64.Build.0 = Debug|Any CPU
+		{9D4E2C71-5A8B-4F36-8E1D-3B7A6C0F2E45}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{9D4E2C71-5A8B-4F36-8E1D-3B7A6C0F2E45}.Debug|x64.Build.0 = Debug|Any CPU
+		{9D4E2C71-5A8B-4F36-8E1D-3B7A6C0F2E45}.Release|arm64.ActiveCfg = Release|Any CPU
+		{9D4E2C71-5A8B-4F36-8E1D-3B7A6C0F2E45}.Release|arm64.Build.0 = Release|Any CPU
+		{9D4E2C71-5A8B-4F36-8E1D-3B7A6C0F2E45}.Release|x64.ActiveCfg = Release|Any CPU
+		{9D4E2C71-5A8B-4F36-8E1D-3B7A6C0F2E45}.Release|x64.Build.0 = Release|Any CPU
+		{9D4E2C71-5A8B-4F36-8E1D-3B7A6C0F2E45}.Tests|arm64.ActiveCfg = Release|Any CPU
+		{9D4E2C71-5A8B-4F36-8E1D-3B7A6C0F2E45}.Tests|arm64.Build.0 = Release|Any CPU
+		{9D4E2C71-5A8B-4F36-8E1D-3B7A6C0F2E45}.Tests|x64.ActiveCfg = Release|Any CPU
+		{9D4E2C71-5A8B-4F36-8E1D-3B7A6C0F2E45}.Tests|x64.Build.0 = Release|Any CPU
 		{A618D28B-9352-44F4-AA71-609BF68BF871}.Debug|arm64.ActiveCfg = Debug|arm64
 		{A618D28B-9352-44F4-AA71-609BF68BF871}.Debug|arm64.Build.0 = Debug|arm64
 		{A618D28B-9352-44F4-AA71-609BF68BF871}.Debug|x64.ActiveCfg = Debug|Any CPU

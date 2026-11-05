@@ -1,0 +1,227 @@
+<!--
+ Copyright (C) 2026 The Qt Company Ltd.
+ SPDX-License-Identifier: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
+-->
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+  <!-- Colors close to the dark theme of Visual Studio. -->
+  <Color x:Key="Color.Background">#1F1F1F</Color>
+  <Color x:Key="Color.Foreground">#F1F1F1</Color>
+  <Color x:Key="Color.ContentBackground">#252526</Color>
+  <Color x:Key="Color.Border">#3F3F46</Color>
+  <Color x:Key="Color.Hover">#3E3E40</Color>
+  <Color x:Key="Color.Pressed">#007ACC</Color>
+  <Color x:Key="Color.Selection">#264F78</Color>
+  <Color x:Key="Color.InactiveSelection">#3F3F46</Color>
+  <Color x:Key="Color.SecondaryForeground">#9D9D9D</Color>
+
+  <SolidColorBrush x:Key="Theme.Background" Color="{StaticResource Color.Background}" />
+  <SolidColorBrush x:Key="Theme.Foreground" Color="{StaticResource Color.Foreground}" />
+  <SolidColorBrush x:Key="Theme.ContentBackground" Color="{StaticResource Color.ContentBackground}" />
+  <SolidColorBrush x:Key="Theme.ContentForeground" Color="{StaticResource Color.Foreground}" />
+  <SolidColorBrush x:Key="Theme.Border" Color="{StaticResource Color.Border}" />
+  <SolidColorBrush x:Key="Theme.SecondaryForeground" Color="{StaticResource Color.SecondaryForeground}" />
+  <SolidColorBrush x:Key="Theme.Error" Color="#F48771" />
+
+  <!-- Used by the default control templates, e.g. for the tree view selection. -->
+  <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="{StaticResource Color.Selection}" />
+  <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="{StaticResource Color.Foreground}" />
+  <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="{StaticResource Color.InactiveSelection}" />
+  <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="{StaticResource Color.Foreground}" />
+  <SolidColorBrush x:Key="{x:Static SystemColors.WindowBrushKey}" Color="{StaticResource Color.ContentBackground}" />
+  <SolidColorBrush x:Key="{x:Static SystemColors.WindowTextBrushKey}" Color="{StaticResource Color.Foreground}" />
+  <SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}" Color="{StaticResource Color.Background}" />
+  <SolidColorBrush x:Key="{x:Static SystemColors.ControlTextBrushKey}" Color="{StaticResource Color.Foreground}" />
+  <SolidColorBrush x:Key="{x:Static SystemColors.GrayTextBrushKey}" Color="{StaticResource Color.SecondaryForeground}" />
+
+  <!-- The default button template uses fixed light colors. -->
+  <Style TargetType="Button">
+    <Setter Property="Foreground" Value="{StaticResource Theme.Foreground}" />
+    <Setter Property="Background" Value="{StaticResource Theme.ContentBackground}" />
+    <Setter Property="BorderBrush" Value="{StaticResource Theme.Border}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="Padding" Value="8,2" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="Button">
+          <Border x:Name="Border" Background="{TemplateBinding Background}"
+                  BorderBrush="{TemplateBinding BorderBrush}"
+                  BorderThickness="{TemplateBinding BorderThickness}">
+            <ContentPresenter Margin="{TemplateBinding Padding}"
+                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                              RecognizesAccessKey="True" />
+          </Border>
+          <ControlTemplate.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+              <Setter TargetName="Border" Property="Background">
+                <Setter.Value>
+                  <SolidColorBrush Color="{StaticResource Color.Hover}" />
+                </Setter.Value>
+              </Setter>
+            </Trigger>
+            <Trigger Property="IsPressed" Value="True">
+              <Setter TargetName="Border" Property="Background">
+                <Setter.Value>
+                  <SolidColorBrush Color="{StaticResource Color.Pressed}" />
+                </Setter.Value>
+              </Setter>
+            </Trigger>
+            <Trigger Property="IsKeyboardFocused" Value="True">
+              <Setter TargetName="Border" Property="BorderBrush">
+                <Setter.Value>
+                  <SolidColorBrush Color="{StaticResource Color.Pressed}" />
+                </Setter.Value>
+              </Setter>
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="False">
+              <Setter Property="Foreground" Value="{StaticResource Theme.SecondaryForeground}" />
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <!-- Toolbar buttons use their own style key. -->
+  <Style x:Key="{x:Static ToolBar.ButtonStyleKey}" TargetType="Button"
+         BasedOn="{StaticResource {x:Type Button}}">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="BorderBrush" Value="Transparent" />
+    <Setter Property="Padding" Value="4,2" />
+  </Style>
+
+  <!-- The default group box template draws a fixed white inner border. -->
+  <Style TargetType="GroupBox">
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="GroupBox">
+          <Grid>
+            <Grid.RowDefinitions>
+              <RowDefinition Height="Auto" />
+              <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <Border Grid.RowSpan="2" Margin="0,8,0,0" CornerRadius="3"
+                    BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1" />
+            <Border Grid.Row="0" Margin="6,0,0,0" Padding="2,0" HorizontalAlignment="Left"
+                    Background="{StaticResource Theme.Background}">
+              <ContentPresenter ContentSource="Header" RecognizesAccessKey="True" />
+            </Border>
+            <ContentPresenter Grid.Row="1" Margin="{TemplateBinding Padding}" />
+          </Grid>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <Style TargetType="ToolBar">
+    <Setter Property="Background" Value="{StaticResource Theme.Background}" />
+    <Setter Property="Foreground" Value="{StaticResource Theme.Foreground}" />
+  </Style>
+
+  <Style TargetType="Menu">
+    <Setter Property="Background" Value="{StaticResource Theme.Background}" />
+    <Setter Property="Foreground" Value="{StaticResource Theme.Foreground}" />
+  </Style>
+
+  <!--
+    Menus: the default templates draw light popups. The editor only uses menu bar headers
+    with plain items, separators and a context menu, so these templates cover just that.
+  -->
+  <SolidColorBrush x:Key="Menu.Highlight" Color="{StaticResource Color.Hover}" />
+
+  <Style x:Key="{x:Static MenuItem.SeparatorStyleKey}" TargetType="Separator">
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="Separator">
+          <Border Height="1" Margin="28,4,4,4" Background="{StaticResource Theme.Border}" />
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <!-- An item inside a popup menu: header and shortcut, e.g. "Undo    Ctrl+Z". -->
+  <ControlTemplate x:Key="Menu.ItemTemplate" TargetType="MenuItem">
+    <Border x:Name="Bd" Background="Transparent" Padding="0,4">
+      <Grid>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="28" />
+          <ColumnDefinition Width="*" />
+          <ColumnDefinition Width="Auto" SharedSizeGroup="MenuItemGesture" />
+        </Grid.ColumnDefinitions>
+        <ContentPresenter Grid.Column="1" ContentSource="Header" RecognizesAccessKey="True"
+                          VerticalAlignment="Center" />
+        <TextBlock Grid.Column="2" Margin="32,0,12,0" VerticalAlignment="Center"
+                   Text="{TemplateBinding InputGestureText}"
+                   Foreground="{StaticResource Theme.SecondaryForeground}" />
+      </Grid>
+    </Border>
+    <ControlTemplate.Triggers>
+      <Trigger Property="IsHighlighted" Value="True">
+        <Setter TargetName="Bd" Property="Background" Value="{StaticResource Menu.Highlight}" />
+      </Trigger>
+      <Trigger Property="IsEnabled" Value="False">
+        <Setter Property="Foreground" Value="{StaticResource Theme.SecondaryForeground}" />
+      </Trigger>
+    </ControlTemplate.Triggers>
+  </ControlTemplate>
+
+  <!-- A header of the menu bar that opens a popup, e.g. "File". -->
+  <ControlTemplate x:Key="Menu.TopLevelHeaderTemplate" TargetType="MenuItem">
+    <Border x:Name="Bd" Background="Transparent" Padding="7,3">
+      <Grid>
+        <ContentPresenter ContentSource="Header" RecognizesAccessKey="True" />
+        <Popup x:Name="PART_Popup" Placement="Bottom" AllowsTransparency="True"
+               Focusable="False" PopupAnimation="None"
+               IsOpen="{Binding IsSubmenuOpen, RelativeSource={RelativeSource TemplatedParent}}">
+          <Border Background="{StaticResource Theme.ContentBackground}"
+                  BorderBrush="{StaticResource Theme.Border}" BorderThickness="1" Padding="2"
+                  MinWidth="160" Grid.IsSharedSizeScope="True">
+            <ItemsPresenter KeyboardNavigation.DirectionalNavigation="Cycle"
+                            KeyboardNavigation.TabNavigation="Cycle" />
+          </Border>
+        </Popup>
+      </Grid>
+    </Border>
+    <ControlTemplate.Triggers>
+      <Trigger Property="IsHighlighted" Value="True">
+        <Setter TargetName="Bd" Property="Background" Value="{StaticResource Menu.Highlight}" />
+      </Trigger>
+      <Trigger Property="IsSubmenuOpen" Value="True">
+        <Setter TargetName="Bd" Property="Background" Value="{StaticResource Menu.Highlight}" />
+      </Trigger>
+    </ControlTemplate.Triggers>
+  </ControlTemplate>
+
+  <Style TargetType="MenuItem">
+    <Setter Property="Foreground" Value="{StaticResource Theme.Foreground}" />
+    <Setter Property="Template" Value="{StaticResource Menu.ItemTemplate}" />
+    <Style.Triggers>
+      <Trigger Property="Role" Value="TopLevelHeader">
+        <Setter Property="Template" Value="{StaticResource Menu.TopLevelHeaderTemplate}" />
+      </Trigger>
+    </Style.Triggers>
+  </Style>
+
+  <Style TargetType="ContextMenu">
+    <Setter Property="Foreground" Value="{StaticResource Theme.Foreground}" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="ContextMenu">
+          <Border Background="{StaticResource Theme.ContentBackground}"
+                  BorderBrush="{StaticResource Theme.Border}" BorderThickness="1" Padding="2"
+                  MinWidth="160" Grid.IsSharedSizeScope="True">
+            <ItemsPresenter KeyboardNavigation.DirectionalNavigation="Cycle" />
+          </Border>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <Style TargetType="StatusBar">
+    <Setter Property="Background" Value="{StaticResource Theme.Background}" />
+    <Setter Property="Foreground" Value="{StaticResource Theme.SecondaryForeground}" />
+  </Style>
+
+</ResourceDictionary>

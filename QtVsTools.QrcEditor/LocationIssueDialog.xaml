@@ -1,0 +1,23 @@
+<!--
+ Copyright (C) 2026 The Qt Company Ltd.
+ SPDX-License-Identifier: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
+-->
+<Window x:Class="QtVsTools.QrcEditor.LocationIssueDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Invalid File Location"
+        SizeToContent="WidthAndHeight" ResizeMode="NoResize"
+        WindowStartupLocation="CenterOwner" ShowInTaskbar="False"
+        Background="{DynamicResource Theme.Background}"
+        Foreground="{DynamicResource Theme.Foreground}">
+  <StackPanel Margin="16" MaxWidth="480">
+    <TextBlock x:Name="MessageText" TextWrapping="Wrap" />
+    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,16,0,0">
+      <Button x:Name="CopyButton" Content="_Copy" MinWidth="75" Margin="0,0,8,0"
+              IsDefault="True" Click="CopyButton_Click" />
+      <Button x:Name="SkipButton" Content="_Skip" MinWidth="75" Margin="0,0,8,0"
+              Click="SkipButton_Click" />
+      <Button Content="_Abort" MinWidth="75" Click="AbortButton_Click" />
+    </StackPanel>
+  </StackPanel>
+</Window>

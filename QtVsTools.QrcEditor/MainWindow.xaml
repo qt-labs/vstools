@@ -1,0 +1,234 @@
+<!--
+ Copyright (C) 2026 The Qt Company Ltd.
+ SPDX-License-Identifier: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
+-->
+<Window x:Class="QtVsTools.QrcEditor.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:QtVsTools.QrcEditor"
+        xmlns:qrc="clr-namespace:QtVsTools.Qrc;assembly=QtVsTools.Qrc"
+        Title="Qt Resource Editor"
+        Icon="qrceditor.ico"
+        Width="640" Height="600" MinWidth="400" MinHeight="400"
+        Background="{DynamicResource Theme.Background}"
+        Foreground="{DynamicResource Theme.Foreground}"
+        Closing="Window_Closing"
+        PreviewKeyDown="Window_PreviewKeyDown">
+
+  <Window.Resources>
+    <local:FilePreviewConverter x:Key="FilePreview" />
+    <local:FileGlyphConverter x:Key="FileGlyph" />
+
+    <HierarchicalDataTemplate DataType="{x:Type qrc:QrcPrefix}" ItemsSource="{Binding Files}">
+      <TextBlock Text="{Binding DisplayName}" Margin="2,1" />
+    </HierarchicalDataTemplate>
+
+    <DataTemplate DataType="{x:Type qrc:QrcFile}">
+      <StackPanel Orientation="Horizontal" Margin="2,1">
+        <Grid Width="16" Height="16" Margin="0,0,4,0">
+          <Image x:Name="Preview"
+                 Source="{Binding Path, Converter={StaticResource FilePreview}}" />
+          <!-- Shown if there is no preview image -->
+          <TextBlock x:Name="Glyph" Visibility="Collapsed"
+                     FontFamily="Segoe MDL2 Assets" FontSize="13"
+                     HorizontalAlignment="Center" VerticalAlignment="Center"
+                     Foreground="{DynamicResource Theme.SecondaryForeground}"
+                     Text="{Binding Path, Converter={StaticResource FileGlyph}}" />
+        </Grid>
+        <TextBlock Text="{Binding DisplayName}" />
+      </StackPanel>
+      <DataTemplate.Triggers>
+        <DataTrigger Binding="{Binding Source, ElementName=Preview}" Value="{x:Null}">
+          <Setter TargetName="Glyph" Property="Visibility" Value="Visible" />
+        </DataTrigger>
+      </DataTemplate.Triggers>
+    </DataTemplate>
+
+    <Style x:Key="IconText" TargetType="TextBlock">
+      <Setter Property="FontFamily" Value="Segoe MDL2 Assets" />
+      <Setter Property="FontSize" Value="14" />
+      <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+
+    <Style TargetType="TextBox">
+      <Setter Property="Background" Value="{DynamicResource Theme.ContentBackground}" />
+      <Setter Property="Foreground" Value="{DynamicResource Theme.ContentForeground}" />
+      <Setter Property="BorderBrush" Value="{DynamicResource Theme.Border}" />
+      <Setter Property="CaretBrush" Value="{DynamicResource Theme.ContentForeground}" />
+      <!-- Undo and redo apply to the document, not to the text of a single box. -->
+      <Setter Property="IsUndoEnabled" Value="False" />
+      <Setter Property="Margin" Value="0,2" />
+      <Setter Property="Padding" Value="2" />
+      <Style.Triggers>
+        <Trigger Property="IsEnabled" Value="False">
+          <Setter Property="Foreground" Value="{DynamicResource Theme.SecondaryForeground}" />
+        </Trigger>
+      </Style.Triggers>
+    </Style>
+
+    <Style TargetType="Label">
+      <Setter Property="Foreground" Value="{DynamicResource Theme.Foreground}" />
+      <Setter Property="VerticalAlignment" Value="Center" />
+      <Setter Property="Padding" Value="0,0,8,0" />
+      <Style.Triggers>
+        <Trigger Property="IsEnabled" Value="False">
+          <Setter Property="Foreground" Value="{DynamicResource Theme.SecondaryForeground}" />
+        </Trigger>
+      </Style.Triggers>
+    </Style>
+  </Window.Resources>
+
+  <Window.CommandBindings>
+    <CommandBinding Command="ApplicationCommands.Open" Executed="Open_Executed" />
+    <CommandBinding Command="ApplicationCommands.Save" Executed="Save_Executed"
+                    CanExecute="HasDocument_CanExecute" />
+    <CommandBinding Command="ApplicationCommands.SaveAs" Executed="SaveAs_Executed"
+                    CanExecute="HasDocument_CanExecute" />
+    <CommandBinding Command="local:EditorCommands.Exit" Executed="Exit_Executed" />
+    <CommandBinding Command="local:EditorCommands.Undo" Executed="Undo_Executed"
+                    CanExecute="Undo_CanExecute" />
+    <CommandBinding Command="local:EditorCommands.Redo" Executed="Redo_Executed"
+                    CanExecute="Redo_CanExecute" />
+    <CommandBinding Command="local:EditorCommands.AddFiles" Executed="AddFiles_Executed"
+                    CanExecute="HasSelection_CanExecute" />
+    <CommandBinding Command="local:EditorCommands.AddPrefix" Executed="AddPrefix_Executed"
+                    CanExecute="HasDocument_CanExecute" />
+    <CommandBinding Command="local:EditorCommands.Remove" Executed="Remove_Executed"
+                    CanExecute="HasSelection_CanExecute" />
+    <CommandBinding Command="local:EditorCommands.About" Executed="About_Executed" />
+  </Window.CommandBindings>
+
+  <DockPanel>
+    <!-- Menus are reached with Alt, not with Tab. -->
+    <Menu DockPanel.Dock="Top" KeyboardNavigation.TabNavigation="None">
+      <MenuItem Header="_File">
+        <MenuItem Command="ApplicationCommands.Open" Header="_Open..." />
+        <MenuItem Command="ApplicationCommands.Save" Header="_Save" />
+        <MenuItem Command="ApplicationCommands.SaveAs" Header="Save _As..." />
+        <Separator />
+        <MenuItem Command="local:EditorCommands.Exit" />
+      </MenuItem>
+      <MenuItem Header="_Edit">
+        <MenuItem Command="local:EditorCommands.Undo" />
+        <MenuItem Command="local:EditorCommands.Redo" />
+        <Separator />
+        <MenuItem Command="local:EditorCommands.AddFiles" />
+        <MenuItem Command="local:EditorCommands.AddPrefix" />
+        <MenuItem Command="local:EditorCommands.Remove" InputGestureText="Del" />
+      </MenuItem>
+      <MenuItem Header="_Help">
+        <MenuItem Command="local:EditorCommands.About" />
+      </MenuItem>
+    </Menu>
+
+    <ToolBarTray DockPanel.Dock="Top" IsLocked="True"
+                 Background="{DynamicResource Theme.Background}">
+      <!-- A toolbar keeps the Tab key cycling inside itself by default. -->
+      <ToolBar Background="Transparent" BorderThickness="0" Loaded="ToolBar_Loaded"
+               KeyboardNavigation.TabNavigation="Continue">
+        <Button AutomationProperties.Name="Open" Command="ApplicationCommands.Open" ToolTip="Open (Ctrl+O)">
+          <TextBlock Style="{StaticResource IconText}" Text="&#xE8E5;" />
+        </Button>
+        <Button AutomationProperties.Name="Save" Command="ApplicationCommands.Save" ToolTip="Save (Ctrl+S)">
+          <TextBlock Style="{StaticResource IconText}" Text="&#xE74E;" />
+        </Button>
+        <Separator />
+        <Button AutomationProperties.Name="Undo" Command="local:EditorCommands.Undo" ToolTip="Undo (Ctrl+Z)">
+          <TextBlock Style="{StaticResource IconText}" Text="&#xE7A7;" />
+        </Button>
+        <Button AutomationProperties.Name="Redo" Command="local:EditorCommands.Redo" ToolTip="Redo (Ctrl+Y)">
+          <TextBlock Style="{StaticResource IconText}" Text="&#xE7A6;" />
+        </Button>
+      </ToolBar>
+    </ToolBarTray>
+
+    <StatusBar DockPanel.Dock="Bottom">
+      <StatusBarItem>
+        <TextBlock x:Name="StatusText" TextTrimming="CharacterEllipsis" />
+      </StatusBarItem>
+    </StatusBar>
+
+    <Grid Margin="8">
+      <Grid.RowDefinitions>
+        <RowDefinition Height="*" MinHeight="120" />
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="Auto" />
+      </Grid.RowDefinitions>
+
+      <TreeView x:Name="Tree" Grid.Row="0"
+                ItemsSource="{Binding Prefixes}"
+                Background="{DynamicResource Theme.ContentBackground}"
+                Foreground="{DynamicResource Theme.ContentForeground}"
+                BorderBrush="{DynamicResource Theme.Border}"
+                AllowDrop="True"
+                SelectedItemChanged="Tree_SelectedItemChanged"
+                PreviewKeyDown="Tree_PreviewKeyDown"
+                DragOver="Tree_DragOver"
+                Drop="Tree_Drop">
+        <TreeView.ItemContainerStyle>
+          <Style TargetType="TreeViewItem">
+            <Setter Property="IsExpanded" Value="True" />
+            <Setter Property="AutomationProperties.Name" Value="{Binding DisplayName}" />
+            <Setter Property="Foreground" Value="{DynamicResource Theme.ContentForeground}" />
+          </Style>
+        </TreeView.ItemContainerStyle>
+      </TreeView>
+
+      <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,6,0,6">
+        <Button x:Name="AddButton" MinWidth="80" Margin="0,0,6,0" Padding="8,2"
+                Click="AddButton_Click" IsEnabled="False">
+          <StackPanel Orientation="Horizontal">
+            <TextBlock Text="Add" />
+            <TextBlock Style="{StaticResource IconText}" FontSize="8" Margin="6,0,0,0"
+                       Text="&#xE70D;" />
+          </StackPanel>
+          <Button.ContextMenu>
+            <ContextMenu>
+              <MenuItem Command="local:EditorCommands.AddFiles" />
+              <MenuItem Command="local:EditorCommands.AddPrefix" />
+            </ContextMenu>
+          </Button.ContextMenu>
+        </Button>
+        <Button MinWidth="80" Padding="8,2" Content="Remove"
+                Command="local:EditorCommands.Remove" />
+      </StackPanel>
+
+      <GroupBox Grid.Row="2" Header="Properties" Padding="6"
+                Foreground="{DynamicResource Theme.Foreground}"
+                BorderBrush="{DynamicResource Theme.Border}">
+        <Grid>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+          </Grid.ColumnDefinitions>
+          <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+          </Grid.RowDefinitions>
+
+          <Label Grid.Row="0" Content="_Alias:" Target="{Binding ElementName=AliasText}"
+                 IsEnabled="{Binding IsEnabled, ElementName=AliasText}" />
+          <TextBox x:Name="AliasText" Grid.Row="0" Grid.Column="1" IsEnabled="False"
+                   TextChanged="AliasText_TextChanged" LostKeyboardFocus="Text_LostFocus" />
+
+          <Label Grid.Row="1" Content="_Prefix:" Target="{Binding ElementName=PrefixText}"
+                 IsEnabled="{Binding IsEnabled, ElementName=PrefixText}" />
+          <TextBox x:Name="PrefixText" Grid.Row="1" Grid.Column="1" IsEnabled="False"
+                   TextChanged="PrefixText_TextChanged" LostKeyboardFocus="Text_LostFocus" />
+
+          <Label Grid.Row="2" Content="_Language:" Target="{Binding ElementName=LanguageText}"
+                 IsEnabled="{Binding IsEnabled, ElementName=LanguageText}" />
+          <TextBox x:Name="LanguageText" Grid.Row="2" Grid.Column="1" IsEnabled="False"
+                   TextChanged="LanguageText_TextChanged" LostKeyboardFocus="Text_LostFocus" />
+
+          <Label Grid.Row="3" Content="Pat_h:" Target="{Binding ElementName=PathText}"
+                 IsEnabled="{Binding IsEnabled, ElementName=PathText}" />
+          <TextBox x:Name="PathText" Grid.Row="3" Grid.Column="1" IsEnabled="False"
+                   IsReadOnly="True" />
+        </Grid>
+      </GroupBox>
+    </Grid>
+  </DockPanel>
+</Window>
