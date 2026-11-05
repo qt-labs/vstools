@@ -148,10 +148,11 @@
       <Project>{8df0a4c4-a32d-44a4-9da4-41a6bca80b44}</Project>
       <Name>QtVsTools.Wizards</Name>
     </ProjectReference>
-    <ProjectReference Include="..\qrceditor\qrceditor.vcxproj">
-      <Project>{4cee73c9-fcfa-3a72-a0a3-036bdbb3240f}</Project>
-      <Name>qrceditor</Name>
+    <ProjectReference Include="..\QtVsTools.QrcEditor\QtVsTools.QrcEditor.csproj">
+      <Project>{9d4e2c71-5a8b-4f36-8e1d-3b7a6c0f2e45}</Project>
+      <Name>QtVsTools.QrcEditor</Name>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <IncludeOutputGroupsInVSIX>BuiltProjectOutputGroup%3bBuiltProjectOutputGroupDependencies%3bGetCopyToOutputDirectoryItems%3b</IncludeOutputGroupsInVSIX>
     </ProjectReference>
     <ProjectReference Include="..\Templates\qtclass\QtTemplate.Item.QtClass.csproj">
       <Project>{4981AAE8-9AC7-4758-87EA-FB2397D6C404}</Project>

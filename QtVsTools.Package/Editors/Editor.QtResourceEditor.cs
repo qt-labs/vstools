@@ -2,8 +2,10 @@
 // SPDX-License-Identifier: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using Microsoft.VisualStudio.PlatformUI;
 
 namespace QtVsTools.Package.Editors
 {
@@ -32,6 +34,24 @@ namespace QtVsTools.Package.Editors
             caption => caption.StartsWith(Title);
 
         protected override string GetTitle(Process editorProcess) => Title;
+
+        protected override Dictionary<string, (string, bool)> GetArguments(string filePath)
+        {
+            var dark = QtOptionsPage.ColorTheme switch
+            {
+                QtOptionsPage.EditorColorTheme.Dark => true,
+                QtOptionsPage.EditorColorTheme.Consistent => VSColorTheme
+                    .GetThemedColor(EnvironmentColors.EditorExpansionFillBrushKey)
+                    .GetBrightness() < 0.5f,
+                _ => false
+            };
+
+            return new Dictionary<string, (string, bool)>
+            {
+                { "filepath", (Utils.SafeQuote(filePath), false) },
+                { "theme", (dark ? "dark" : "light", true) }
+            };
+        }
 
         protected override bool Detached => QtOptionsPage.ResourceEditorDetached;
 
