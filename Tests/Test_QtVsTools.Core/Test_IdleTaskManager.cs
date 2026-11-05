@@ -146,7 +146,11 @@ namespace QtVsTools.Test.Core
             var mockTask2 = new Mock<IIdleTask>();
             var idleTaskManager = await ArrangeIdleTaskManagerAsync(TestContext.CancellationToken);
 
-            mockTask1.Setup(t => t.RunAsync(It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
+            // Keep the first task running so the second one is still queued (not currently
+            // running) when it is removed. Without this, the idle runner executes asynchronously
+            // and the assertions race the task loop, making the test flaky.
+            var tcs = new TaskCompletionSource<bool>();
+            mockTask1.Setup(t => t.RunAsync(It.IsAny<CancellationToken>())).Returns(tcs.Task);
             mockTask2.Setup(t => t.RunAsync(It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
 
             idleTaskManager.Add(mockTask1.Object);
@@ -154,7 +158,14 @@ namespace QtVsTools.Test.Core
 
             // Act, simulate entering idle state
             idleTaskManager.OnEnterIdle((uint)_VSLONGIDLEREASON.LIR_NOUSERINPUT);
-            idleTaskManager.Remove(mockTask2.Object); // Remove the second task
+
+            // Give the idle runner time to start the first task
+            await Task.Delay(100, TestContext.CancellationToken);
+
+            idleTaskManager.Remove(mockTask2.Object); // Remove the second task (not yet running)
+
+            // Complete the long-running first task to allow the test to proceed
+            tcs.SetResult(true);
 
             // Assert
             mockTask1.Verify(t => t.RunAsync(It.IsAny<CancellationToken>()), Times.Once);
