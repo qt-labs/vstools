@@ -148,11 +148,6 @@
       <Project>{8df0a4c4-a32d-44a4-9da4-41a6bca80b44}</Project>
       <Name>QtVsTools.Wizards</Name>
     </ProjectReference>
-    <ProjectReference Include="..\qmakefilereader\qmakefilereader.vcxproj">
-      <Project>{70711a97-d9b0-3a86-9756-9ff47337908b}</Project>
-      <Name>qmakefilereader</Name>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-    </ProjectReference>
     <ProjectReference Include="..\qrceditor\qrceditor.vcxproj">
       <Project>{4cee73c9-fcfa-3a72-a0a3-036bdbb3240f}</Project>
       <Name>qrceditor</Name>

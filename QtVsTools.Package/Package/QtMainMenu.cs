@@ -147,8 +147,7 @@ namespace QtVsTools
                 ProjectImporter.ImportProFile(QtVsToolsPackage.Instance.Dte);
                 break;
             case QtMenus.Package.ImportPriFile:
-                ProjectImporter.ImportPriFile(QtVsToolsPackage.Instance.Dte,
-                    Utils.PackageInstallPath);
+                ProjectImporter.ImportPriFile(QtVsToolsPackage.Instance.Dte);
                 break;
             case QtMenus.Package.ConvertToQtMsBuild:
                 MsBuildProjectConverter.SolutionToQtMsBuild();

@@ -85,7 +85,7 @@ namespace QtVsTools
             var dte = QtVsToolsPackage.Instance.Dte;
             switch (command.CommandID.ID) {
             case QtMenus.Package.ImportPriFileProject:
-                ProjectImporter.ImportPriFile(dte, Utils.PackageInstallPath);
+                ProjectImporter.ImportPriFile(dte);
                 break;
             case QtMenus.Package.lUpdateOnProject:
                 Translation.RunLUpdate(HelperFunctions.GetSelectedQtProject(dte));

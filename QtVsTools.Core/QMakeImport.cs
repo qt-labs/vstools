@@ -18,7 +18,7 @@ namespace QtVsTools.Core
 
     public static class QMakeImport
     {
-        private class QMakeProcess : QMake
+        internal class QMakeProcess : QMake
         {
             private readonly VersionInformation qtVersion;
 

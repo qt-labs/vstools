@@ -20,7 +20,6 @@ Trolltech.Qt4VS200?Base.xml
 *_wrapper.bat
 *_plugin_import.cpp
 qrceditor/bin/
-qmakefilereader/bin/
 *.metaproj*
 *.binlog
 

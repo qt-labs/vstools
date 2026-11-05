@@ -97,7 +97,7 @@ namespace QtVsTools.Core
             }
         }
 
-        public static void ImportPriFile(DTE dte, string pkgInstallPath)
+        public static void ImportPriFile(DTE dte)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
@@ -108,7 +108,7 @@ namespace QtVsTools.Core
                 + "project's Qt version.";
             const string wrongVersion = "The project's Qt version is no longer supported. To "
                 + "import the .pri file, please use Qt 5.0 or later for your project.";
-            if (GetQtInstallPath(project.QtVersion, notQt, wrongVersion) is not { } qtDir)
+            if (GetQtInstallPath(project.QtVersion, notQt, wrongVersion) is null)
                 return;
 
             var priFile = OpenFileDialog("Import from .pri File",
@@ -119,8 +119,7 @@ namespace QtVsTools.Core
 
             var qmake = new QMakeWrapper
             {
-                QtDir = qtDir,
-                PkgInstallPath = pkgInstallPath
+                QtVersion = VersionInformation.GetOrAddByName(project.QtVersion)
             };
             if (!qmake.ReadFile(priFile.FullName)) {
                 Messages.Print($"--- (Importing .pri file) file: {priFile} could not be read.");
