@@ -58,13 +58,6 @@
         <PackageReference Include="Microsoft.VisualStudio.Sdk.TestFramework" Version="17.11.66" />
       </ItemGroup>
     </When>
-
-    <!-- VS 2019 / Dev16 -->
-    <When Condition="'$(VisualStudioVersion)'=='16.0'">
-      <ItemGroup>
-        <PackageReference Include="Microsoft.VisualStudio.Sdk.TestFramework" Version="16.5.22-beta" />
-      </ItemGroup>
-    </When>
   </Choose>
 
   <ItemGroup>

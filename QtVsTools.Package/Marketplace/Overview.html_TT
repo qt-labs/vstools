@@ -53,14 +53,12 @@ href="https://marketplace.visualstudio.com/items?itemName=TheQtCompany.QtVisualS
                 </a>
             </li>
         <#}#>
-        <#if (VS_NAME !="2019" ) {#>
             <li>
                 <a title="Qt VS Tools for Visual Studio 2019"
 href="https://marketplace.visualstudio.com/items?itemName=TheQtCompany.QtVisualStudioTools2019">
                     Qt VS Tools for Visual Studio 2019
                 </a>
             </li>
-        <#}#>
             <li>
                 <a title="Qt VS Tools for Visual Studio 2022 and 2026 on ARM"
 href="https://marketplace.visualstudio.com/items?itemName=TheQtCompany.QtVisualStudioTools2022ARM">

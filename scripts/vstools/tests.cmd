@@ -7,8 +7,6 @@
 :: * Runs the auto-tests that were found
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-IF /I "%VS%"=="2019" GOTO :skip_tests_vs2019
-
 ECHO.
 %##########################%
 %##% %BOLD%Finding tests...%RESET%
@@ -82,13 +80,6 @@ CALL %SCRIPTLIB%\info.cmd "version"
 %##% %BOLD%%GREEN%Test run successful.%RESET%
 %##########################%
 GOTO :eof
-
-:skip_tests_vs2019
-%##########################%
-%##% %BOLD%%YELLOW%Skipping tests for Visual Studio 2019 (no longer supported).%RESET%
-%##########################%
-%##########################%
-EXIT /B 0
 
 :error
 IF %ERRORLEVEL% NEQ 0 (

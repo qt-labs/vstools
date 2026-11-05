@@ -77,11 +77,6 @@
       <ItemGroup>
       </ItemGroup>
     </When>
-    <When Condition="'$(VisualStudioVersion)'=='16.0'">
-      <ItemGroup>
-        <PackageReference Include="$(Name_Microsoft_VisualStudio_Validation)" Version="$(Version_Microsoft_VisualStudio_Validation)" />
-      </ItemGroup>
-    </When>
   </Choose>
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////

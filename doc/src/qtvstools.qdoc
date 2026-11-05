@@ -42,7 +42,7 @@
     \section1 About
 
     Qt VS Tools integrate the Qt development tools into Microsoft Visual Studio
-    2019 (16.11 and later), 2022 (17.12 and later), and 2026 (current releases).
+    2022 (17.12 and later) and 2026 (current releases).
     Use the standard Windows development environment without having to worry
     about Qt-related build steps or tools.
 

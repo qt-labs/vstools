@@ -37,8 +37,6 @@ namespace QtVsTools.Test.QtMsBuild.Tasks
                 vcTargetsPath = Path.Combine(vcTargetsPath, "v180");
             else if (Directory.Exists(Path.Combine(vcTargetsPath, "v170")))
                 vcTargetsPath = Path.Combine(vcTargetsPath, "v170");
-            else if (Directory.Exists(Path.Combine(vcTargetsPath, "v160")))
-                vcTargetsPath = Path.Combine(vcTargetsPath, "v160");
             else
                 Assert.Inconclusive("MSBuild VC targets directory not found");
 

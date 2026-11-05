@@ -105,14 +105,12 @@ namespace QtVsTools.Core
             if (!string.IsNullOrEmpty(_visualizersPath))
                 return;
 
-#if VS2019 || VS2022 || VS2026
+#if VS2022 || VS2026
             string path = null;
 
             var version = await VsShell.GetReleaseStringAsync() ?? string.Empty;
 
-            if (version.StartsWith("16.", StringComparison.Ordinal))
-                path = @"Visual Studio 2019\Visualizers\";
-            else if (version.StartsWith("17.", StringComparison.Ordinal))
+            if (version.StartsWith("17.", StringComparison.Ordinal))
                 path = @"Visual Studio 2022\Visualizers\";
             else if (version.StartsWith("18.", StringComparison.Ordinal))
                 path = @"Visual Studio 18\Visualizers\";

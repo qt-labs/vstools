@@ -50,8 +50,6 @@
   <!--<Import Project="$(SolutionDir)\references.props" />-->
   <!-- // Visual Studio 2022 -->
   <ItemGroup Condition="'$(VisualStudioVersion)'=='17.0'" />
-  <!-- // Visual Studio 2019 -->
-  <ItemGroup Condition="'$(VisualStudioVersion)'=='16.0'" />
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////
   // Solution project references

@@ -26,15 +26,12 @@ namespace QtVsTools.Core.Common
         });
 
         /// <summary>
-        /// Gets the extension architecture of Visual Studio. Defaults to x86 for VS2019 and x64
-        /// for VS2022/VS2026.
+        /// Gets the extension architecture of Visual Studio. Defaults to x64.
         /// </summary>
         public static string Architecture => ResolvedArchitecture.Value;
         private static readonly Lazy<string> ResolvedArchitecture = new(() =>
         {
-#if VS2019
-            return "x86";
-#elif VS2022 || VS2026
+#if VS2022 || VS2026
             var manifestPath = Path.Combine(PackageInstallPath, "extension.vsixmanifest");
             if (!File.Exists(manifestPath))
                 return "x64";
@@ -57,15 +54,11 @@ namespace QtVsTools.Core.Common
         public static string VersionAndArchitecture => ResolvedVersionAndArchitecture.Value;
         private static readonly Lazy<string> ResolvedVersionAndArchitecture = new(() =>
         {
-#if VS2019
-            return $"2019-{Architecture}";
-#elif VS2022 || VS2026
-# if VS2022
+#if VS2022
             return $"2022-{Architecture}";
-# elif VS2026
-# error Remove this line if you want to build a special VS2026 version of the VsTools extension.
+#elif VS2026
+#error Remove this line if you want to build a special VS2026 version of the VsTools extension.
             return $"2026-{Architecture}";
-# endif
 #endif
         });
 

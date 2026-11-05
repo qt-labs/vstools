@@ -4,17 +4,9 @@
     Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v18.0\TextTemplating\Microsoft.TextTemplating.targets" />
   <Import Condition="'$(VisualStudioVersion)'=='17.0'"
     Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v17.0\TextTemplating\Microsoft.TextTemplating.targets" />
-  <Import Condition="'$(VisualStudioVersion)'=='16.0'"
-    Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v16.0\TextTemplating\Microsoft.TextTemplating.targets" />
   <PropertyGroup>
     <TransformOnBuild>true</TransformOnBuild>
     <TransformOutOfDateOnly>true</TransformOutOfDateOnly>
-    <AssemblyRef_Microsoft_VisualStudio_Interop
-      Condition="'$(AssemblyRef_Microsoft_VisualStudio_Interop)' == ''
-        AND (
-          '$(VisualStudioVersion)' == '16.0'
-        )"
-      >System</AssemblyRef_Microsoft_VisualStudio_Interop>
     <AssemblyRef_Microsoft_VisualStudio_Interop
       Condition="'$(AssemblyRef_Microsoft_VisualStudio_Interop)' == ''
         AND (
@@ -73,9 +65,6 @@
   </Target>
   <PropertyGroup>
     <BeforeTransform>$(BeforeTransform);PrepareTransform</BeforeTransform>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(VisualStudioVersion)' == '16.0'">
-    <DefineConstants>$(DefineConstants);VS2019</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition="'$(VisualStudioVersion)' == '17.0'">
     <DefineConstants>$(DefineConstants);VS2022</DefineConstants>

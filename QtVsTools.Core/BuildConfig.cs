@@ -14,11 +14,9 @@ namespace QtVsTools.Core
         private static readonly Lazy<string> PlatformToolsetLazy =
             new(() =>
             {
-#if VS2019 || VS2022 || VS2026
+#if VS2022 || VS2026
                 var version = VsShell.GetReleaseString();
 
-                if (version.StartsWith("16.", StringComparison.Ordinal))
-                    return "142";
                 if (version.StartsWith("17.", StringComparison.Ordinal))
                     return "143";
                 if (version.StartsWith("18.", StringComparison.Ordinal))

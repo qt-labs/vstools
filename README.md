@@ -53,10 +53,9 @@ Recommended options for [jom](https://wiki.qt.io/Jom):
 
 ### 32-bit or 64-bit
 
-Visual Studio 2022/2026 is a 64-bit application, whereas VS 2019 is a 32-bit application. The
-target platform for which Qt is built must reflect this:
+Visual Studio 2022/2026 is a 64-bit application. The target platform for which Qt is built must
+reflect this:
 
-- For Visual Studio 2019, use Qt built for the x86 platform.
 - For Visual Studio 2022, use Qt built for the x64 platform.
 - For Visual Studio 2026, use Qt built for the x64 platform.
 
@@ -68,7 +67,7 @@ After cloning the repository, follow the instructions below to build the Qt Visu
 
 The following is required in order to build the Qt Visual Studio solution:
 
-- Visual Studio 2019 or 2022/2026, with the following workloads:
+- Visual Studio 2022/2026, with the following workloads:
     - Desktop development with C++
     - .NET desktop development
     - [Visual Studio extension development](https://docs.microsoft.com/en-us/visualstudio/extensibility/installing-the-visual-studio-sdk)
@@ -82,7 +81,6 @@ The following is required in order to build the Qt Visual Studio solution:
 ### Environment variables
 
 Set environment variables `QTBUILD_STATIC_VS`_`nnnn`_ according to the installed VS versions, i.e.:
-- `QTBUILD_STATIC_VS2019` = _path to Qt installation built with msvc2019_
 - `QTBUILD_STATIC_VS2022` = _path to Qt installation built with msvc2022_
 - `QTBUILD_STATIC_VS2026` = _path to Qt installation built with msvc2026_
 
@@ -90,12 +88,6 @@ For example, assuming Qt is installed in the following directory tree:
 
     C:
     +--- build
-         +--- qt_5.15.9_msvc2019_x86
-         |    +--- bin
-         |    +--- include
-         |    +--- lib
-         |    (etc.)
-         |
          +--- qt_5.15.9_msvc2022_x64
          |    +--- bin
          |    +--- include
@@ -109,7 +101,6 @@ For example, assuming Qt is installed in the following directory tree:
 
 In this case, the following environment variables must be set:
 
-    QTBUILD_STATIC_VS2019=C:\build\qt_5.15.9_msvc2019_x86
     QTBUILD_STATIC_VS2022=C:\build\qt_5.15.9_msvc2022_x64
     QTBUILD_STATIC_VS2026=C:\build\qt_5.15.9_msvc2026_x64
 
@@ -128,18 +119,17 @@ This will:
 - Open the solution in the VS IDE, ready to build/debug.
 
 This procedure must be repeated when opening the solution on another
-version of VS. For example, assuming VS 2022 and VS 2019 are
-installed, to open the solution in VS 2019 after it has already been
-initialized and used in VS 2022, run the following:
+version of VS. For example, assuming VS 2026 and VS 2022 are
+installed, to open the solution in VS 2022 after it has already been
+initialized and used in VS 2026, run the following:
 
-    C:\...\vstools> vstools -vs2019 -init -startvs
+    C:\...\vstools> vstools -vs2022 -init -startvs
 
 By default, if no VS version is specified, the most recent version is selected.
 
 ### Target platform
 
-The solution platform must be set to `'x64'` for VS 2022/2026, and `'x86'`
-or `'Any CPU'` for VS 2019.
+The solution platform must be set to `'x64'` for VS 2022/2026.
 
 ## Debug
 

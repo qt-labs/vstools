@@ -81,10 +81,6 @@
         </PackageReference>
       </ItemGroup>
     </When>
-    <When Condition="'$(VisualStudioVersion)'=='16.0'">
-      <ItemGroup>
-      </ItemGroup>
-    </When>
   </Choose>
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////

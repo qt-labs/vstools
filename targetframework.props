@@ -6,7 +6,7 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <PropertyGroup>
-    <LangVersion>9.0</LangVersion> <!-- C# 9.0 is supported by both VS2019 and VS2022 -->
+    <LangVersion>9.0</LangVersion>
   </PropertyGroup>
 
   <!-- // Visual Studio 2026 -->
@@ -16,11 +16,6 @@
 
   <!-- // Visual Studio 2022 -->
   <PropertyGroup Condition="'$(VisualStudioVersion)'=='17.0'">
-    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
-  </PropertyGroup>
-
-  <!-- // Visual Studio 2019 -->
-  <PropertyGroup Condition="'$(VisualStudioVersion)'=='16.0'">
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
   </PropertyGroup>
 

@@ -69,7 +69,6 @@ SET EMPTY_LOOP=%FALSE%
 SETLOCAL
 SET VS=%~1
 REM Normalize:
-REM  - 2019 -> 2019
 REM  - 2022 -> 2022
 REM  - 18   -> 2026 (Visual Studio 2026 / Dev18)
 IF "%VS%"=="18" SET VS=2026
@@ -85,15 +84,7 @@ IF %LIST_VERSIONS% (
     EXIT /B
 )
 
-IF "%VCVARS_ARCH%" == "" (
-    IF "%VS%" == "2026" (
-        SET VCVARS_ARCH=x64
-    ) ELSE IF "%VS%" == "2022" (
-        SET VCVARS_ARCH=x64
-    ) ELSE (
-        SET VCVARS_ARCH=x86
-    )
-)
+IF "%VCVARS_ARCH%" == "" SET VCVARS_ARCH=x64
 
 IF %VERBOSE% %##% CALL "%VS_PATH%\VC\Auxiliary\Build\vcvarsall.bat %VCVARS_ARCH%"
 CALL "%VS_PATH%\VC\Auxiliary\Build\vcvarsall.bat" %VCVARS_ARCH% > NUL
@@ -108,14 +99,6 @@ IF %ERRORLEVEL% NEQ 0 (
     EXIT /B
 )
 
-REM Decide which solution to use for this VS instance
-REM  - VS 2019: use vstools.2019.sln if it exists
-REM  - newer VS (2022, 2026, ...): use vstools.sln
-IF "%VS%"=="2019" (
-    IF EXIST "vstools.2019.sln" (
-        SET "VSTOOLS_SOLUTION=vstools.2019.sln"
-    )
-)
 IF %VERBOSE% %##% Using solution: %VSTOOLS_SOLUTION%
 
 CALL %SCRIPTLIB%\info.cmd "version"
