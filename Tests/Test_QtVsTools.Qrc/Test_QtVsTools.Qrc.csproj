@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+ Copyright (C) 2026 The Qt Company Ltd.
+ SPDX-License-Identifier: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
+-->
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Platforms>AnyCPU</Platforms>
+    <LangVersion>9.0</LangVersion>
+    <IsTestProject>true</IsTestProject>
+    <TargetFramework>net48</TargetFramework>
+
+    <RootNamespace>Test_QtVsTools.Qrc</RootNamespace>
+    <AssemblyName>Test_QtVsTools.Qrc</AssemblyName>
+
+    <!-- We have an AssemblyInfo.cs -->
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <!-- We want to be explicit about the included files -->
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+
+    <NoWarn>$(NoWarn);MSTEST0001</NoWarn>
+    <RunSettingsFile>$(SolutionDir)\vstools.runsettings</RunSettingsFile>
+
+    <!-- Optional but helpful for binding redirects on net48 -->
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
+
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="$(Name_MSTest_TestAdapter)" Version="$(Version_MSTest_TestAdapter)" />
+    <PackageReference Include="$(Name_MSTest_TestFramework)" Version="$(Version_MSTest_TestFramework)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="$(SolutionDir)\QtVsTools.Qrc\QtVsTools.Qrc.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Test_QrcDocument.cs" />
+    <Compile Include="Test_QrcEditing.cs" />
+    <Compile Include="Test_QrcPath.cs" />
+  </ItemGroup>
+
+  <Import Project="$(SolutionDir)\references.props" Condition="Exists('$(SolutionDir)\references.props')" />
+  <Import Project="$(SolutionDir)\transform.targets" Condition="Exists('$(SolutionDir)\transform.targets')" />
+
+</Project>
