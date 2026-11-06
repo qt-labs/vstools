@@ -104,7 +104,7 @@
     <Name_Community_VisualStudio_VSCT
       >Community.VisualStudio.VSCT</Name_Community_VisualStudio_VSCT>
     <Version_Community_VisualStudio_VSCT
-      >16.0.29.6</Version_Community_VisualStudio_VSCT>
+      >16.0.29.14</Version_Community_VisualStudio_VSCT>
   </PropertyGroup>
 
   <!-- MSTest.TestAdapter -->
@@ -112,7 +112,7 @@
     <Name_MSTest_TestAdapter
       >MSTest.TestAdapter</Name_MSTest_TestAdapter>
     <Version_MSTest_TestAdapter
-      >4.0.2</Version_MSTest_TestAdapter>
+      >4.5.2</Version_MSTest_TestAdapter>
   </PropertyGroup>
 
   <!-- MSTest.TestFramework -->
@@ -120,7 +120,7 @@
     <Name_MSTest_TestFramework
       >MSTest.TestFramework</Name_MSTest_TestFramework>
     <Version_MSTest_TestFramework
-      >4.0.2</Version_MSTest_TestFramework>
+      >4.5.2</Version_MSTest_TestFramework>
   </PropertyGroup>
 
   <!-- Newtonsoft.Json -->
@@ -144,7 +144,7 @@
     <Name_System_Management
       >System.Management</Name_System_Management>
     <Version_System_Management
-      >10.0</Version_System_Management>
+      >10.0.14</Version_System_Management>
   </PropertyGroup>
 
   <!-- DiffPlex -->
@@ -176,7 +176,7 @@
     <Name_Microsoft_VisualStudio_SDK_Analyzers
       >Microsoft.VisualStudio.SDK.Analyzers</Name_Microsoft_VisualStudio_SDK_Analyzers>
     <Version_Microsoft_VisualStudio_SDK_Analyzers
-      >17.7.79</Version_Microsoft_VisualStudio_SDK_Analyzers>
+      >17.7.113</Version_Microsoft_VisualStudio_SDK_Analyzers>
   </PropertyGroup>
 
   <!-- Microsoft.VisualStudio.Threading.Analyzers -->
