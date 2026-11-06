@@ -193,17 +193,7 @@ namespace QtVsTools
                 ///////
                 // Set %QTMSBUILD% by default to point to standard location of Qt/MSBuild
                 //
-                var qtMsBuildPath = Environment.GetEnvironmentVariable("QtMsBuild");
-                if (string.IsNullOrEmpty(qtMsBuildPath)) {
-
-                    Environment.SetEnvironmentVariable(
-                        "QtMsBuild", qtMsBuildDefault,
-                        EnvironmentVariableTarget.User);
-
-                    Environment.SetEnvironmentVariable(
-                        "QtMsBuild", qtMsBuildDefault,
-                        EnvironmentVariableTarget.Process);
-                }
+                SetQtMsBuildEnvironment(qtMsBuildDefault);
 
                 CopyTextMateLanguageFiles();
                 InitTimer.Stop();
@@ -421,6 +411,50 @@ namespace QtVsTools
             }
         }
 
+        private static string QtMsBuildStandardPath =>
+            Path.Combine(Environment.GetEnvironmentVariable("LocalAppData") ?? "", "QtMsBuild");
+
+        private static bool IsQtMsBuildPath(string path) =>
+            !string.IsNullOrEmpty(path) && File.Exists(Path.Combine(path, "qt.targets"));
+
+        private static string GetUserEnvironmentVariable(string variable) =>
+            Environment.GetEnvironmentVariable(variable, EnvironmentVariableTarget.User);
+
+        private static void SetUserEnvironmentVariable(string variable, string value) =>
+            Environment.SetEnvironmentVariable(variable, value, EnvironmentVariableTarget.User);
+
+        /// <summary>
+        /// Points %QTMSBUILD% of this process, and of the user if it is not set, to
+        /// <c>qtMsBuildDefault</c>, unless it already points to Qt/MSBuild files.
+        /// </summary>
+        /// <remarks>
+        /// Processes inherit %QTMSBUILD% from the process that started them, so it can still
+        /// name the package folder of an extension that has been updated or removed since.
+        /// Projects would then fail to import Qt/MSBuild. Only the standard location is stored
+        /// for the user: the package folder changes with every update of the extension.
+        /// </remarks>
+        private static void SetQtMsBuildEnvironment(string qtMsBuildDefault)
+        {
+            var processValue = Environment.GetEnvironmentVariable("QtMsBuild");
+            if (IsQtMsBuildPath(processValue))
+                return;
+
+            if (!string.IsNullOrEmpty(processValue)) {
+                Messages.Print($"QtMsBuild is set to '{processValue}', which contains no "
+                    + $"Qt/MSBuild files; using '{qtMsBuildDefault}' instead.");
+            }
+
+            // Set a valid path so projects in this Visual Studio instance can load Qt/MSBuild.
+            Environment.SetEnvironmentVariable("QtMsBuild", qtMsBuildDefault,
+                EnvironmentVariableTarget.Process);
+
+            var userValue = GetUserEnvironmentVariable("QtMsBuild");
+            if (IsQtMsBuildPath(userValue))
+                return;
+            if (string.Equals(qtMsBuildDefault, QtMsBuildStandardPath, Utils.IgnoreCase))
+                SetUserEnvironmentVariable("QtMsBuild", qtMsBuildDefault);
+        }
+
         /// <summary>
         /// Installs Qt/MSBuild files from the package folder to the standard location under
         /// %LOCALAPPDATA%\QtMsBuild.
@@ -432,8 +466,7 @@ namespace QtVsTools
         /// </remarks>>
         private static async Task<string> InstallQtMsBuildFilesAsync()
         {
-            var qtMsBuildDefault = Path.Combine(
-                Environment.GetEnvironmentVariable("LocalAppData") ?? "", "QtMsBuild");
+            var qtMsBuildDefault = QtMsBuildStandardPath;
             try {
                 var defaultUri = new Uri(qtMsBuildDefault + Path.DirectorySeparatorChar);
                 var vsixPath = Path.Combine(Utils.PackageInstallPath, "QtMsBuild");
