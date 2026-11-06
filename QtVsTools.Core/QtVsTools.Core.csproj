@@ -128,6 +128,7 @@
     <Compile Include="Common\PriorityQueue.cs" />
     <Compile Include="Common\Prototyped.cs" />
     <Compile Include="Common\PunisherQueue.cs" />
+    <Compile Include="Common\TextParsers.cs" />
     <Compile Include="Common\Timestamp.cs" />
     <Compile Include="Common\Utils.EnvParser.cs" />
     <Compile Include="Common\Utils.cs" />

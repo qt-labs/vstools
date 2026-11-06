@@ -14,7 +14,6 @@ namespace QtVsTools.Core
 {
     using QtVsTools.Common;
     using static Common.Utils;
-    using static SyntaxAnalysis.RegExpr;
 
     public static class QMakeImport
     {
@@ -52,32 +51,6 @@ namespace QtVsTools.Core
                     OutMsg(qmakeProc, "Error setting VC vars");
                 return Run(qmakeProc);
             }
-
-            private static LazyFactory StaticLazy { get; } = new();
-            private static Parser EnvVarParser => StaticLazy.Get(() => EnvVarParser, () =>
-            {
-                var tokenName = new Token("name", (~Chars["=\r\n"]).Repeat(atLeast: 1));
-                var tokenValuePart = new Token("value_part", (~Chars[";\r\n"]).Repeat(atLeast: 1));
-                var tokenValue = new Token("value", (tokenValuePart | Chars[';']).Repeat())
-                {
-                    new Rule<List<string>>
-                    {
-                        Capture(_ => new List<string>()),
-                        Update("value_part", (List<string> parts, string part) => parts.Add(part))
-                    }
-                };
-                var tokenEnvVar = new Token("env_var", tokenName & "=" & tokenValue & LineBreak)
-                {
-                    new Rule<KeyValuePair<string, List<string>>>
-                    {
-                        Create("name", (string name)
-                            => new KeyValuePair<string, List<string>>(name, null)),
-                        Transform("value", (KeyValuePair<string, List<string>> prop, List<string> value)
-                            => new KeyValuePair<string, List<string>>(prop.Key, value))
-                    }
-                };
-                return tokenEnvVar.Render();
-            });
 
             private bool SetVcVars(ProcessStartInfo startInfo)
             {
@@ -152,9 +125,7 @@ namespace QtVsTools.Core
                     return false;
 
                 // Parse command output: copy environment variables to startInfo
-                var envVars = EnvVarParser.Parse(stdOut.ToString())
-                    .GetValues<KeyValuePair<string, List<string>>>("env_var")
-                    .ToDictionary(envVar => envVar.Key, envVar => envVar.Value ?? new(), CaseIgnorer);
+                var envVars = Common.TextParsers.ParseVcVarsEnvironment(stdOut.ToString());
                 foreach (var vcVar in envVars)
                     startInfo.Environment[vcVar.Key] = string.Join(";", vcVar.Value);
 

@@ -8,10 +8,7 @@ using System.Threading.Tasks;
 namespace QtVsTools.Qml.Debug
 {
     using Common;
-    using SyntaxAnalysis;
     using V4;
-    using static SyntaxAnalysis.RegExpr;
-    using RegExprParser = SyntaxAnalysis.RegExpr.Parser;
 
     struct FrameInfo
     {
@@ -43,7 +40,6 @@ namespace QtVsTools.Qml.Debug
 
     class QmlDebugger : Disposable, IMessageEventSink
     {
-        static LazyFactory StaticLazy { get; } = new();
 
         IDebuggerEventSink sink;
         ProtocolDriver driver;
@@ -405,74 +401,6 @@ namespace QtVsTools.Qml.Debug
         }
 
         /// <summary>
-        /// Connection parameters for QML debug session
-        /// </summary>
-        class ConnectParams
-        {
-            public ushort Port { get; set; }
-            public ushort? MaxPort { get; set; }
-            public string Host { get; set; }
-            public string File { get; set; }
-            public bool Block { get; set; }
-        }
-
-        enum TokenId { ConnectParams, Port, MaxPort, Host, File, Block }
-
-        /// <summary>
-        /// Regex-based parser for QML debug connection parameters
-        /// </summary>
-        static RegExprParser ConnectParamsParser => StaticLazy.Get(() =>
-            ConnectParamsParser, () => new Token(TokenId.ConnectParams, RxConnectParams)
-            {
-                new Rule<ConnectParams>
-                {
-                    Update(TokenId.Port, (ConnectParams conn, ushort n) => conn.Port = n),
-                    Update(TokenId.MaxPort, (ConnectParams conn, ushort n) => conn.MaxPort = n),
-                    Update(TokenId.Host, (ConnectParams conn, string s) => conn.Host = s),
-                    Update(TokenId.File, (ConnectParams conn, string s) => conn.File = s),
-                    Update(TokenId.Block, (ConnectParams conn, bool b) => conn.Block = b)
-                }
-            }
-            .Render());
-
-        /// <summary>
-        /// Regular expression for parsing connection parameters string in the form:
-        ///
-        ///   -qmljsdebugger=port:<port_num>[,port_max][,host:<address>][,file:<name>][,block]
-        ///
-        /// </summary>
-        static RegExpr RxConnectParams =>
-            "-qmljsdebugger="
-            & ((RxPort | RxHost | RxFile) & RxDelim).Repeat(atLeast: 1) & RxBlock.Optional();
-
-        static RegExpr RxPort =>
-            "port:" & new Token(TokenId.Port, CharDigit.Repeat(atLeast: 1))
-            {
-                new Rule<ushort> { Capture(ushort.Parse) }
-            }
-            & (
-                "," & new Token(TokenId.MaxPort, CharDigit.Repeat(atLeast: 1))
-                {
-                    new Rule<ushort> { Capture(ushort.Parse) }
-                }
-            ).Optional();
-
-        static RegExpr RxHost =>
-            "host:" & new Token(TokenId.Host, (~CharSet[CharSpace, Chars[","]]).Repeat(atLeast: 1));
-
-        static RegExpr RxFile =>
-            "file:" & new Token(TokenId.File, (~CharSet[CharSpace, Chars[","]]).Repeat(atLeast: 1));
-
-        static RegExpr RxBlock =>
-            new Token(TokenId.Block, "block")
-            {
-                new Rule<bool> { Capture(_ => true) }
-            };
-
-        static RegExpr RxDelim =>
-            ("," & !LookAhead[CharSpace | EndOfLine]) | LookAhead[CharSpace | EndOfLine];
-
-        /// <summary>
         /// Extract QML debug connection parameters from command line args
         /// </summary>
         public static bool ParseCommandLine(
@@ -485,15 +413,7 @@ namespace QtVsTools.Qml.Debug
             portFrom = 0;
             hostName = fileName = "";
 
-            ConnectParams connParams;
-            try {
-                connParams = ConnectParamsParser
-                    .Parse(args)
-                    .GetValues<ConnectParams>(TokenId.ConnectParams)
-                    .FirstOrDefault();
-            } catch (ParseErrorException) {
-                return false;
-            }
+            var connParams = Core.Common.TextParsers.ParseQmlDebuggerArgs(args);
 
             if (connParams == null)
                 return false;

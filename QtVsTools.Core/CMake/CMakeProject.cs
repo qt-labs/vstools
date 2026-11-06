@@ -29,7 +29,6 @@ namespace QtVsTools.Core.CMake
 {
     using Common;
     using QtVsTools.Common;
-    using static SyntaxAnalysis.RegExpr;
 
     public partial class CMakeProject : Concurrent<CMakeProject>
     {
@@ -145,15 +144,6 @@ namespace QtVsTools.Core.CMake
             return lists;
         }
 
-        private Parser CMakeListsParser => Lazy.Get(() => CMakeListsParser, () =>
-        {
-            var cmakeListsParser
-                = WordBoundary & "find_package" & Space & "(" & Space
-                & (Word & Space & "NAMES" & Space).Optional()
-                & new Token("qt_version", "Qt" & CharSet['5', '6']) & ~CharWord;
-            return cmakeListsParser.Render(HorizSpace);
-        });
-
         private async Tasks.Task<bool> HasQtReferenceAsync(IEnumerable<string> listFiles)
         {
             foreach (var listFile in listFiles) {
@@ -161,14 +151,12 @@ namespace QtVsTools.Core.CMake
                 if (!File.Exists(listFilePath))
                     continue;
                 try {
-                    if (!CMakeListsParser.Parse(await Utils.ReadAllTextAsync(listFilePath)).Any())
+                    if (!TextParsers.HasQtFindPackage(await Utils.ReadAllTextAsync(listFilePath)))
                         continue;
                     if (IsCompatible())
                         return true;
                     await ShowIncompatibleProjectAsync();
                     return false;
-                } catch (ParseErrorException) {
-                    continue;
                 } catch (Exception exception) {
                     exception.Log();
                 }

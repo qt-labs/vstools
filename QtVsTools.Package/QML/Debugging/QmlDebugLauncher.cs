@@ -24,12 +24,10 @@ namespace QtVsTools.Qml.Debug
     using Core;
     using Core.MsBuild;
     using Core.Options;
-    using SyntaxAnalysis;
     using VisualStudio;
     using static Core.Common.Utils;
     using static Core.Instances;
     using static Instances;
-    using static SyntaxAnalysis.RegExpr;
 
     class Launcher : Disposable, IDebugEventCallback2
     {
@@ -151,28 +149,6 @@ namespace QtVsTools.Qml.Debug
             return engineGuid;
         }
 
-        class WslPath
-        {
-            public string Drive;
-            public string Path;
-            public static implicit operator string(WslPath wslPath)
-            {
-                return $@"{wslPath.Drive}:\{wslPath.Path}";
-            }
-        }
-
-        static readonly RegExpr wslPathRegex = new Token("WSLPATH", SkipWs_Disable, StartOfFile
-            & "/mnt/" & new Token("DRIVE", CharWord) & "/" & new Token("PATH", AnyChar.Repeat()))
-        {
-            new Rule<WslPath>
-            {
-                Update("DRIVE", (WslPath wslPath, string drive) => wslPath.Drive = drive),
-                Update("PATH", (WslPath wslPath, string path) => wslPath.Path = path)
-            }
-        };
-        static readonly Parser wslPathParser = wslPathRegex.Render();
-
-
         bool GetProcessInfo(IDebugProcess2 pProcess, bool native, out uint procId)
         {
             procId = 0;
@@ -198,8 +174,7 @@ namespace QtVsTools.Qml.Debug
                 if (native) {
                     procExecPath = Path.GetFullPath(fileName);
                 } else {
-                    var wslPath = wslPathParser.Parse(fileName)
-                        .GetValues<WslPath>("WSLPATH").FirstOrDefault();
+                    var wslPath = Core.Common.TextParsers.ConvertWslPath(fileName);
                     procExecPath = wslPath != null ? Path.GetFullPath(wslPath) : fileName;
                 }
 

@@ -58,6 +58,7 @@
     <Compile Include="Test_LazyFactory.cs" />
     <Compile Include="Test_ProjectImporter.cs" />
     <Compile Include="Test_QmlLanguageServerManager.cs" />
+    <Compile Include="Test_TextParsers.cs" />
     <Compile Include="Test_Utils.cs" />
     <Compile Include="Test_Utils.Zip.cs" />
   </ItemGroup>

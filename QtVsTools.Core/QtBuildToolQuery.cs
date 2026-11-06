@@ -9,7 +9,6 @@ using System.Text;
 namespace QtVsTools.Core
 {
     using QtVsTools.Common;
-    using static SyntaxAnalysis.RegExpr;
 
     public interface IQueryProcess
     {
@@ -37,41 +36,13 @@ namespace QtVsTools.Core
             {
                 var process = CreateQueryProcess(QtDir);
                 if (process.Run() == 0 && process.StdOutput.Length > 0) {
-                    return PropertyParser
-                        .Parse(process.StdOutput.ToString())
-                        .GetValues<KeyValuePair<string, string>>("PROP")
-                        .GroupBy(x => x.Key)
-                        .Select(x => new { x.Key, x.Last().Value })
-                        .ToDictionary(property => property.Key, property => property.Value);
+                    return Common.TextParsers.ParseQueryProperties(process.StdOutput.ToString());
                 }
                 return new Dictionary<string, string>();
             }
         )();
 
         private string QtDir { get; set; }
-
-        private static LazyFactory StaticLazy { get; } = new();
-        private static Parser PropertyParser => StaticLazy.Get(() => PropertyParser, () =>
-        {
-            var charSeparator = Char[':'];
-            var charsName = CharSet[~(charSeparator + CharVertSpace)];
-            var charsValue = CharSet[~CharVertSpace];
-
-            var propertyName = new Token("NAME", charsName.Repeat(atLeast: 1));
-            var propertyValue = new Token("VALUE", charsValue.Repeat());
-            var property = new Token("PROP", propertyName & charSeparator & propertyValue)
-                {
-                    new Rule<KeyValuePair<string, string>>
-                    {
-                        Create("NAME", (string name) =>
-                            new KeyValuePair<string, string>(name, "")),
-                        Transform("VALUE", (KeyValuePair<string, string> prop, string value) =>
-                            new KeyValuePair<string, string>(prop.Key, value))
-                    }
-                };
-            var propertyLine = StartOfLine & property & CharVertSpace.Repeat();
-            return propertyLine.Repeat().Render();
-        });
 
         private static bool TryGetQtPathQuery(string qtDir, out QtBuildToolQuery qtPathsQuery)
         {

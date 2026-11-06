@@ -19,8 +19,6 @@ namespace QtVsTools.Core
     using Options;
     using VisualStudio;
 
-    using static SyntaxAnalysis.RegExpr;
-
     public static partial class Notifications
     {
         public static SearchDevRelease NotifySearchDevRelease
@@ -219,17 +217,8 @@ namespace QtVsTools.Core
                 if (!response.IsSuccessStatusCode)
                     return;
 
-                var tokenVersion = new Token("VERSION", Number & "." & Number & "." & Number)
-                {
-                    new Rule<System.Version> { Capture(value => new System.Version(value)) }
-                };
-                var regexHrefVersion = "href=\"" & tokenVersion & Chars["/"].Optional() & "\"";
-                var regexResponse = (regexHrefVersion | AnyChar | VertSpace).Repeat();
-                var parserResponse = regexResponse.Render();
-
                 var responseData = await response.Content.ReadAsStringAsync();
-                var devVersion = parserResponse.Parse(responseData)
-                    .GetValues<System.Version>("VERSION")
+                var devVersion = TextParsers.ParseDevReleaseVersions(responseData)
                     .Where(v => v >= currentVersionNoRevision)
                     .Max();
                 if (devVersion == null)

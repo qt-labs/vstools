@@ -263,46 +263,15 @@ namespace QtVsTools.Core.MsBuild
             }
         }
 
-        /// <summary>
-        /// Parser for project format version string:
-        ///
-        ///     QtVS_vNNN
-        ///
-        /// </summary>
-        private Parser _ProjectFormatVersion;
-
-        private Parser ProjectFormatVersion
-        {
-            get
-            {
-                if (_ProjectFormatVersion != null)
-                    return _ProjectFormatVersion;
-                var expr = "QtVS_v" & new Token("VERSION", Char['0', '9'].Repeat(3))
-                {
-                    new Rule<int> { Capture(int.Parse) }
-                };
-                try {
-                    _ProjectFormatVersion = expr.Render();
-                } catch (Exception e) {
-                    e.Log();
-                }
-                return _ProjectFormatVersion;
-            }
-        }
-
         private Version ParseProjectFormatVersion(string text)
         {
-            if (string.IsNullOrEmpty(text) || ProjectFormatVersion == null)
+            if (string.IsNullOrEmpty(text))
                 return Version.Unknown;
-            try {
-                return (Version)ProjectFormatVersion.Parse(text)
-                    .GetValues<int>("VERSION")
-                    .First();
-            } catch {
-                return text.StartsWith(KeywordV2, StringComparison.Ordinal)
-                    ? Version.V1
-                    : Version.Unknown;
-            }
+            if (TextParsers.ParseProjectFormatVersion(text) is { } version)
+                return (Version)version;
+            return text.StartsWith(KeywordV2, StringComparison.Ordinal)
+                ? Version.V1
+                : Version.Unknown;
         }
 
         public Version GetProjectFormatVersion()
@@ -773,45 +742,13 @@ namespace QtVsTools.Core.MsBuild
             }
         }
 
-        /// <summary>
-        /// All path separators
-        /// </summary>
-        private static readonly char[] slashChars = {
-            Path.DirectorySeparatorChar,
-            Path.AltDirectorySeparatorChar
-        };
-
-        /// <summary>
-        /// Pattern that matches one path separator char
-        /// </summary>
-        private static readonly RegExpr slash = CharSet[slashChars];
-
-        /// <summary>
-        /// Gets a RegExpr that matches a given path, regardless
-        /// of case and varying directory separators
-        /// </summary>
-        private static RegExpr GetPathPattern(string findWhatPath)
-        {
-            return
-                // Make pattern case-insensitive
-                CaseInsensitive &
-                // Split path string by directory separators
-                findWhatPath.Split(slashChars, StringSplitOptions.RemoveEmptyEntries)
-                // Convert path parts to RegExpr (escapes regex special chars)
-                .Select(dirName => (RegExpr)dirName)
-                // Join all parts, separated by path separator pattern
-                .Aggregate((path, dirName) => path & slash & dirName);
-        }
-
         public void ReplacePath(string oldPath, string newPath)
         {
             var srcUri = new Uri(Path.GetFullPath(oldPath));
             var projUri = new Uri(this[Files.Project].Path);
 
-            var absolutePath = GetPathPattern(srcUri.AbsolutePath);
-            var relativePath = GetPathPattern(projUri.MakeRelativeUri(srcUri).OriginalString);
-
-            var findWhat = (absolutePath | relativePath).Render().Regex;
+            var findWhat = TextParsers.CreatePathRegex(srcUri.AbsolutePath,
+                projUri.MakeRelativeUri(srcUri).OriginalString);
 
             foreach (var xElem in this[Files.Project].Xml.Descendants()) {
                 if (!xElem.HasElements)
