@@ -60,7 +60,6 @@ namespace QtVsTools.QtMsBuild.Tasks
             System.Boolean IgnoreExitCode = false)
         #endregion
         {
-#if (VS2022 || VS2026)
             #region Code
             if (!string.IsNullOrEmpty(Message))
                 Log.LogMessage(MessageImportance.High, Message);
@@ -119,9 +118,6 @@ namespace QtVsTools.QtMsBuild.Tasks
                 return false;
             }
             #endregion
-#else
-            ExitCode = 0;
-#endif
             return true;
         }
     }

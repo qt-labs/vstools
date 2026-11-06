@@ -105,7 +105,6 @@ namespace QtVsTools.Core
             if (!string.IsNullOrEmpty(_visualizersPath))
                 return;
 
-#if VS2022 || VS2026
             string path = null;
 
             var version = await VsShell.GetReleaseStringAsync() ?? string.Empty;
@@ -117,9 +116,6 @@ namespace QtVsTools.Core
 
             _visualizersPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder
                     .MyDocuments), path ?? @"Visual Studio 2022\Visualizers\");
-#else
-#error Unknown Visual Studio version!
-#endif
         }
     }
 }

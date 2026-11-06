@@ -62,15 +62,6 @@
     <Compile Include="Test_Utils.Zip.cs" />
   </ItemGroup>
 
-  <ItemGroup>
-    <T4Template Include="extension.vsixmanifest_TT">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <OutputFile>extension.vsixmanifest</OutputFile>
-      <DependsOn>$(SolutionDir)\version.tt;$(SolutionDir)\common.tt</DependsOn>
-      <LastGenOutput>extension.vsixmanifest</LastGenOutput>
-    </T4Template>
-  </ItemGroup>
-
   <Import Project="$(SolutionDir)\references.props" Condition="Exists('$(SolutionDir)\references.props')" />
   <Import Project="$(SolutionDir)\transform.targets" Condition="Exists('$(SolutionDir)\transform.targets')" />
 

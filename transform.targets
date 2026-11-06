@@ -74,7 +74,4 @@
   <PropertyGroup>
     <BeforeTransform>$(BeforeTransform);PrepareTransform</BeforeTransform>
   </PropertyGroup>
-  <PropertyGroup>
-    <DefineConstants>$(DefineConstants);VS2022</DefineConstants>
-  </PropertyGroup>
 </Project>

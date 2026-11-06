@@ -14,7 +14,6 @@ namespace QtVsTools.Core
         private static readonly Lazy<string> PlatformToolsetLazy =
             new(() =>
             {
-#if VS2022 || VS2026
                 var version = VsShell.GetReleaseString();
 
                 if (version.StartsWith("17.", StringComparison.Ordinal))
@@ -23,9 +22,6 @@ namespace QtVsTools.Core
                     return "145";
 
                 throw new Exception($"Unsupported Visual Studio version: {version}");
-#else
-#error Unknown Visual Studio version!
-#endif
             }, LazyThreadSafetyMode.ExecutionAndPublication);
 
         public static string PlatformToolset => PlatformToolsetLazy.Value;

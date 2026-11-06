@@ -5,8 +5,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
-using System.Xml.Linq;
+
+using static System.Runtime.InteropServices.Architecture;
 
 namespace QtVsTools.Core.Common
 {
@@ -26,41 +28,19 @@ namespace QtVsTools.Core.Common
         });
 
         /// <summary>
-        /// Gets the extension architecture of Visual Studio. Defaults to x64.
+        /// Gets the architecture of Visual Studio, "x64" or "arm64". An extension package only
+        /// installs into the Visual Studio architecture it was built for, so this is also the
+        /// architecture of the installed extension.
         /// </summary>
-        public static string Architecture => ResolvedArchitecture.Value;
-        private static readonly Lazy<string> ResolvedArchitecture = new(() =>
-        {
-#if VS2022 || VS2026
-            var manifestPath = Path.Combine(PackageInstallPath, "extension.vsixmanifest");
-            if (!File.Exists(manifestPath))
-                return "x64";
-            try {
-                var doc = XDocument.Load(manifestPath);
-                var arch = doc.Descendants()
-                    .FirstOrDefault(e => e.Name.LocalName == "ProductArchitecture")?.Value;
-                return string.Equals(arch, "arm64", IgnoreCase) ? "arm64" : "x64";
-            } catch (Exception exception) {
-                System.Diagnostics.Debug.WriteLine(exception);
-                return "x64";
-            }
-#endif
-        });
+        public static string Architecture =>
+            RuntimeInformation.ProcessArchitecture == Arm64 ? "arm64" : "x64";
 
         /// <summary>
-        /// Gets the combined version and extension architecture of Visual Studio, as used in
-        /// the names of the deployed packages (see scripts\vstools\deploy.cmd).
+        /// Gets the product line and architecture of the extension, as used in the names of the
+        /// deployed packages (see scripts\vstools\deploy.cmd). Fixed to 2022, cause one extension
+        /// built for VS 2022 covers VS 2022 and VS 2026.
         /// </summary>
-        public static string VersionAndArchitecture => ResolvedVersionAndArchitecture.Value;
-        private static readonly Lazy<string> ResolvedVersionAndArchitecture = new(() =>
-        {
-#if VS2022
-            return $"2022-{Architecture}";
-#elif VS2026
-#error Remove this line if you want to build a special VS2026 version of the VsTools extension.
-            return $"2026-{Architecture}";
-#endif
-        });
+        public static string VersionAndArchitecture => $"2022-{Architecture}";
 
         public static string Unquote(string path)
         {

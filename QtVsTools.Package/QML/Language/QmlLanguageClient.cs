@@ -42,7 +42,6 @@ namespace QtVsTools.Package.QML.Language
             exception.Log();
             return Task.CompletedTask;
         }
-#if VS2022 || VS2026
         public Tasks.Task<InitializationFailureContext>
             OnServerInitializeFailedAsync(ILanguageClientInitializationInfo initializationState)
         {
@@ -67,7 +66,6 @@ namespace QtVsTools.Package.QML.Language
                 FailureMessage = failureMessage
             });
         }
-#endif
         public IEnumerable<string> ConfigurationSections => null;
 
         public object InitializationOptions => null;

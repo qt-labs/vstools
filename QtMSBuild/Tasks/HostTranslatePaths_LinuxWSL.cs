@@ -49,7 +49,6 @@ namespace QtVsTools.QtMsBuild.Tasks
             System.String[] Names = null)
         #endregion
         {
-#if (VS2022 || VS2026)
             #region Code
             Result = new ITaskItem[] { };
             var newItems = new List<ITaskItem>();
@@ -72,9 +71,6 @@ namespace QtVsTools.QtMsBuild.Tasks
             }
             Result = newItems.ToArray();
             #endregion
-#else
-            Result = null;
-#endif
             return true;
         }
     }

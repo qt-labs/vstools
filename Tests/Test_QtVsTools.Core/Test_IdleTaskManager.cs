@@ -18,7 +18,6 @@ namespace QtVsTools.Test.Core
     [TestClass]
     public class Test_IdleTaskManager
     {
-#if VS2022 || VS2026
         public TestContext TestContext { get; set; }
 
         private static GlobalServiceProvider MockServiceProvider { get; set; }
@@ -401,6 +400,5 @@ namespace QtVsTools.Test.Core
                 BindingFlags.NonPublic | BindingFlags.Instance);
             return (List<IIdleTask>)processedTasksField.GetValue(manager);
         }
-#endif
     }
 }
