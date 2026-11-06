@@ -64,22 +64,18 @@
   </ItemGroup>
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////
-  // Version specific package references
+  // Package references
   // -->
-  <Choose>
-    <When Condition="'$(VisualStudioVersion)'=='17.0'">
-      <ItemGroup>
-        <PackageReference Include="$(Name_Microsoft_VisualStudio_Threading_Analyzers)" Version="$(Version_Microsoft_VisualStudio_Threading_Analyzers)">
-          <PrivateAssets>all</PrivateAssets>
-          <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
-        </PackageReference>
-        <PackageReference Include="$(Name_Microsoft_VisualStudio_SDK_Analyzers)" Version="$(Version_Microsoft_VisualStudio_SDK_Analyzers)">
-          <PrivateAssets>all</PrivateAssets>
-          <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
-        </PackageReference>
-      </ItemGroup>
-    </When>
-  </Choose>
+  <ItemGroup>
+    <PackageReference Include="$(Name_Microsoft_VisualStudio_Threading_Analyzers)" Version="$(Version_Microsoft_VisualStudio_Threading_Analyzers)">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="$(Name_Microsoft_VisualStudio_SDK_Analyzers)" Version="$(Version_Microsoft_VisualStudio_SDK_Analyzers)">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////
   // Solution project references

@@ -1,19 +1,11 @@
 
 == Static build of Qt
 
-This project requires an x64 static build of Qt that includes at least qtbase and qtdeclarative.
+This project requires a static build of Qt that includes at least qtbase and qtdeclarative,
+built with the Visual Studio 2022 toolset (MSVC v143) for the target architecture (x64 or arm64).
 
-By default, it will look for the Qt build three levels higher in the file system hierarchy, in
-"build\qt5-x86-<VS Version>-static", where <VS Version> is "vs2022" or "vs2026".
-
-For example, when building in Visual Studio 2022, if the Qt VS Tools solution is located in
-X:\dev\vstools (and therefore vsqml is located in X:\dev\vstools\src\vsqml), the project will look
-for the static build of Qt in X:\dev\build\qt5-x86-vs2022-static.
-
-It is also possible to override the default Qt build location by setting the following environment
-variables:
-    QTBUILD_STATIC_VS2022 = <path to x64 static build of Qt for Visual Studio 2022>
-    QTBUILD_STATIC_VS2026 = <path to x64 static build of Qt for Visual Studio 2026>
+Set the environment variable QTBUILD_STATIC_VS2022 to the static build of Qt, or pass
+-p:QtBuild=<path> to MSBuild. The build fails if neither is set.
 
 The following configure options can be used to obtain an optimized build configuration:
 
@@ -30,5 +22,6 @@ The following configure options can be used to obtain an optimized build configu
 
 == Project output
 
-The output DLL is copied to a bin sub-folder inside the project directory
-(e.g. X:\dev\vstools\vsqml\bin). This is the location where the VS Tools project will look for it.
+The output DLL is written to bin\<Platform>\<Configuration> inside the project directory
+(e.g. X:\dev\vstools\VsQml\bin\x64\Release). The package project picks it up through its
+project reference.

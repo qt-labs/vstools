@@ -80,29 +80,21 @@ The following is required in order to build the Qt Visual Studio solution:
 
 ### Environment variables
 
-Set environment variables `QTBUILD_STATIC_VS`_`nnnn`_ according to the installed VS versions, i.e.:
-- `QTBUILD_STATIC_VS2022` = _path to Qt installation built with msvc2022_
-- `QTBUILD_STATIC_VS2026` = _path to Qt installation built with msvc2026_
-
-For example, assuming Qt is installed in the following directory tree:
+Set the environment variable `QTBUILD_STATIC_VS2022` to the path of the static Qt installation
+built with msvc2022 for the architecture this machine builds the extension for. For example,
+assuming Qt is installed in the following directory tree:
 
     C:
     +--- build
          +--- qt_5.15.9_msvc2022_x64
-         |    +--- bin
-         |    +--- include
-         |    +--- lib
-         |    (etc.)
-         +--- qt_5.15.9_msvc2026_x64
               +--- bin
               +--- include
               +--- lib
               (etc.)
 
-In this case, the following environment variables must be set:
+In this case, the following environment variable must be set:
 
     QTBUILD_STATIC_VS2022=C:\build\qt_5.15.9_msvc2022_x64
-    QTBUILD_STATIC_VS2026=C:\build\qt_5.15.9_msvc2026_x64
 
 ### Initialization
 

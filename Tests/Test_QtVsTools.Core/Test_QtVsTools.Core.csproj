@@ -42,23 +42,10 @@
     <PackageReference Include="$(Name_Microsoft_VisualStudio_SDK)" Version="$(Version_Microsoft_VisualStudio_SDK)" ExcludeAssets="runtime" />
   </ItemGroup>
 
-  <Choose>
-    <!-- VS 2026 / Dev18 -->
-    <When Condition="'$(VisualStudioVersion)'=='18.0'">
-      <ItemGroup>
-        <PackageReference Include="Microsoft.ServiceHub.Framework" Version="4.8.55" />
-        <PackageReference Include="Microsoft.VisualStudio.Sdk.TestFramework" Version="17.11.66" />
-      </ItemGroup>
-    </When>
-
-    <!-- VS 2022 / Dev17 -->
-    <When Condition="'$(VisualStudioVersion)'=='17.0'">
-      <ItemGroup>
-        <PackageReference Include="Microsoft.ServiceHub.Framework" Version="4.8.55" />
-        <PackageReference Include="Microsoft.VisualStudio.Sdk.TestFramework" Version="17.11.66" />
-      </ItemGroup>
-    </When>
-  </Choose>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.ServiceHub.Framework" Version="4.8.55" />
+    <PackageReference Include="Microsoft.VisualStudio.Sdk.TestFramework" Version="17.11.66" />
+  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="$(SolutionDir)\QtVsTools.Core\QtVsTools.Core.csproj" />

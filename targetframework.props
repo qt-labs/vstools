@@ -7,15 +7,6 @@
 
   <PropertyGroup>
     <LangVersion>9.0</LangVersion>
-  </PropertyGroup>
-
-  <!-- // Visual Studio 2026 -->
-  <PropertyGroup Condition="'$(VisualStudioVersion)'=='18.0'">
-    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
-  </PropertyGroup>
-
-  <!-- // Visual Studio 2022 -->
-  <PropertyGroup Condition="'$(VisualStudioVersion)'=='17.0'">
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
   </PropertyGroup>
 
