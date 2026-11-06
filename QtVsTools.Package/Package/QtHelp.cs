@@ -5,10 +5,11 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
 using System.Data;
-using System.Data.SQLite;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using EnvDTE;
+using Microsoft.Data.Sqlite;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 
@@ -147,7 +148,10 @@ namespace QtVsTools
                     + $"a.NamespaceId=f.Id AND a.Name='{keyword}'";
 
                 var links = new Dictionary<string, string>();
-                ProcessQchFiles(qchFiles, linksForKeyword, keyword, docPath, info, links);
+                if (!TryProcessQchFiles(qchFiles, linksForKeyword, keyword, docPath, info, links)) {
+                    ShowGenericSearchResultsOnline(keyword, info.Major);
+                    return true;
+                }
 
                 string uri;
                 switch (links.Values.Count) {
@@ -192,15 +196,35 @@ namespace QtVsTools
             if (QtOptionsPage.HelpPreference != QtOptionsPage.SourcePreference.Online)
                 return false;
 
+            ShowGenericSearchResultsOnline(keyword, version);
+            return true;
+        }
+
+        private static void ShowGenericSearchResultsOnline(string keyword, uint version)
+        {
             VsShellUtilities.OpenSystemBrowser(HelperFunctions.FromNativeSeparators(
                 new UriBuilder($"https://doc.qt.io/qt-{version}/search-results.html")
                 {
                     Query = "q=" + keyword
                 }.ToString())
             );
-            return true;
         }
 
+        private static bool TryProcessQchFiles(IEnumerable<string> qchFiles,
+            string linksForKeyword, string keyword, string docPath, VersionInformation info,
+            IDictionary<string, string> links)
+        {
+            try {
+                ProcessQchFiles(qchFiles, linksForKeyword, keyword, docPath, info, links);
+                return true;
+            } catch (Exception exception) {
+                exception.Log();
+                return false;
+            }
+        }
+
+        // Not inlined: a SQLite assembly that fails to load throws when this method is compiled.
+        [MethodImpl(MethodImplOptions.NoInlining)]
         private static void ProcessQchFiles(IEnumerable<string> qchFiles, string linksForKeyword,
             string keyword, string docPath, VersionInformation info, IDictionary<string, string> links)
         {
@@ -212,18 +236,20 @@ namespace QtVsTools
             string linksForKeyword, string keyword, string docPath, VersionInformation info,
             IDictionary<string, string> links)
         {
-            var builder = new SQLiteConnectionStringBuilder
+            SQLitePCL.Batteries_V2.Init();
+            var builder = new SqliteConnectionStringBuilder
             {
-                ReadOnly = true
+                Mode = SqliteOpenMode.ReadOnly,
+                Pooling = false
             };
 
             foreach (var file in qchFiles) {
                 builder.DataSource = file;
 
-                using var connection = new SQLiteConnection(builder.ToString());
+                using var connection = new SqliteConnection(builder.ToString());
                 await connection.OpenAsync();
 
-                using var command = new SQLiteCommand(linksForKeyword, connection);
+                using var command = new SqliteCommand(linksForKeyword, connection);
                 using var reader = await command.ExecuteReaderAsync();
                 while (await reader.ReadAsync()) {
                     var title = GetString(reader, 0);

@@ -90,7 +90,8 @@
     <PackageReference Include="$(Name_Microsoft_VisualStudio_SDK)" Version="$(Version_Microsoft_VisualStudio_SDK)" ExcludeAssets="runtime" />
     <PackageReference Include="$(Name_Microsoft_VisualStudio_ProjectSystem)" Version="$(Version_Microsoft_VisualStudio_ProjectSystem)" />
     <PackageReference Include="$(Name_Newtonsoft_Json)" Version="$(Version_Newtonsoft_Json)" />
-    <PackageReference Include="$(Name_Stub_System_Data_SQLite_Core_NetFramework)" Version="$(Version_Stub_System_Data_SQLite_Core_NetFramework)" GeneratePathProperty="true" />
+    <PackageReference Include="$(Name_Microsoft_Data_Sqlite_Core)" Version="$(Version_Microsoft_Data_Sqlite_Core)" />
+    <PackageReference Include="$(Name_SQLitePCLRaw_bundle_e_sqlite3)" Version="$(Version_SQLitePCLRaw_bundle_e_sqlite3)" />
     <PackageReference Include="$(Name_Microsoft_VisualStudio_Shell_15)" Version="$(Version_Microsoft_VisualStudio_Shell_15)" />
     <PackageReference Include="$(Name_Microsoft_VisualStudio_Composition)" Version="$(Version_Microsoft_VisualStudio_Composition)" />
     <PackageReference Include="$(Name_Microsoft_VisualStudio_Workspace)" Version="$(Version_Microsoft_VisualStudio_Workspace)" />
@@ -514,27 +515,37 @@
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////
   // NuGet native libs
+  //
+  // SQLitePCLRaw loads e_sqlite3.dll from runtimes\win-<arch>\native next to its assembly. Its
+  // .NET Framework targets only add the x86, x64 and 32-bit ARM builds to the output, so replace
+  // them with the builds for the 64-bit processes Visual Studio runs as: x64 and arm64.
+  // These copies serve Visual Studio 2022. Visual Studio 2026 redirects SQLitePCLRaw to its own
+  // 3.x assemblies and native library for its architecture (devenv.exe.config).
   // -->
-  <PropertyGroup Condition="'$(PkgStub_System_Data_SQLite_Core_NetFramework)' != ''">
-    <SQLitePkgDir Condition="'$(SQLitePkgDir)' == ''">$(PkgStub_System_Data_SQLite_Core_NetFramework)</SQLitePkgDir>
+  <PropertyGroup>
+    <SQLiteNativePkgDir
+      >$(NuGetPackageRoot)sqlitepclraw.lib.e_sqlite3\$(Version_SQLitePCLRaw_bundle_e_sqlite3)</SQLiteNativePkgDir>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(PkgStub_System_Data_SQLite_Core_NetFramework)' == ''">
-    <NuGetGlobalPkgDir Condition="'$(NuGetGlobalPkgDir)' == ''">$(USERPROFILE)\.nuget\packages</NuGetGlobalPkgDir>
-    <SQLitePkgRoot>$(NuGetGlobalPkgDir)\Stub.System.Data.SQLite.Core.NetFramework</SQLitePkgRoot>
-    <SQLitePkgDir Condition="'$(SQLitePkgDir)' == ''">$(SQLitePkgRoot)\$(Version_Stub_System_Data_SQLite_Core_NetFramework)</SQLitePkgDir>
-  </PropertyGroup>
-  <ItemGroup>
-    <Content Include="$(SQLitePkgDir)\build\net46\x64\SQLite.Interop.dll">
-      <Link>SQLite.Interop\x64\SQLite.Interop.dll</Link>
-      <IncludeInVSIX>true</IncludeInVSIX>
-      <VSIXSubPath>x64\</VSIXSubPath>
-    </Content>
-    <Content Include="$(SQLitePkgDir)\build\net46\x86\SQLite.Interop.dll">
-      <Link>SQLite.Interop\x86\SQLite.Interop.dll</Link>
-      <IncludeInVSIX>true</IncludeInVSIX>
-      <VSIXSubPath>x86\</VSIXSubPath>
-    </Content>
-  </ItemGroup>
+  <Target Name="SQLiteNativeLibs" BeforeTargets="AssignTargetPaths">
+    <Error Condition="!Exists('$(SQLiteNativePkgDir)\runtimes\win-arm64\native\e_sqlite3.dll')"
+      Text="SQLite native library not found in '$(SQLiteNativePkgDir)'." />
+    <ItemGroup>
+      <Content Remove="@(Content)"
+        Condition="'%(Content.Filename)%(Content.Extension)' == 'e_sqlite3.dll'" />
+      <Content Include="$(SQLiteNativePkgDir)\runtimes\win-x64\native\e_sqlite3.dll">
+        <Link>runtimes\win-x64\native\e_sqlite3.dll</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        <IncludeInVSIX>true</IncludeInVSIX>
+        <VSIXSubPath>runtimes\win-x64\native</VSIXSubPath>
+      </Content>
+      <Content Include="$(SQLiteNativePkgDir)\runtimes\win-arm64\native\e_sqlite3.dll">
+        <Link>runtimes\win-arm64\native\e_sqlite3.dll</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        <IncludeInVSIX>true</IncludeInVSIX>
+        <VSIXSubPath>runtimes\win-arm64\native</VSIXSubPath>
+      </Content>
+    </ItemGroup>
+  </Target>
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////
   // Regenerate the templates when the platform changes. Store the last platform in one file

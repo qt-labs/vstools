@@ -131,12 +131,22 @@
       >13.0.4</Version_Newtonsoft_Json>
   </PropertyGroup>
 
-  <!-- Stub.System.Data.SQLite.Core.NetFramework -->
+  <!-- Microsoft.Data.Sqlite.Core -->
   <PropertyGroup>
-    <Name_Stub_System_Data_SQLite_Core_NetFramework
-      >Stub.System.Data.SQLite.Core.NetFramework</Name_Stub_System_Data_SQLite_Core_NetFramework>
-    <Version_Stub_System_Data_SQLite_Core_NetFramework
-      >1.0.119</Version_Stub_System_Data_SQLite_Core_NetFramework>
+    <Name_Microsoft_Data_Sqlite_Core
+      >Microsoft.Data.Sqlite.Core</Name_Microsoft_Data_Sqlite_Core>
+    <Version_Microsoft_Data_Sqlite_Core
+      >8.0.11</Version_Microsoft_Data_Sqlite_Core>
+  </PropertyGroup>
+
+  <!-- SQLitePCLRaw.bundle_e_sqlite3
+       Must be the version Microsoft.Data.Sqlite references: Visual Studio 2022 redirects
+       SQLitePCLRaw only up to 2.1.4, so a newer version does not bind to that reference. -->
+  <PropertyGroup>
+    <Name_SQLitePCLRaw_bundle_e_sqlite3
+      >SQLitePCLRaw.bundle_e_sqlite3</Name_SQLitePCLRaw_bundle_e_sqlite3>
+    <Version_SQLitePCLRaw_bundle_e_sqlite3
+      >2.1.6</Version_SQLitePCLRaw_bundle_e_sqlite3>
   </PropertyGroup>
 
   <!-- System.Management -->
