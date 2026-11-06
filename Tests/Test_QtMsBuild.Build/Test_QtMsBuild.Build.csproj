@@ -39,7 +39,6 @@
   <ItemGroup>
     <ProjectReference Include="$(SolutionDir)\QtMSBuild\QtMSBuild.csproj" />
     <ProjectReference Include="$(SolutionDir)\QtVsTools.Core\QtVsTools.Core.csproj" />
-    <ProjectReference Include="$(SolutionDir)\QtVsTools.RegExpr\QtVsTools.RegExpr.csproj" />
   </ItemGroup>
 
   <ItemGroup>

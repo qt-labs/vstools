@@ -72,12 +72,6 @@
   /////////////////////////////////////////////////////////////////////////////////////////////////
   // Solution project references
   // -->
-  <ItemGroup>
-    <ProjectReference Include="..\QtVsTools.RegExpr\QtVsTools.RegExpr.csproj">
-      <Project>{a2831b9b-4d3b-46cb-85df-1b5c277c17db}</Project>
-      <Name>QtVsTools.RegExpr</Name>
-    </ProjectReference>
-  </ItemGroup>
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////
   // Project items

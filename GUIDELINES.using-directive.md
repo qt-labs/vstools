@@ -46,9 +46,9 @@ namespace QtVsTools
     using Core;
     using QtMsBuild;
 
-    using RegExprParser = SyntaxAnalysis.RegExpr.Parser;
+    using Tasks = System.Threading.Tasks;
 
-    using static SyntaxAnalysis.RegExpr;
+    using static Core.Common.Utils;
 
     class ...
 ```
