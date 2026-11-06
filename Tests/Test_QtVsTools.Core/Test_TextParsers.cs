@@ -135,6 +135,7 @@ namespace QtVsTools.Test.Core
         {
             var versions = TextParsers.ParseDevReleaseVersions(
                 "<html><body><pre>\n"
+                + "<a href=\"../\">Parent Directory</a>\n"
                 + "<a href=\"3.4.1/\">3.4.1/</a>   12-Sep-2025 10:00\n"
                 + "<a href=\"3.5.0/\">3.5.0/</a>   01-Nov-2026 10:00\n"
                 + "<a href=\"3.6.0\">3.6.0</a>\n"
@@ -217,6 +218,16 @@ namespace QtVsTools.Test.Core
         }
 
         [TestMethod]
+        public void ParseQmlDebuggerArgs_QuotedArgument()
+        {
+            var args = TextParsers.ParseQmlDebuggerArgs(
+                "app.exe \"-qmljsdebugger=port:3768,file:app,block\" -x");
+            Assert.AreEqual((ushort)3768, args.Port);
+            Assert.AreEqual("app", args.File);
+            Assert.IsTrue(args.Block);
+        }
+
+        [TestMethod]
         public void ParseQmlDebuggerArgs_HostBeforePort()
         {
             var args = TextParsers.ParseQmlDebuggerArgs("-qmljsdebugger=host:localhost,port:1234");
@@ -253,10 +264,23 @@ namespace QtVsTools.Test.Core
         [DataRow("Keyword QtVS_v301", 301)]
         [DataRow("QtVS_v30", null)]
         [DataRow("Qt4VSv1.0", null)]
+        [DataRow("QtVS_v\u0663\u0660\u0664", null)] // Arabic-Indic digits
         [DataRow("", null)]
         public void ParseProjectFormatVersion(string text, int? expected)
         {
             Assert.AreEqual(expected, TextParsers.ParseProjectFormatVersion(text));
+        }
+
+        [TestMethod]
+        [DataRow("'$(Configuration)|$(Platform)'=='Debug|x64'", "x64")]
+        [DataRow("'$(Configuration)|$(Platform)'=='Release|Win32'", "Win32")]
+        [DataRow(" '$(Configuration)|$(Platform)' == 'Debug|ARM64' ", "ARM64")]
+        [DataRow("'$(Configuration)'=='Debug'", null)]
+        [DataRow("", null)]
+        [DataRow(null, null)]
+        public void ParseConfigConditionPlatform(string condition, string expected)
+        {
+            Assert.AreEqual(expected, TextParsers.ParseConfigConditionPlatform(condition));
         }
 
         [TestMethod]
@@ -278,6 +302,17 @@ namespace QtVsTools.Test.Core
             var regex = TextParsers.CreatePathRegex("C:/a+b/(x)");
             Assert.IsTrue(regex.IsMatch(@"c:\A+B\(X)\y"));
             Assert.IsFalse(regex.IsMatch(@"c:\aab\x\y"));
+        }
+
+        [TestMethod]
+        public void CreatePathRegex_WithoutUsablePath_MatchesNothing()
+        {
+            Assert.IsFalse(TextParsers.CreatePathRegex("", "/", @"\\").IsMatch("anything"));
+            Assert.AreEqual("x", TextParsers.CreatePathRegex("", "/").Replace("x", "$(QTDIR)"));
+
+            var regex = TextParsers.CreatePathRegex("", "C:/Qt");
+            Assert.AreEqual("$(QTDIR)/bin", regex.Replace("c:/qt/bin", "$(QTDIR)"));
+            Assert.AreEqual("other", regex.Replace("other", "$(QTDIR)"));
         }
 
         #endregion

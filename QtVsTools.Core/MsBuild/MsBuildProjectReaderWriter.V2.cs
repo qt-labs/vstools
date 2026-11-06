@@ -36,15 +36,8 @@ namespace QtVsTools.Core.MsBuild
                 .ForEach(config =>
                 {
                     if (userProps != null) {
-                        string platform = null;
-                        try {
-                            platform = ConfigCondition
-                                .Parse((string)config.Attribute("Condition"))
-                                .GetValues<string>("Platform")
-                                .FirstOrDefault();
-                        } catch (Exception e) {
-                            e.Log();
-                        }
+                        var platform = Common.TextParsers.ParseConfigConditionPlatform(
+                            (string)config.Attribute("Condition"));
 
                         if (!string.IsNullOrEmpty(platform)) {
                             var qtInstallName = $"Qt5Version_x0020_{platform}";

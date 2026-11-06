@@ -9,9 +9,6 @@ using System.Text.RegularExpressions;
 
 namespace QtVsTools.Core.Common
 {
-    using QtVsTools.Common;
-    using static SyntaxAnalysis.RegExpr;
-
     /// <summary>
     /// Connection parameters of a QML debug session, see
     /// <see cref="TextParsers.ParseQmlDebuggerArgs"/>.
@@ -27,94 +24,58 @@ namespace QtVsTools.Core.Common
 
     /// <summary>
     /// Small text parsers used throughout the extension, in one place so that their behavior is
-    /// covered by tests.
+    /// covered by tests (see Test_TextParsers).
     /// </summary>
     public static class TextParsers
     {
-        private static LazyFactory StaticLazy { get; } = new();
-
         #region qmake -query / qtpaths -query
+
+        // NAME:VALUE, the name up to the first colon
+        private static readonly Regex QueryPropertyRegex = new(
+            @"^(?<name>[^:\r\n]+):(?<value>[^\r\n]*)", RegexOptions.Multiline);
 
         /// <summary>
         /// Parses the output of 'qmake -query': one 'NAME:VALUE' per line. The last value wins
-        /// if a name occurs more than once.
+        /// if a name occurs more than once. Lines without a colon are skipped.
         /// </summary>
         public static Dictionary<string, string> ParseQueryProperties(string output)
         {
-            return QueryPropertyParser
-                .Parse(output)
-                .GetValues<KeyValuePair<string, string>>("PROP")
-                .GroupBy(x => x.Key)
-                .Select(x => new { x.Key, x.Last().Value })
-                .ToDictionary(property => property.Key, property => property.Value);
+            var properties = new Dictionary<string, string>();
+            foreach (Match match in QueryPropertyRegex.Matches(output ?? string.Empty))
+                properties[match.Groups["name"].Value] = match.Groups["value"].Value;
+            return properties;
         }
-
-        private static Parser QueryPropertyParser => StaticLazy.Get(() => QueryPropertyParser, () =>
-        {
-            var charSeparator = Char[':'];
-            var charsName = CharSet[~(charSeparator + CharVertSpace)];
-            var charsValue = CharSet[~CharVertSpace];
-
-            var propertyName = new Token("NAME", charsName.Repeat(atLeast: 1));
-            var propertyValue = new Token("VALUE", charsValue.Repeat());
-            var property = new Token("PROP", propertyName & charSeparator & propertyValue)
-                {
-                    new Rule<KeyValuePair<string, string>>
-                    {
-                        Create("NAME", (string name) =>
-                            new KeyValuePair<string, string>(name, "")),
-                        Transform("VALUE", (KeyValuePair<string, string> prop, string value) =>
-                            new KeyValuePair<string, string>(prop.Key, value))
-                    }
-                };
-            var propertyLine = StartOfLine & property & CharVertSpace.Repeat();
-            return propertyLine.Repeat().Render();
-        });
 
         #endregion
 
         #region vcvars environment
 
+        // NAME=VALUE, terminated by a line break
+        private static readonly Regex VcVarsRegex = new(
+            @"^(?<name>[^=\r\n]+)=(?<value>[^\r\n]*)\r?\n", RegexOptions.Multiline);
+
         /// <summary>
-        /// Parses the output of 'vcvars*.bat && set': one 'NAME=VALUE' per line, the value split
-        /// at ';'. Names are compared case-insensitively.
+        /// Parses the output of 'vcvars*.bat && set': one 'NAME=VALUE' per line, each line
+        /// terminated by a line break, the value split at ';'. Names are compared
+        /// case-insensitively; the last value wins if a name occurs more than once.
         /// </summary>
         public static Dictionary<string, List<string>> ParseVcVarsEnvironment(string output)
         {
-            return VcVarsParser.Parse(output)
-                .GetValues<KeyValuePair<string, List<string>>>("env_var")
-                .ToDictionary(envVar => envVar.Key, envVar => envVar.Value ?? new(),
-                    Utils.CaseIgnorer);
+            var env = new Dictionary<string, List<string>>(Utils.CaseIgnorer);
+            foreach (Match match in VcVarsRegex.Matches(output ?? string.Empty)) {
+                env[match.Groups["name"].Value] = match.Groups["value"].Value
+                    .Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries)
+                    .ToList();
+            }
+            return env;
         }
-
-        private static Parser VcVarsParser => StaticLazy.Get(() => VcVarsParser, () =>
-        {
-            var tokenName = new Token("name", (~Chars["=\r\n"]).Repeat(atLeast: 1));
-            var tokenValuePart = new Token("value_part", (~Chars[";\r\n"]).Repeat(atLeast: 1));
-            var tokenValue = new Token("value", (tokenValuePart | Chars[';']).Repeat())
-            {
-                new Rule<List<string>>
-                {
-                    Capture(_ => new List<string>()),
-                    Update("value_part", (List<string> parts, string part) => parts.Add(part))
-                }
-            };
-            var tokenEnvVar = new Token("env_var", tokenName & "=" & tokenValue & LineBreak)
-            {
-                new Rule<KeyValuePair<string, List<string>>>
-                {
-                    Create("name", (string name)
-                        => new KeyValuePair<string, List<string>>(name, null)),
-                    Transform("value", (KeyValuePair<string, List<string>> prop, List<string> value)
-                        => new KeyValuePair<string, List<string>>(prop.Key, value))
-                }
-            };
-            return tokenEnvVar.Render();
-        });
 
         #endregion
 
         #region Dev releases
+
+        private static readonly Regex DevReleaseRegex = new(
+            @"href=""(?<version>[0-9]+\.[0-9]+\.[0-9]+)/?""");
 
         /// <summary>
         /// Returns the versions linked as 'href="X.Y.Z"' or 'href="X.Y.Z/"' in the HTML listing
@@ -122,49 +83,36 @@ namespace QtVsTools.Core.Common
         /// </summary>
         public static IEnumerable<System.Version> ParseDevReleaseVersions(string html)
         {
-            return DevReleaseParser.Parse(html).GetValues<System.Version>("VERSION");
+            return DevReleaseRegex.Matches(html ?? string.Empty)
+                .Cast<Match>()
+                .Select(match => System.Version.TryParse(match.Groups["version"].Value,
+                    out var version) ? version : null)
+                .Where(version => version != null)
+                .ToList();
         }
-
-        private static Parser DevReleaseParser => StaticLazy.Get(() => DevReleaseParser, () =>
-        {
-            var tokenVersion = new Token("VERSION", Number & "." & Number & "." & Number)
-            {
-                new Rule<System.Version> { Capture(value => new System.Version(value)) }
-            };
-            var regexHrefVersion = "href=\"" & tokenVersion & Chars["/"].Optional() & "\"";
-            var regexResponse = (regexHrefVersion | AnyChar | VertSpace).Repeat();
-            return regexResponse.Render();
-        });
 
         #endregion
 
         #region CMake
 
+        // find_package(Qt6 ...) or find_package(<name> NAMES Qt6 ...)
+        private static readonly Regex QtFindPackageRegex = new(
+            @"\bfind_package\s*\(\s*(?:\w+\s+NAMES\s+)?Qt[56](?!\w)");
+
         /// <summary>
         /// Returns true if a CMakeLists.txt text contains 'find_package(Qt5 ...)' or
-        /// 'find_package(Qt6 ...)', optionally as 'find_package(<name> NAMES Qt6 ...)'.
+        /// 'find_package(Qt6 ...)', optionally as 'find_package(&lt;name&gt; NAMES Qt6 ...)'.
         /// </summary>
         public static bool HasQtFindPackage(string cmakeLists)
         {
-            try {
-                return CMakeListsParser.Parse(cmakeLists).Any();
-            } catch (ParseErrorException) {
-                return false;
-            }
+            return QtFindPackageRegex.IsMatch(cmakeLists ?? string.Empty);
         }
-
-        private static Parser CMakeListsParser => StaticLazy.Get(() => CMakeListsParser, () =>
-        {
-            var cmakeListsParser
-                = WordBoundary & "find_package" & Space & "(" & Space
-                & (Word & Space & "NAMES" & Space).Optional()
-                & new Token("qt_version", "Qt" & CharSet['5', '6']) & ~CharWord;
-            return cmakeListsParser.Render(HorizSpace);
-        });
 
         #endregion
 
         #region WSL paths
+
+        private static readonly Regex WslPathRegex = new(@"\A/mnt/(?<drive>\w)/(?<path>.*)");
 
         /// <summary>
         /// Converts a WSL path of the form '/mnt/c/dir/file' into 'c:\dir/file'. Returns null if
@@ -172,110 +120,76 @@ namespace QtVsTools.Core.Common
         /// </summary>
         public static string ConvertWslPath(string path)
         {
-            WslPath wslPath;
-            try {
-                wslPath = WslPathParser.Parse(path)
-                    .GetValues<WslPath>("WSLPATH").FirstOrDefault();
-            } catch (ParseErrorException) {
-                return null;
-            }
-            return wslPath == null ? null : $@"{wslPath.Drive}:\{wslPath.Path}";
+            var match = WslPathRegex.Match(path ?? string.Empty);
+            return match.Success
+                ? $@"{match.Groups["drive"].Value}:\{match.Groups["path"].Value}"
+                : null;
         }
-
-        private class WslPath
-        {
-            public string Drive;
-            public string Path;
-        }
-
-        private static Parser WslPathParser => StaticLazy.Get(() => WslPathParser, () =>
-            new Token("WSLPATH", SkipWs_Disable, StartOfFile
-                & "/mnt/" & new Token("DRIVE", CharWord) & "/" & new Token("PATH", AnyChar.Repeat()))
-            {
-                new Rule<WslPath>
-                {
-                    Update("DRIVE", (WslPath wslPath, string drive) => wslPath.Drive = drive),
-                    Update("PATH", (WslPath wslPath, string path) => wslPath.Path = path)
-                }
-            }
-            .Render());
 
         #endregion
 
         #region QML debugger
 
+        // Stops at a quote, so that "-qmljsdebugger=...,block" in a quoted command line keeps its
+        // last parameter.
+        private static readonly Regex QmlDebuggerArgsRegex =
+            new(@"-qmljsdebugger=(?<params>[^\s""]*)");
+
         /// <summary>
         /// Extracts the QML debug connection parameters from command line arguments of the form
         ///
-        ///   -qmljsdebugger=port:<port_num>[,port_max][,host:<address>][,file:<name>][,block]
+        ///   -qmljsdebugger=port:&lt;port_num&gt;[,port_max][,host:&lt;address&gt;][,file:&lt;name&gt;][,block]
         ///
-        /// Returns null if the arguments contain no such parameters.
+        /// 'port', 'host' and 'file' may appear in any order, 'block' only last. Parsing stops at
+        /// the first unknown parameter. Returns null if there is no known parameter.
         /// </summary>
         public static QmlDebugConnectParams ParseQmlDebuggerArgs(string args)
         {
-            try {
-                return QmlDebuggerArgsParser
-                    .Parse(args)
-                    .GetValues<QmlDebugConnectParams>(QmlTokenId.ConnectParams)
-                    .FirstOrDefault();
-            } catch (ParseErrorException) {
+            var match = QmlDebuggerArgsRegex.Match(args ?? string.Empty);
+            if (!match.Success)
                 return null;
+
+            var parts = match.Groups["params"].Value.Split(',');
+            var connParams = new QmlDebugConnectParams();
+            var known = 0;
+            for (var i = 0; i < parts.Length; i++) {
+                var part = parts[i];
+                if (part.StartsWith("port:", StringComparison.Ordinal)
+                    && TryParsePort(part.Substring("port:".Length), out var port)) {
+                    connParams.Port = port;
+                    if (i + 1 < parts.Length && TryParsePort(parts[i + 1], out var maxPort)) {
+                        connParams.MaxPort = maxPort;
+                        i++;
+                    }
+                } else if (part.StartsWith("host:", StringComparison.Ordinal)
+                    && part.Length > "host:".Length) {
+                    connParams.Host = part.Substring("host:".Length);
+                } else if (part.StartsWith("file:", StringComparison.Ordinal)
+                    && part.Length > "file:".Length) {
+                    connParams.File = part.Substring("file:".Length);
+                } else {
+                    connParams.Block = known > 0 && part == "block";
+                    break;
+                }
+                known++;
             }
+            return known > 0 ? connParams : null;
         }
 
-        private enum QmlTokenId { ConnectParams, Port, MaxPort, Host, File, Block }
-
-        private static Parser QmlDebuggerArgsParser => StaticLazy.Get(() =>
-            QmlDebuggerArgsParser, () => new Token(QmlTokenId.ConnectParams, RxConnectParams)
-            {
-                new Rule<QmlDebugConnectParams>
-                {
-                    Update(QmlTokenId.Port, (QmlDebugConnectParams conn, ushort n) => conn.Port = n),
-                    Update(QmlTokenId.MaxPort,
-                        (QmlDebugConnectParams conn, ushort n) => conn.MaxPort = n),
-                    Update(QmlTokenId.Host, (QmlDebugConnectParams conn, string s) => conn.Host = s),
-                    Update(QmlTokenId.File, (QmlDebugConnectParams conn, string s) => conn.File = s),
-                    Update(QmlTokenId.Block, (QmlDebugConnectParams conn, bool b) => conn.Block = b)
-                }
-            }
-            .Render());
-
-        private static SyntaxAnalysis.RegExpr RxConnectParams =>
-            "-qmljsdebugger="
-            & ((RxPort | RxHost | RxFile) & RxDelim).Repeat(atLeast: 1) & RxBlock.Optional();
-
-        private static SyntaxAnalysis.RegExpr RxPort =>
-            "port:" & new Token(QmlTokenId.Port, CharDigit.Repeat(atLeast: 1))
-            {
-                new Rule<ushort> { Capture(ushort.Parse) }
-            }
-            & (
-                "," & new Token(QmlTokenId.MaxPort, CharDigit.Repeat(atLeast: 1))
-                {
-                    new Rule<ushort> { Capture(ushort.Parse) }
-                }
-            ).Optional();
-
-        private static SyntaxAnalysis.RegExpr RxHost =>
-            "host:" & new Token(QmlTokenId.Host,
-                (~CharSet[CharSpace, Chars[","]]).Repeat(atLeast: 1));
-
-        private static SyntaxAnalysis.RegExpr RxFile =>
-            "file:" & new Token(QmlTokenId.File,
-                (~CharSet[CharSpace, Chars[","]]).Repeat(atLeast: 1));
-
-        private static SyntaxAnalysis.RegExpr RxBlock =>
-            new Token(QmlTokenId.Block, "block")
-            {
-                new Rule<bool> { Capture(_ => true) }
-            };
-
-        private static SyntaxAnalysis.RegExpr RxDelim =>
-            ("," & !LookAhead[CharSpace | EndOfLine]) | LookAhead[CharSpace | EndOfLine];
+        private static bool TryParsePort(string text, out ushort port)
+        {
+            port = 0;
+            return text.Length > 0 && text.All(c => c is >= '0' and <= '9')
+                && ushort.TryParse(text, out port);
+        }
 
         #endregion
 
         #region Qt/MSBuild projects
+
+        // [0-9], not \d: \d also matches other Unicode digits, which int.Parse rejects.
+        private static readonly Regex ProjectFormatVersionRegex =
+            new(@"QtVS_v(?<version>[0-9]{3})");
 
         /// <summary>
         /// Returns the number NNN of the first 'QtVS_vNNN' in a text, e.g. the Keyword of a
@@ -283,23 +197,23 @@ namespace QtVsTools.Core.Common
         /// </summary>
         public static int? ParseProjectFormatVersion(string text)
         {
-            try {
-                return ProjectFormatVersionParser.Parse(text ?? string.Empty)
-                    .GetValues<int>("VERSION").First();
-            } catch (ParseErrorException) {
-                return null;
-            }
+            var match = ProjectFormatVersionRegex.Match(text ?? string.Empty);
+            return match.Success ? int.Parse(match.Groups["version"].Value) : null;
         }
 
-        private static Parser ProjectFormatVersionParser => StaticLazy.Get(() =>
-            ProjectFormatVersionParser, () =>
-            {
-                var expr = "QtVS_v" & new Token("VERSION", Char['0', '9'].Repeat(3))
-                {
-                    new Rule<int> { Capture(int.Parse) }
-                };
-                return expr.Render();
-            });
+        private static readonly Regex ConfigConditionRegex = new(
+            @"'\$\(Configuration\)\|\$\(Platform\)'\s*==\s*'(?<configuration>\w*)\|(?<platform>\w*)'");
+
+        /// <summary>
+        /// Returns the platform of a project configuration condition of the form
+        /// '$(Configuration)|$(Platform)'=='Debug|x64'. Returns null if the text has no such
+        /// condition.
+        /// </summary>
+        public static string ParseConfigConditionPlatform(string condition)
+        {
+            var match = ConfigConditionRegex.Match(condition ?? string.Empty);
+            return match.Success ? match.Groups["platform"].Value : null;
+        }
 
         private static readonly char[] SlashChars =
         {
@@ -309,19 +223,20 @@ namespace QtVsTools.Core.Common
 
         /// <summary>
         /// Returns a regex that matches any of the given paths, regardless of case and of the
-        /// directory separators used.
+        /// directory separators used. Paths without a name, e.g. empty or only slashes, are
+        /// ignored; without any other path, the regex matches nothing.
         /// </summary>
         public static Regex CreatePathRegex(params string[] paths)
         {
-            SyntaxAnalysis.RegExpr slash = CharSet[SlashChars];
-            return paths
-                .Select(findWhatPath => (SyntaxAnalysis.RegExpr)(
-                    CaseInsensitive &
-                    findWhatPath.Split(SlashChars, StringSplitOptions.RemoveEmptyEntries)
-                        .Select(dirName => (SyntaxAnalysis.RegExpr)dirName)
-                        .Aggregate((path, dirName) => path & slash & dirName)))
-                .Aggregate((a, b) => a | b)
-                .Render().Regex;
+            var alternatives = paths
+                .Select(path => path.Split(SlashChars, StringSplitOptions.RemoveEmptyEntries))
+                .Where(parts => parts.Length > 0)
+                .Select(parts => "(?:" + string.Join(@"[\\/]", parts.Select(Regex.Escape)) + ")")
+                .ToList();
+            // An empty alternative would match everywhere, and ReplacePath would then rewrite
+            // every value of the project file.
+            return new Regex(alternatives.Count > 0 ? string.Join("|", alternatives) : "(?!)",
+                RegexOptions.IgnoreCase);
         }
 
         #endregion

@@ -17,11 +17,9 @@ using Microsoft.Win32;
 namespace QtVsTools.Core.MsBuild
 {
     using Common;
-    using SyntaxAnalysis;
     using static Common.Utils;
     using static HelperFunctions;
     using static MsBuildProjectFormat;
-    using static SyntaxAnalysis.RegExpr;
 
     public partial class MsBuildProjectReaderWriter
     {
@@ -237,32 +235,6 @@ namespace QtVsTools.Core.MsBuild
             return true;
         }
 
-        /// <summary>
-        /// Parser for project configuration conditional expressions of the type:
-        ///
-        ///     '$(Configuration)|$(Platform)'=='_TOKEN_|_TOKEN_'
-        ///
-        /// </summary>
-        private Parser _ConfigCondition;
-
-        private Parser ConfigCondition
-        {
-            get
-            {
-                if (_ConfigCondition != null)
-                    return _ConfigCondition;
-                var config = new Token("Configuration", CharWord.Repeat());
-                var platform = new Token("Platform", CharWord.Repeat());
-                var expr = "'$(Configuration)|$(Platform)'=='" & config & "|" & platform & "'";
-                try {
-                    _ConfigCondition = expr.Render();
-                } catch (Exception e) {
-                    e.Log();
-                }
-                return _ConfigCondition;
-            }
-        }
-
         private Version ParseProjectFormatVersion(string text)
         {
             if (string.IsNullOrEmpty(text))
@@ -299,9 +271,6 @@ namespace QtVsTools.Core.MsBuild
         /// <returns>true if successful</returns>
         public bool UpdateProjectFormatVersion(Version oldVersion)
         {
-            if (ConfigCondition == null)
-                return false;
-
             switch (oldVersion) {
             case Version.Latest:
                 return true; // Nothing to do!
