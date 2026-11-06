@@ -547,4 +547,23 @@
       <VSIXSubPath>x86\</VSIXSubPath>
     </Content>
   </ItemGroup>
+  <!--
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Regenerate the templates when the platform changes. Store the last platform in one file
+  // because all configurations share the outputs.
+  // -->
+  <Target Name="ResetPlatformTemplates" BeforeTargets="TransformDuringBuild"
+          Condition="'$(VsToolsSolutionPlatform)' != ''">
+    <PropertyGroup>
+      <_PlatformTemplatesPlatformFile
+        >$(BaseIntermediateOutputPath)PlatformTemplates.last</_PlatformTemplatesPlatformFile>
+      <_LastPlatform Condition="Exists('$(_PlatformTemplatesPlatformFile)')"
+        >$([System.IO.File]::ReadAllText('$(_PlatformTemplatesPlatformFile)').Trim())</_LastPlatform>
+    </PropertyGroup>
+    <Delete Files="source.extension.vsixmanifest;Marketplace\Overview.html"
+            Condition="'$(_LastPlatform)' != '$(VsToolsSolutionPlatform)'" />
+    <MakeDir Directories="$(BaseIntermediateOutputPath)" />
+    <WriteLinesToFile File="$(_PlatformTemplatesPlatformFile)"
+            Lines="$(VsToolsSolutionPlatform)" Overwrite="true" WriteOnlyWhenDifferent="true" />
+  </Target>
 </Project>

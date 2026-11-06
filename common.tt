@@ -98,7 +98,14 @@
         }
     }
 
-    string VS_TARGET_ARCH = Environment.GetEnvironmentVariable("VSCMD_ARG_TGT_ARCH") ?? "x64";
+    // Architecture of the Visual Studio the extension is built for.
+    string SOLUTION_PLATFORM = Host?.ResolveParameterValue("-", "-", "SolutionPlatform");
+    string VS_TARGET_ARCH = SOLUTION_PLATFORM?.ToLowerInvariant() switch
+    {
+        "x64" => "x64",
+        "arm64" => "arm64",
+        _ => Environment.GetEnvironmentVariable("VSCMD_ARG_TGT_ARCH") ?? "x64"
+    };
 
 /***************************************************************************/
     string WARNING_GENERATED_FILE = "This file was generated automatically.";

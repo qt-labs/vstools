@@ -26,6 +26,20 @@
         Condition="'$(VsSdk_Shell_Interop)' == ''"
       >$(VsInstallRoot)\Common7\IDE\PublicAssemblies\Microsoft.VisualStudio.Shell.Interop.dll</VsSdk_Shell_Interop>
   </PropertyGroup>
+  <!--
+    Solution platform (x64 or arm64) the extension is built for. MSBuild does not pass
+    SolutionPlatform to the projects of a solution build, but the configuration of every project
+    in CurrentSolutionConfigurationContents, e.g. 'Debug|arm64' for the native projects.
+  -->
+  <PropertyGroup>
+    <VsToolsSolutionPlatform>$(SolutionPlatform)</VsToolsSolutionPlatform>
+    <VsToolsSolutionPlatform Condition="'$(VsToolsSolutionPlatform)' == ''
+      AND $(CurrentSolutionConfigurationContents.ToLowerInvariant().Contains('|arm64&lt;'))"
+      >arm64</VsToolsSolutionPlatform>
+    <VsToolsSolutionPlatform Condition="'$(VsToolsSolutionPlatform)' == ''
+      AND $(CurrentSolutionConfigurationContents.ToLowerInvariant().Contains('|x64&lt;'))"
+      >x64</VsToolsSolutionPlatform>
+  </PropertyGroup>
   <Target Name="PrepareTransform">
     <ItemGroup>
       <T4TransformInputs Include="@(T4Template)"/>
@@ -43,6 +57,10 @@
       </T4ParameterValues>
       <T4ParameterValues Include="VisualStudioVersion">
         <Value>$(VisualStudioVersion)</Value>
+        <Visible>false</Visible>
+      </T4ParameterValues>
+      <T4ParameterValues Include="SolutionPlatform" Condition="'$(VsToolsSolutionPlatform)' != ''">
+        <Value>$(VsToolsSolutionPlatform)</Value>
         <Visible>false</Visible>
       </T4ParameterValues>
       <T4ParameterValues Include="VCTargetsPath">
