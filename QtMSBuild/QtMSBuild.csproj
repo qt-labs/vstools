@@ -49,9 +49,9 @@
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Runtime" />
   </ItemGroup>
-  <ItemGroup Condition=" '$(Configuration)|$(Platform)' != 'Debug|arm64' AND '$(Configuration)|$(Platform)' != 'Release|arm64' ">
-  <Reference Include="$(VCTargetsPath)\Application Type\Linux\1.0\Microsoft.Build.Linux.Tasks.dll" />
-  <Reference Include="$(VCTargetsPath)\Application Type\Linux\1.0\liblinux.dll" />
+  <ItemGroup>
+    <Reference Include="$(VCTargetsPath)\Application Type\Linux\1.0\Microsoft.Build.Linux.Tasks.dll" />
+    <Reference Include="$(VCTargetsPath)\Application Type\Linux\1.0\liblinux.dll" />
   </ItemGroup>
   <!--
   /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -438,18 +438,14 @@
     <Compile Include="Tasks\HostTranslatePaths_Windows.cs" />
     <Compile Include="Tasks\HostExec_Windows.cs" />
   </ItemGroup>
-  <Choose>
-    <When Condition=" '$(Configuration)|$(Platform)' != 'Debug|arm64' AND '$(Configuration)|$(Platform)' != 'Release|arm64' ">
-      <ItemGroup>
-        <Compile Include="Tasks\HostExec_LinuxWSL_Error.cs" />
-        <Compile Include="Tasks\HostTranslatePaths_LinuxWSL_Error.cs" />
-        <Compile Include="Tasks\HostTranslatePaths_LinuxSSL.cs" />
-        <Compile Include="Tasks\HostExec_LinuxSSL.cs" />
-        <Compile Include="Tasks\HostTranslatePaths_LinuxWSL.cs" />
-        <Compile Include="Tasks\HostExec_LinuxWSL.cs" />
-      </ItemGroup>
-    </When>
-  </Choose>
+  <ItemGroup>
+    <Compile Include="Tasks\HostExec_LinuxWSL_Error.cs" />
+    <Compile Include="Tasks\HostTranslatePaths_LinuxWSL_Error.cs" />
+    <Compile Include="Tasks\HostTranslatePaths_LinuxSSL.cs" />
+    <Compile Include="Tasks\HostExec_LinuxSSL.cs" />
+    <Compile Include="Tasks\HostTranslatePaths_LinuxWSL.cs" />
+    <Compile Include="Tasks\HostExec_LinuxWSL.cs" />
+  </ItemGroup>
   <ItemGroup>
     <T4Template Include="QtMSBuild\qt_tasks.targets_TT">
       <Generator>TextTemplatingFileGenerator</Generator>
