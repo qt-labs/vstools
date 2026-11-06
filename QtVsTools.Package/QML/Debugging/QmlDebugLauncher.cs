@@ -380,11 +380,16 @@ namespace QtVsTools.Qml.Debug
             if (ParseEnvironment(envString) is not { Count: > 0 } env)
                 return NextHook?.OnLaunchDebugTargets(targetCount, targets, results) ?? S_OK;
 
-            if (env.ContainsKey("PATH") && env.ContainsKey("QTDIR")) {
+            if (env.ContainsKey("QTDIR")) {
                 var qtDllPath = env.TryGetValue("QT_DLL_PATH", out var dllPath)
                     ? dllPath : $"{env["QTDIR"]}/bin";
-                if (!env["PATH"].Contains(qtDllPath)) {
-                    env["PATH"] = $"{qtDllPath};{env["PATH"]}";
+                // Visual Studio adds its own environment when starting the process. Setting
+                // PATH here overrides Visual Studio's PATH, so use it as the starting point
+                // if the project does not define PATH.
+                if (!env.TryGetValue("PATH", out var path))
+                    path = Environment.GetEnvironmentVariable("PATH") ?? string.Empty;
+                if (!path.Contains(qtDllPath)) {
+                    env["PATH"] = $"{qtDllPath};{path}";
                     var bstrEnv = string.Join("\0", env.Select(kv => $"{kv.Key}={kv.Value}"));
                     targets[0].bstrEnv = bstrEnv + '\0';
                 }
