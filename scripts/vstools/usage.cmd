@@ -15,12 +15,13 @@ ECHO.
 %##########################%
 %##%
 %##% == 'VS Versions' can be one or more of the following:
-%##%  -vs2026 ................ Select the latest version of Visual Studio 2026
 %##%  -vs2022 ................ Select the latest version of Visual Studio 2022
 %##%  -version ^<X^>.^<Y^> ....... Select version X.Y of Visual Studio
 %##%                           Can be specified several times
 %##%
-%##%  If no version is specified, the most recent version of VS is selected.
+%##%  If no version is specified, the latest Visual Studio 2022, version 17.14 or later,
+%##%  is selected; building requires Visual Studio 2022. The extension built with it
+%##%  supports Visual Studio 2022 and 2026.
 %##%
 %##% == 'Operation' can be one of the following:
 %##%  -build .... Incremental build of solution
@@ -40,6 +41,8 @@ ECHO.
 %##%                           x86_x64, x86_arm, x86_arm64, amd64_x86, x64_x86,
 %##%                           amd64_arm, x64_arm, amd64_arm64, x64_arm64,
 %##%                           arm64_amd64, arm64_x64, arm64_x86, arm64_arm
+%##%                           Defaults to the architecture of this machine
+%##%                           (arm64 on ARM64, otherwise x64)
 %##%  -config ^<NAME^> ......... Select NAME as the build configuration
 %##%                           Defaults to the 'Release' configuration
 %##%                           Only valid with -build or -rebuild

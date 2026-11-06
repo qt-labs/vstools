@@ -51,13 +51,12 @@ Recommended options for [jom](https://wiki.qt.io/Jom):
 
     jom module-qtbase module-qtdeclarative
 
-### 32-bit or 64-bit
+### Toolset and platform
 
-Visual Studio 2022/2026 is a 64-bit application. The target platform for which Qt is built must
-reflect this:
-
-- For Visual Studio 2022, use Qt built for the x64 platform.
-- For Visual Studio 2026, use Qt built for the x64 platform.
+Build Qt with the Visual Studio 2022 toolset (MSVC v143), the toolset the extension is built
+with, for the architecture of Visual Studio the machine builds the extension for: x64, or arm64
+for Visual Studio on ARM (a native build on an ARM64 machine, configured with
+`-platform win32-msvc`). A static Qt built with a newer toolset cannot be linked.
 
 ## Build
 
@@ -67,7 +66,7 @@ After cloning the repository, follow the instructions below to build the Qt Visu
 
 The following is required in order to build the Qt Visual Studio solution:
 
-- Visual Studio 2022/2026, with the following workloads:
+- Visual Studio 2022 version 17.14 or later, with the following workloads:
     - Desktop development with C++
     - .NET desktop development
     - [Visual Studio extension development](https://docs.microsoft.com/en-us/visualstudio/extensibility/installing-the-visual-studio-sdk)
@@ -110,18 +109,14 @@ This will:
 - Run an initial text template generation;
 - Open the solution in the VS IDE, ready to build/debug.
 
-This procedure must be repeated when opening the solution on another
-version of VS. For example, assuming VS 2026 and VS 2022 are
-installed, to open the solution in VS 2022 after it has already been
-initialized and used in VS 2026, run the following:
-
-    C:\...\vstools> vstools -vs2022 -init -startvs
-
-By default, if no VS version is specified, the most recent version is selected.
+By default, Visual Studio 2022 17.14 or later is selected. The extension built with it supports
+Visual Studio 2022 (17.14 or later) and Visual Studio 2026; there are no separate builds per
+Visual Studio version.
 
 ### Target platform
 
-The solution platform must be set to `'x64'` for VS 2022/2026.
+The solution platform selects the architecture of Visual Studio the extension is built for:
+`'x64'` or `'arm64'`.
 
 ## Debug
 

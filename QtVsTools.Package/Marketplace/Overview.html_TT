@@ -11,7 +11,7 @@
 ****************************************************************************************************
 -->
 <#
-    string VsDisplayName = (VS_NAME == "2022") ? "2022 and 2026" : VS_NAME;
+    string VsDisplayName = "2022 and 2026";
 #>
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -37,19 +37,24 @@
 <p>
     See also:
     <ul>
-        <#if (VS_NAME !="2026" ) {#>
             <li>
                 <a title="Qt VS Tools for Visual Studio 2026"
 href="https://marketplace.visualstudio.com/items?itemName=TheQtCompany.QtVisualStudioTools2026">
                     Qt VS Tools for Visual Studio 2026
                 </a>
             </li>
-        <#}#>
-        <#if (VS_NAME !="2022" ) {#>
+        <#if (VS_TARGET_ARCH == "arm64") {#>
             <li>
                 <a title="Qt VS Tools for Visual Studio 2022 and 2026"
 href="https://marketplace.visualstudio.com/items?itemName=TheQtCompany.QtVisualStudioTools2022">
                     Qt VS Tools for Visual Studio 2022 and 2026
+                </a>
+            </li>
+        <#} else {#>
+            <li>
+                <a title="Qt VS Tools for Visual Studio 2022 and 2026 on ARM"
+href="https://marketplace.visualstudio.com/items?itemName=TheQtCompany.QtVisualStudioTools2022ARM">
+                    Qt VS Tools for Visual Studio 2022 and 2026 on ARM
                 </a>
             </li>
         <#}#>
@@ -57,12 +62,6 @@ href="https://marketplace.visualstudio.com/items?itemName=TheQtCompany.QtVisualS
                 <a title="Qt VS Tools for Visual Studio 2019"
 href="https://marketplace.visualstudio.com/items?itemName=TheQtCompany.QtVisualStudioTools2019">
                     Qt VS Tools for Visual Studio 2019
-                </a>
-            </li>
-            <li>
-                <a title="Qt VS Tools for Visual Studio 2022 and 2026 on ARM"
-href="https://marketplace.visualstudio.com/items?itemName=TheQtCompany.QtVisualStudioTools2022ARM">
-                    Qt VS Tools for Visual Studio 2022 and 2026 on ARM
                 </a>
             </li>
     </ul>

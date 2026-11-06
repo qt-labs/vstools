@@ -14,11 +14,15 @@ ECHO.
 
 ECHO Removing previous installation...
 
-IF "%VS%" == "2026" (
-    start "Uninstalling 2026" /WAIT VSIXInstaller %VSIX_INSTALLER_ARG% /force /quiet /shutdownProcesses /uninstall:QtVsTools.8e827d74-6fc4-40a6-a3aa-faf19552b3b8
-) ELSE IF "%VS%" == "2022" (
-    start "Uninstalling 2022" /WAIT VSIXInstaller %VSIX_INSTALLER_ARG% /force /quiet /shutdownprocesses /uninstall:QtVsTools.8e827d74-6fc4-40a6-a3aa-faf19652b3b8
+IF "%BUILD_PLATFORM%" == "" (
+    SET BUILD_PLATFORM=%VSCMD_ARG_TGT_ARCH%
 )
+IF /I "%BUILD_PLATFORM%" == "arm64" (
+    SET VSTOOLS_PACKAGE_ID=QtVsTools.32c0f213-ae14-4cc2-bae9-8fa56ad8bddf
+) ELSE (
+    SET VSTOOLS_PACKAGE_ID=QtVsTools.8e827d74-6fc4-40a6-a3aa-faf19652b3b8
+)
+start "Uninstalling" /WAIT VSIXInstaller %VSIX_INSTALLER_ARG% /force /quiet /shutdownprocesses /uninstall:%VSTOOLS_PACKAGE_ID%
 
 ECHO Installing...
 start "Installing" /WAIT VSIXInstaller %VSIX_INSTALLER_ARG% /force /quiet /shutdownprocesses QtVsTools.Package\bin\%BUILD_CONFIGURATION%\QtVsTools.vsix

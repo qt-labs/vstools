@@ -84,6 +84,11 @@ IF %LIST_VERSIONS% (
     EXIT /B
 )
 
+REM Default: the architecture of this machine, i.e. build the extension for the native Visual Studio.
+REM Read it from the registry: PROCESSOR_ARCHITECTURE of an emulated x64 shell reports AMD64.
+SET MACHINE_ARCH=
+FOR /F "tokens=3" %%a IN ('REG QUERY "HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Environment" /v PROCESSOR_ARCHITECTURE 2^> NUL') DO SET MACHINE_ARCH=%%a
+IF "%VCVARS_ARCH%" == "" IF /I "%MACHINE_ARCH%" == "ARM64" SET VCVARS_ARCH=arm64
 IF "%VCVARS_ARCH%" == "" SET VCVARS_ARCH=x64
 
 IF %VERBOSE% %##% CALL "%VS_PATH%\VC\Auxiliary\Build\vcvarsall.bat %VCVARS_ARCH%"
