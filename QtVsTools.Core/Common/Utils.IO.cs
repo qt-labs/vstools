@@ -51,7 +51,8 @@ namespace QtVsTools.Core.Common
         });
 
         /// <summary>
-        /// /// Gets the combined version and extension architecture of Visual Studio.
+        /// Gets the combined version and extension architecture of Visual Studio, as used in
+        /// the names of the deployed packages (see scripts\vstools\deploy.cmd).
         /// </summary>
         public static string VersionAndArchitecture => ResolvedVersionAndArchitecture.Value;
         private static readonly Lazy<string> ResolvedVersionAndArchitecture = new(() =>
@@ -60,7 +61,7 @@ namespace QtVsTools.Core.Common
             return $"2019-{Architecture}";
 #elif VS2022 || VS2026
 # if VS2022
-            return $"2024-{Architecture}";
+            return $"2022-{Architecture}";
 # elif VS2026
 # error Remove this line if you want to build a special VS2026 version of the VsTools extension.
             return $"2026-{Architecture}";
