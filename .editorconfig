@@ -3,6 +3,10 @@ root = true
 
 [*]
 charset = utf-8
+max_line_length = 100
+insert_final_newline = true
+trim_trailing_whitespace = true
+guidelines = 80 dashed, 100
 
 # Microsoft .NET properties
 csharp_indent_braces = false
@@ -3453,7 +3457,7 @@ end_of_line = crlf
 #### .NET Coding Conventions ####
 
 # Organize usings
-file_header_template = Copyright (C) 2025 The Qt Company Ltd.\nSPDX-License-Identifier: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
+file_header_template = Copyright (C) 2026 The Qt Company Ltd.\nSPDX-License-Identifier: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
 
 # Parentheses preferences
 dotnet_style_parentheses_in_other_operators = never_if_unnecessary
