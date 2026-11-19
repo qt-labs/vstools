@@ -1561,7 +1561,7 @@
     \e {custom build steps} into Qt/MSBuild steps.
 
     For more information about Qt/MSBuild project format versions, see
-    \l {https://github.com/qt-labs/vstools/blob/dev/Tests/ProjectFormats/ProjectFormats.md}
+    \l {https://github.com/qt-labs/vstools/blob/dev/QtVsTools/Tests/ProjectFormats/ProjectFormats.md}
     {Qt VS Tools - Project format versions}.
 
     \section1 Path to build files

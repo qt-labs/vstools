@@ -75,7 +75,7 @@ href="https://marketplace.visualstudio.com/items?itemName=TheQtCompany.QtVisualS
     </li>
     <li>
         <a title="Changelog"
-            href="https://code.qt.io/cgit/qt-labs/vstools.git/tree/Changelog?h=v<#=QT_VS_TOOLS_VERSION#>">
+            href="https://code.qt.io/cgit/qt-labs/vstools.git/tree/QtVsTools/Changelog?h=v<#=QT_VS_TOOLS_VERSION#>">
             Changelog
         </a>
     </li>

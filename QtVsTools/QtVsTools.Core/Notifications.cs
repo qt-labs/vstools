@@ -80,7 +80,7 @@ namespace QtVsTools.Core
                 OnClicked= () =>
                 {
                     VsShellUtilities.OpenSystemBrowser(
-                        "https://code.qt.io/cgit/qt-labs/vstools.git/tree/Changelog");
+                        "https://code.qt.io/cgit/qt-labs/vstools.git/tree/QtVsTools/Changelog");
                 }
             },
             new()

@@ -50,7 +50,7 @@
     <#=XML_COMMENT_BEGIN#> END Generated Text -->
     <MoreInfo>https://doc.qt.io/qtvstools/index.html</MoreInfo>
     <License>LICENSE.GPL3-EXCEPT</License>
-    <ReleaseNotes>https://code.qt.io/cgit/qt-labs/vstools.git/tree/Changelog</ReleaseNotes>
+    <ReleaseNotes>https://code.qt.io/cgit/qt-labs/vstools.git/tree/QtVsTools/Changelog</ReleaseNotes>
     <Icon>qt.ico</Icon>
     <PreviewImage>preview.png</PreviewImage>
   </Metadata>

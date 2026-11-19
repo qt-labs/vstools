@@ -30,3 +30,5 @@ synchronization. Submit your change for review on
 3. Clone the repository from `https://codereview.qt-project.org/qt-labs/vstools` with
    `--recurse-submodules`, commit your change on top of `dev`, and push it for review to
    `refs/for/dev`.
+
+See the [Qt VS Tools README](../QtVsTools/README.md) for build instructions.

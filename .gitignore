@@ -68,23 +68,11 @@ GeneratedFiles/
 # Local signing keys
 *.pfx
 
-# Qt-generated files
-.qmake.stash
-Makefile
-Makefile.*
-ui_*.h
-*_wrapper.bat
-*_plugin_import.cpp
-
 # Test output
 [Tt]est[Rr]esult*/
 [Bb]uild[Ll]og.*
 *.VisualState.xml
 TestResult.xml
-Tests/BigSolution/generated/
-Tests/Test_QtMsBuild.Build/evalprops.csv
-Tests/Test_QtMsBuild.Tasks/evalprops.csv
-Tests/system/suite_*/envvars
 
 # Visual Studio profiler output
 *.psess
@@ -104,39 +92,3 @@ UpgradeLog*.htm
 !**/packages/build/
 *.nuget.props
 *.nuget.targets
-
-# Generated assembly metadata and version information
-**/Properties/AssemblyInfo.tt.cs
-QtVsTools.Core/Version.tt.cs
-
-# Generated extension metadata
-QtVsTools.Package/QtVersionId.vsct
-QtVsTools.Package/Marketplace/Overview.html
-QtVsTools.Package/source.extension.vsixmanifest
-
-# Generated project and item templates
-Templates/console/console.vstemplate
-Templates/designer/designer.vstemplate
-Templates/empty/empty.vstemplate
-Templates/gui/gui.vstemplate
-Templates/lib/lib.vstemplate
-Templates/qtclass/qtclass.vstemplate
-Templates/quick/quick.vstemplate
-Templates/server/server.vstemplate
-Templates/test/test.vstemplate
-Templates/translation/translation.vstemplate
-Templates/widgetsclass/widgetsclass.vstemplate
-
-# Generated Qt/MSBuild files
-QtMSBuild/QtMsBuild/moc/qtmoc_v3.xml
-QtMSBuild/QtMsBuild/moc/qtmoc_cl.targets
-QtMSBuild/QtMsBuild/rcc/qtrcc_v3.xml
-QtMSBuild/QtMsBuild/rcc/qtrcc_cl.targets
-QtMSBuild/QtMsBuild/repc/qtrepc_v3.xml
-QtMSBuild/QtMsBuild/repc/qtrepc_cl.targets
-QtMSBuild/QtMsBuild/qt_tasks.targets
-vstools.pri
-
-# Generated documentation
-doc/html/
-doc/*.qch
