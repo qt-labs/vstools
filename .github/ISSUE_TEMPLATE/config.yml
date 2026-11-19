@@ -1,0 +1,11 @@
+# Copyright (C) 2026 The Qt Company Ltd.
+# SPDX-License-Identifier: LicenseRef-Qt-Commercial OR LGPL-3.0-only
+
+blank_issues_enabled: false
+contact_links:
+  - name: Qt bug tracker
+    url: https://qt-project.atlassian.net/browse/QTVSADDINBUG
+    about: Report bugs and request features for Qt VS Tools directly in the Qt bug tracker.
+  - name: Qt Forum
+    url: https://forum.qt.io/category/13/tools
+    about: Ask questions and discuss Qt VS Tools with the community.

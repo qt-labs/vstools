@@ -1,0 +1,158 @@
+# Copyright (C) 2026 The Qt Company Ltd.
+# SPDX-License-Identifier: LicenseRef-Qt-Commercial OR LGPL-3.0-only
+
+name: Move issues to Jira
+
+# The "jira" label exports a triaged issue to QTVSADDINBUG and closes the GitHub issue.
+# Requires JIRA_USER (account e-mail) and JIRA_TOKEN (Atlassian API token) repository secrets
+# for an account that may create issues in QTVSADDINBUG.
+on:
+  issues:
+    types: [ labeled ]
+
+concurrency:
+  group: jira-export-${{ github.repository }}-${{ github.event.issue.number }}
+  cancel-in-progress: false
+
+permissions:
+  issues: write
+
+jobs:
+  move:
+    if: github.repository == 'qt-labs/vstools' && github.event.label.name == 'jira'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create the Jira issue and close the GitHub issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+          JIRA_URL: https://qt-project.atlassian.net
+          JIRA_USER: ${{ secrets.JIRA_USER }}
+          JIRA_TOKEN: ${{ secrets.JIRA_TOKEN }}
+          REPO: ${{ github.repository }}
+          NUMBER: ${{ github.event.issue.number }}
+          TITLE: ${{ github.event.issue.title }}
+          BODY: ${{ github.event.issue.body }}
+          ISSUE_URL: ${{ github.event.issue.html_url }}
+          ISSUE_AUTHOR: ${{ github.event.issue.user.login }}
+          LABELS: ${{ join(github.event.issue.labels.*.name, ',') }}
+        run: |
+          set -euo pipefail
+          # Issue bodies edited in the browser may use CRLF line endings.
+          body=${BODY//$'\r'/}
+
+          # Problems the triager can fix: explain them on the issue and remove the "jira" label,
+          # so that adding it again retries the export.
+          fail_export() {
+            printf '%s\n' "$1" >&2
+            gh issue comment "$NUMBER" --repo "$REPO" --body "$(printf \
+              'The export to Jira failed: %s\n\nFix this and add the `jira` label again.' "$1")"
+            gh issue edit "$NUMBER" --repo "$REPO" --remove-label jira
+            exit 1
+          }
+
+          if [[ "$TITLE" =~ ^[[:space:]]*$ || "$body" =~ ^[[:space:]]*$ ]]; then
+            fail_export 'The issue needs a title and a description.'
+          fi
+          # A "version:<x.y.z>" label set by the triager takes precedence over the issue form.
+          affects_version=$(tr ',' '\n' <<< "$LABELS" | sed -n 's/^version://p' | head -n1)
+          if [[ -z "$affects_version" ]]; then
+            affects_version=$(awk '
+              /^### Qt VS Tools version$/ { in_version=1; next }
+              /^### / { if (in_version) exit }
+              in_version && NF { print; exit }
+            ' <<< "$body")
+          fi
+
+          # The label holds owner, repository and issue number, so it identifies the source.
+          jira_label="github-${REPO//\//-}-${NUMBER}"
+          matching_export_keys() {
+            jq -r --arg label "$jira_label" '
+              (if has("issues") then .issues[] else . end)
+              | select(.fields.project.key == "QTVSADDINBUG")
+              | select(.fields.labels | index($label) != null)
+              | .key'
+          }
+
+          comments=$(gh api --paginate "repos/$REPO/issues/$NUMBER/comments" --jq '.[].body')
+          marker_key=$(printf '%s\n' "$comments" | \
+            sed -nE 's/.*<!-- jira-export-key: ([A-Z][A-Z0-9]*-[0-9]+) -->.*/\1/p' | head -n1 || true)
+
+          key=
+          if [[ -n "$marker_key" ]]; then
+            # A marker may point to a deleted issue or may have been written by hand.
+            if marker_issue=$(curl -sS --fail-with-body -u "$JIRA_USER:$JIRA_TOKEN" \
+              "$JIRA_URL/rest/api/2/issue/$marker_key?fields=project,labels"); then
+              key=$(matching_export_keys <<< "$marker_issue")
+              if [[ -z "$key" ]]; then
+                printf 'Ignoring Jira marker for a different source: %s\n' "$marker_key" >&2
+              fi
+            else
+              printf 'Ignoring Jira marker that cannot be read: %s\n' "$marker_key" >&2
+            fi
+          fi
+
+          if [[ -z "$key" ]]; then
+            next_page=
+            candidates=
+            while :; do
+              page_args=()
+              if [[ -n "$next_page" ]]; then
+                page_args+=(--data-urlencode "nextPageToken=$next_page")
+              fi
+              search=$(curl -sS --fail-with-body -u "$JIRA_USER:$JIRA_TOKEN" --get \
+                --data-urlencode "jql=project = QTVSADDINBUG AND labels = \"$jira_label\"" \
+                --data-urlencode 'fields=project,labels' \
+                --data-urlencode 'maxResults=100' "${page_args[@]}" \
+                "$JIRA_URL/rest/api/2/search/jql")
+              jq -e '.issues | type == "array"' <<< "$search" >/dev/null
+              page_keys=$(matching_export_keys <<< "$search")
+              candidates+="$page_keys"$'\n'
+              next_page=$(jq -r '.nextPageToken // empty' <<< "$search")
+              [[ -n "$next_page" ]] || break
+            done
+            key=$(printf '%s' "$candidates" | sed '/^$/d' | sort -u)
+            if [[ "$key" == *$'\n'* ]]; then
+              printf 'Multiple Jira issues refer to %s: %s\n' "$ISSUE_URL" "$key" >&2
+              exit 1
+            fi
+          fi
+
+          description=$(printf 'Reported on GitHub by @%s: %s\n\n{noformat}\n%s\n{noformat}' \
+            "$ISSUE_AUTHOR" "$ISSUE_URL" "$body")
+          if [[ -z "$key" ]]; then
+            # Affects versions is required in Jira; reject missing or unknown versions before creation.
+            versions=$(curl -sS --fail-with-body -u "$JIRA_USER:$JIRA_TOKEN" \
+              "$JIRA_URL/rest/api/2/project/QTVSADDINBUG/versions")
+            if [[ -z "$affects_version" ]] || ! jq -e --arg version "$affects_version" \
+              'any(.[]; .name == $version and .archived != true)' <<< "$versions" >/dev/null; then
+              fail_export "\"${affects_version:-(none)}\" is not a Qt VS Tools version known in Jira. Set the version in the issue form or add a \`version:<x.y.z>\` label, e.g. \`version:3.5.0\`."
+            fi
+            # Override the project's default assignee so the exported issue remains unassigned.
+            payload=$(jq -n --arg summary "$TITLE" --arg description "$description" \
+              --arg affects_version "$affects_version" --arg jira_label "$jira_label" \
+              '{fields: ({project: {key: "QTVSADDINBUG"}, issuetype: {name: "Bug"},
+                          components: [{name: "General"}],
+                          assignee: null,
+                          labels: [$jira_label],
+                          summary: $summary, description: $description,
+                          versions: [{name: $affects_version}]})}')
+            key=$(curl -sS --fail-with-body -u "$JIRA_USER:$JIRA_TOKEN" \
+              -H "Content-Type: application/json" -d "$payload" \
+              "$JIRA_URL/rest/api/2/issue" | jq -er '.key | strings')
+          fi
+
+          if [[ ! "$key" =~ ^QTVSADDINBUG-[0-9]+$ ]]; then
+            printf 'Invalid Jira issue key: %s\n' "$key" >&2
+            exit 1
+          fi
+          printf 'Exported %s as %s\n' "$ISSUE_URL" "$key"
+
+          marker="<!-- jira-export-key: $key -->"
+          if ! grep -Fq "$marker" <<< "$comments"; then
+            comment=$(printf 'Thank you for the report. It is now tracked as [%s](%s/browse/%s) in the Qt bug tracker. Please follow up there.\n\n%s' \
+              "$key" "$JIRA_URL" "$key" "$marker")
+            gh issue comment "$NUMBER" --repo "$REPO" --body "$comment"
+          fi
+          if [[ "$(gh issue view "$NUMBER" --repo "$REPO" --json state --jq .state)" == OPEN ]]; then
+            gh issue close "$NUMBER" --repo "$REPO"
+          fi

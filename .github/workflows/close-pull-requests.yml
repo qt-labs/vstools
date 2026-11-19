@@ -1,0 +1,28 @@
+# Copyright (C) 2026 The Qt Company Ltd.
+# SPDX-License-Identifier: LicenseRef-Qt-Commercial OR LGPL-3.0-only
+
+name: Close pull requests
+
+# Use pull_request_target to close pull requests from forks. Never check out or run PR code.
+on:
+  pull_request_target:
+    types: [ opened, reopened ]
+
+permissions:
+  pull-requests: write
+
+jobs:
+  close:
+    if: github.repository == 'qt-labs/vstools'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Close with a pointer to Gerrit
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          gh pr close "$NUMBER" --repo "$REPO" --comment "Thank you for your contribution. \
+          This repository is a mirror, and pull requests cannot be merged here. Please submit \
+          your change for review on the Qt Project's Gerrit server as described in \
+          [CONTRIBUTING.md](https://github.com/$REPO/blob/dev/.github/CONTRIBUTING.md)."

@@ -1,0 +1,91 @@
+# Copyright (C) 2026 The Qt Company Ltd.
+# SPDX-License-Identifier: LicenseRef-Qt-Commercial OR LGPL-3.0-only
+
+name: Qt VS Tools bug report
+description: Report a problem with Qt Visual Studio Tools.
+labels: [ bug ]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a problem with Qt VS Tools. Reports are triaged and
+        moved to the [Qt bug tracker](https://qt-project.atlassian.net/browse/QTVSADDINBUG), where
+        they are tracked and fixed. You can also report directly there.
+
+        For questions and general help, use the
+        [Qt Creator and other tools category](https://forum.qt.io/category/13/tools) on the Qt Forum.
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: What went wrong?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: A minimal project or code snippet helps reproduce the problem.
+      placeholder: |
+        1. Open a Qt project in Visual Studio.
+        2. ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      description: Include error messages and screenshots, if any.
+    validations:
+      required: true
+  - type: input
+    id: tools-version
+    attributes:
+      label: Qt VS Tools version
+      description: Enter the release version. Add development-build revisions to the description above.
+      placeholder: e.g. 3.5.0
+    validations:
+      required: true
+  - type: input
+    id: visual-studio-version
+    attributes:
+      label: Visual Studio version
+      description: Include the version shown in Help > About Microsoft Visual Studio.
+      placeholder: e.g. Visual Studio 2022 17.14 or Visual Studio 2026 18.0
+    validations:
+      required: true
+  - type: input
+    id: qt-version
+    attributes:
+      label: Qt version
+      placeholder: e.g. 6.12.0 msvc2022_arm64
+    validations:
+      required: false
+  - type: input
+    id: os
+    attributes:
+      label: Operating system and architecture
+      placeholder: e.g. Windows 11 ARM64 or Windows 11 x64
+    validations:
+      required: false
+  - type: dropdown
+    id: project-type
+    attributes:
+      label: Project type
+      options:
+        - Qt/MSBuild
+        - CMake
+        - qmake import
+        - Other
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs
+      description: Build or Qt VS Tools output. It is formatted as code automatically.
+      render: shell
