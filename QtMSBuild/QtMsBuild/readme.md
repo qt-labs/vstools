@@ -1,4 +1,4 @@
-﻿## Qt/MSBuild
+## Qt/MSBuild
 Special build rules called Qt/MSBuild let you run Qt build tools and set build options for them. You can also use the tools independently from Qt VS Tools with MSBuild or Visual Studio.
 
 ### Using with MSBuild

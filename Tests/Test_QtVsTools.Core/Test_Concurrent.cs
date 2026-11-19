@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2025 The Qt Company Ltd.
+// Copyright (C) 2025 The Qt Company Ltd.
 // SPDX-License-Identifier: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;

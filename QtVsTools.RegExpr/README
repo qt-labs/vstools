@@ -1,4 +1,4 @@
-﻿
+
 ==== RegExpr: (not just) a C# wrapper for System.Text.RegularExpressions.Regex
 
 The purpose of this module is to allow:
